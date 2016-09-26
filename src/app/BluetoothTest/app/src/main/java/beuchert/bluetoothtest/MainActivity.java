@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
             BluetoothErrorMessage();
         }
 
+        TextView statusText = (TextView) findViewById(R.id.StatusText);
+        statusText.setText("Connected to: " + device.getName());
         TextView PackageContent = (TextView) findViewById(R.id.PackageContent);
 
         if(mSocket.isConnected()){
@@ -122,14 +124,11 @@ public class MainActivity extends AppCompatActivity {
                 BufferedReader r = new BufferedReader(new InputStreamReader(result));
                 String realResult = r.readLine();
                 PackageContent.setText(realResult);
-
             } catch (IOException e) {
                 BluetoothErrorMessage();
+                statusText.setText("Status: Not connected");
             }
         }
-        
-        TextView statusText = (TextView) findViewById(R.id.StatusText);
-        statusText.setText("Connected to: " + device.getName());
     }
 
     private void BluetoothErrorMessage(){
