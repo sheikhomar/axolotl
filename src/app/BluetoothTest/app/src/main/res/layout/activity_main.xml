@@ -39,14 +39,6 @@
         android:layout_below="@+id/ConnectButton"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/StatusText"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:layout_above="@+id/ConnectButton"
-        android:layout_centerHorizontal="true" />
-
     <Button
         android:text="Connect"
         android:layout_width="wrap_content"
@@ -73,4 +65,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
         android:id="@+id/PackageContent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/StatusText"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="Status: Not connected"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="14sp" />
 </RelativeLayout>

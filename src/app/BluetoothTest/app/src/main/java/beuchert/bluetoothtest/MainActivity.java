@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void DisconnectOnClick(View view){
+        TextView statusText = (TextView) findViewById(R.id.StatusText);
+        statusText.setText("Status: Not Connected");
+
         try {
             mSocket.close();
         } catch (IOException e) {
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ErrorMessage(){
+        TextView statusText = (TextView) findViewById(R.id.StatusText);
+        statusText.setText("Status: Not Connected");
         AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
         alertDiaglogBuilder.setTitle("Connection Error");
         alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException). Do you want to try again?");
