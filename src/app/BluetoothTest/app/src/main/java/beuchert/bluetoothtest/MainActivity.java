@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     System.exit(0);
                 }
             });
+            alertDiaglogBuilder.setCancelable(false);
             AlertDialog alertDialog = alertDiaglogBuilder.create();
             alertDialog.show();
         }
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         System.exit(0);
                     }
                 });
-
+                alertDiaglogBuilder.setCancelable(false);
                 AlertDialog alertDialog = alertDiaglogBuilder.create();
                 alertDialog.show();
             }
