@@ -10,36 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="beuchert.bluetoothtest.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/DisconnectButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:id="@+id/StatusText"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <Button
-        android:text="Connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:id="@+id/ConnectButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignEnd="@+id/DisconnectButton"
-        android:layout_alignStart="@+id/DisconnectButton"
-        android:onClick="connectClick" />
-
-    <Button
-        android:text="Disconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:id="@+id/DisconnectButton"
-        android:layout_below="@+id/ConnectButton"
-        android:layout_centerHorizontal="true"
-        android:onClick="DisconnectOnClick" />
-
     <Button
         android:text="Change MAC"
         android:layout_width="wrap_content"
@@ -58,4 +28,49 @@
         android:layout_alignEnd="@+id/DisconnectButton"
         android:id="@+id/NewMacText"
         android:hint="Insert MAC" />
+
+    <Button
+        android:text="Disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:id="@+id/DisconnectButton"
+        android:onClick="DisconnectOnClick"
+        android:layout_below="@+id/ConnectButton"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/StatusText"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:layout_above="@+id/ConnectButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:id="@+id/ConnectButton"
+        android:onClick="connectClick"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Package content:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/DisconnectButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:id="@+id/textView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:id="@+id/PackageContent" />
 </RelativeLayout>

@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TextView statusText = (TextView) findViewById(R.id.StatusText);
+        statusText.setText("Connected to: " + device.getName());
+        TextView PackageContent = (TextView) findViewById(R.id.PackageContent);
 
         if(mSocket.isConnected()){
             InputStream result = null;
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 result = mSocket.getInputStream();
                 BufferedReader r = new BufferedReader(new InputStreamReader(result));
                 String realResult = r.readLine();
-                statusText.setText(realResult);
+                PackageContent.setText(realResult);
 
             } catch (IOException e) {
                 ErrorMessage();
