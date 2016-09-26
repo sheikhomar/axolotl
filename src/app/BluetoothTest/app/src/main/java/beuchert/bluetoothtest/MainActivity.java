@@ -26,10 +26,49 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
 
-        TextView statusText = (TextView) findViewById(R.id.StatusText);
-        Button connectButton = (Button) findViewById(R.id.ConnectButton);
-        Button disconnectButton = (Button) findViewById(R.id.DisconnectButton);
+    @Override
+    protected void onStart(){
+        super.onStart();
+
+        BA = BluetoothAdapter.getDefaultAdapter();
+        if(BA == null){
+            AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
+            alertDiaglogBuilder.setTitle("No Bluetooth adapter");
+            alertDiaglogBuilder.setMessage("Your device does not have a working bluetooth adapter.");
+            alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.exit(0);
+                }
+            });
+            AlertDialog alertDialog = alertDiaglogBuilder.create();
+            alertDialog.show();
+        }
+        else{
+            if(!BA.isEnabled()){
+                AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
+                alertDiaglogBuilder.setTitle("Bluetooth not turned on.");
+                alertDiaglogBuilder.setMessage("Do you want to enable it?");
+                alertDiaglogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        BA.enable();
+                    }
+                });
+
+                alertDiaglogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.exit(0);
+                    }
+                });
+
+                AlertDialog alertDialog = alertDiaglogBuilder.create();
+                alertDialog.show();
+            }
+        }
     }
 
     // Fields:
@@ -49,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             mSocket.close();
         } catch (IOException e) {
-            ErrorMessage();
+            BluetoothErrorMessage();
         }
     }
 
@@ -64,18 +103,15 @@ public class MainActivity extends AppCompatActivity {
     private void Connect(){
         final UUID MY_UUID = UUID.fromString("c3ffbcc2-ab89-4e56-94ed-2a8df65e45bd");
 
-        BA = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice device = BA.getRemoteDevice(MacAdress);
 
         try {
             mSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
             mSocket.connect();
         } catch (IOException e) {
-            ErrorMessage();
+            BluetoothErrorMessage();
         }
 
-        TextView statusText = (TextView) findViewById(R.id.StatusText);
-        statusText.setText("Connected to: " + device.getName());
         TextView PackageContent = (TextView) findViewById(R.id.PackageContent);
 
         if(mSocket.isConnected()){
@@ -87,12 +123,15 @@ public class MainActivity extends AppCompatActivity {
                 PackageContent.setText(realResult);
 
             } catch (IOException e) {
-                ErrorMessage();
+                BluetoothErrorMessage();
             }
         }
+        
+        TextView statusText = (TextView) findViewById(R.id.StatusText);
+        statusText.setText("Connected to: " + device.getName());
     }
 
-    private void ErrorMessage(){
+    private void BluetoothErrorMessage(){
         TextView statusText = (TextView) findViewById(R.id.StatusText);
         statusText.setText("Status: Not Connected");
         AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
@@ -111,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     mSocket.close();
                 } catch (IOException e) {
-                    ErrorMessage();
+                    BluetoothErrorMessage();
                 }
             }
         });
