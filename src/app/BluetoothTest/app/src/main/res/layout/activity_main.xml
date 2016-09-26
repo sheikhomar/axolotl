@@ -37,7 +37,8 @@
         android:layout_marginTop="16dp"
         android:id="@+id/DisconnectButton"
         android:layout_below="@+id/ConnectButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="DisconnectOnClick" />
 
     <Button
         android:text="Change MAC"

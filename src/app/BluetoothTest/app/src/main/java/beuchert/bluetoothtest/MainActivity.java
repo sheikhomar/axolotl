@@ -3,7 +3,9 @@ package beuchert.bluetoothtest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,30 +32,21 @@ public class MainActivity extends AppCompatActivity {
         Button disconnectButton = (Button) findViewById(R.id.DisconnectButton);
     }
 
+    // Fields:
     private String MacAdress = "00:0C:78:33:A5:63";
-    public void connectClick(View view) throws IOException {
-        BluetoothAdapter BA = null;
-        BluetoothSocket mSocket = null;
-        final UUID MY_UUID = UUID.fromString("c3ffbcc2-ab89-4e56-94ed-2a8df65e45bd");
+    private BluetoothAdapter BA = null;
+    private BluetoothSocket mSocket = null;
 
-        BA = BluetoothAdapter.getDefaultAdapter();
-        BluetoothDevice device = BA.getRemoteDevice(MacAdress);
+    // onClick methods:
+    public void connectClick(View view) {
+        Connect();
+    }
 
-        mSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
-        mSocket.connect();
-
-        boolean i = true;
-        while (i){
-            if(mSocket.isConnected()){
-                InputStream result = mSocket.getInputStream();
-                BufferedReader r = new BufferedReader(new InputStreamReader(result));
-                String realResult = r.readLine();
-                TextView statusText = (TextView) findViewById(R.id.StatusText);
-                statusText.setText(realResult);
-
-                i = false;
-                mSocket.close();
-            }
+    public void DisconnectOnClick(View view){
+        try {
+            mSocket.close();
+        } catch (IOException e) {
+            ErrorMessage();
         }
     }
 
@@ -61,5 +54,62 @@ public class MainActivity extends AppCompatActivity {
         EditText MacAdressEditText = (EditText) findViewById(R.id.NewMacText);
         Editable NewMacAdress = MacAdressEditText.getText();
         MacAdress = NewMacAdress.toString();
+    }
+
+
+    // Help methods:
+    private void Connect(){
+        final UUID MY_UUID = UUID.fromString("c3ffbcc2-ab89-4e56-94ed-2a8df65e45bd");
+
+        BA = BluetoothAdapter.getDefaultAdapter();
+        BluetoothDevice device = BA.getRemoteDevice(MacAdress);
+
+        try {
+            mSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
+            mSocket.connect();
+        } catch (IOException e) {
+            ErrorMessage();
+        }
+
+        TextView statusText = (TextView) findViewById(R.id.StatusText);
+
+        if(mSocket.isConnected()){
+            InputStream result = null;
+            try {
+                result = mSocket.getInputStream();
+                BufferedReader r = new BufferedReader(new InputStreamReader(result));
+                String realResult = r.readLine();
+                statusText.setText(realResult);
+
+            } catch (IOException e) {
+                ErrorMessage();
+            }
+        }
+    }
+
+    private void ErrorMessage(){
+        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
+        alertDiaglogBuilder.setTitle("Connection Error");
+        alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException). Do you want to try again?");
+        alertDiaglogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Connect();
+            }
+        });
+
+        alertDiaglogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    mSocket.close();
+                } catch (IOException e) {
+                    ErrorMessage();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialog.show();
     }
 }
