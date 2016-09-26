@@ -38,4 +38,23 @@
         android:id="@+id/DisconnectButton"
         android:layout_below="@+id/ConnectButton"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Change MAC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/MACButton"
+        android:onClick="ChangeOnClick" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_alignTop="@+id/MACButton"
+        android:layout_alignEnd="@+id/DisconnectButton"
+        android:id="@+id/NewMacText"
+        android:hint="Insert MAC" />
 </RelativeLayout>
