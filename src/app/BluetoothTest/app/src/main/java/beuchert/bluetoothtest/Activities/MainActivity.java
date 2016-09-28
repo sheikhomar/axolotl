@@ -1,163 +1,79 @@
 package beuchert.bluetoothtest.Activities;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.DialogInterface;
-import android.content.res.Resources;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.Editable;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Set;
-import java.util.UUID;
+
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import beuchert.bluetoothtest.R;
+import beuchert.bluetoothtest.Services.BluetoothService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BluetoothService.Callbacks {
+
+    // Fields:
+    private BluetoothService blueService;
+    private Intent blueIntent;
+
+    private ServiceConnection mServiceConnection= new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Toast.makeText(MainActivity.this, "onServiceConnected called", Toast.LENGTH_SHORT).show();
+            // We've binded to LocalService, cast the IBinder and get LocalService instance
+            BluetoothService.LocalBinder binder = (BluetoothService.LocalBinder) service;
+            blueService = binder.getServiceInstance(); //Get instance of your service!
+            blueService.registerClient(MainActivity.this); //Activity register in the service as client for callbacks!
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Toast.makeText(MainActivity.this, "onServiceDisconnected called", Toast.LENGTH_SHORT).show();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        blueIntent = new Intent(MainActivity.this, BluetoothService.class);
     }
 
     @Override
     protected void onStart(){
         super.onStart();
+        Log.d("MainActivity", "MainActivity Started");
+        Intent blueIntent = new Intent(this, BluetoothService.class);
+        bindService(blueIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-        BA = BluetoothAdapter.getDefaultAdapter();
-        if(BA == null){
-            AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
-            alertDiaglogBuilder.setTitle("No Bluetooth adapter");
-            alertDiaglogBuilder.setMessage("Your device does not have a working bluetooth adapter.");
-            alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    System.exit(0);
-                }
-            });
-            alertDiaglogBuilder.setCancelable(false);
-            AlertDialog alertDialog = alertDiaglogBuilder.create();
-            alertDialog.show();
-        }
-        else{
-            if(!BA.isEnabled()){
-                AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
-                alertDiaglogBuilder.setTitle("Bluetooth not turned on.");
-                alertDiaglogBuilder.setMessage("Do you want to enable it?");
-                alertDiaglogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        BA.enable();
-                    }
-                });
-
-                alertDiaglogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        System.exit(0);
-                    }
-                });
-                alertDiaglogBuilder.setCancelable(false);
-                AlertDialog alertDialog = alertDiaglogBuilder.create();
-                alertDialog.show();
-            }
-        }
     }
 
-    // Fields:
-    private String MacAdress = "00:0C:78:33:A5:63";
-    private BluetoothAdapter BA = null;
-    private BluetoothSocket mSocket = null;
-
     // onClick methods:
-    public void connectClick(View view) {
-        Connect();
+    public void onConnectClick(View view) {
+        // insert on click event
+        blueService.connect();
     }
 
     public void DisconnectOnClick(View view){
-        TextView statusText = (TextView) findViewById(R.id.StatusText);
-        statusText.setText("Status: Not Connected");
-
-        try {
-            mSocket.close();
-        } catch (IOException e) {
-            BluetoothErrorMessage();
-        }
+        // Insert OnClick event
     }
 
     public void ChangeOnClick(View view){
-        EditText MacAdressEditText = (EditText) findViewById(R.id.NewMacText);
-        Editable NewMacAdress = MacAdressEditText.getText();
-        MacAdress = NewMacAdress.toString();
+        // Insert OnCLick event
+    }
+
+    @Override
+    public void updateClient(long data) {
+
     }
 
 
     // Help methods:
-    private void Connect(){
-        final UUID MY_UUID = UUID.fromString("c3ffbcc2-ab89-4e56-94ed-2a8df65e45bd");
 
-        BluetoothDevice device = BA.getRemoteDevice(MacAdress);
-
-        try {
-            mSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
-            mSocket.connect();
-        } catch (IOException e) {
-            BluetoothErrorMessage();
-        }
-
-        TextView statusText = (TextView) findViewById(R.id.StatusText);
-        statusText.setText("Connected to: " + device.getName());
-        TextView PackageContent = (TextView) findViewById(R.id.PackageContent);
-
-        if(mSocket.isConnected()){
-            InputStream result = null;
-            try {
-                result = mSocket.getInputStream();
-                BufferedReader r = new BufferedReader(new InputStreamReader(result));
-                String realResult = r.readLine();
-                PackageContent.setText(realResult);
-            } catch (IOException e) {
-                BluetoothErrorMessage();
-                statusText.setText("Status: Not connected");
-            }
-        }
-    }
-
-    private void BluetoothErrorMessage(){
-        TextView statusText = (TextView) findViewById(R.id.StatusText);
-        statusText.setText("Status: Not Connected");
-        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
-        alertDiaglogBuilder.setTitle("Connection Error");
-        alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException). Do you want to try again?");
-        alertDiaglogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Connect();
-            }
-        });
-
-        alertDiaglogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    mSocket.close();
-                } catch (IOException e) {
-                    BluetoothErrorMessage();
-                }
-            }
-        });
-
-        AlertDialog alertDialog = alertDiaglogBuilder.create();
-        alertDialog.show();
-    }
 }
