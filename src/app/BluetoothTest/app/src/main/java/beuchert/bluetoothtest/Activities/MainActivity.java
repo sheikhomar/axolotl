@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements Callbacks {
         Log.d("MainActivity", "MainActivity Started");
         Intent blueIntent = new Intent(this, BluetoothService.class);
         bindService(blueIntent, mServiceConnection, BIND_AUTO_CREATE);
-
     }
 
     // onClick methods:
@@ -67,8 +67,9 @@ public class MainActivity extends AppCompatActivity implements Callbacks {
         blueService.disconnect();
     }
 
-    public void ChangeOnClick(View view){
-        // Insert OnCLick event
+    public void sendOnClick(View view){
+        EditText message = (EditText) findViewById(R.id.communicationMessage);
+        blueService.sendMessage(message.getText().toString());
     }
 
     @Override
@@ -78,9 +79,6 @@ public class MainActivity extends AppCompatActivity implements Callbacks {
 
     @Override
     public void showBluetoothConnectionAlert() {
-        TextView statusText = (TextView) findViewById(R.id.StatusText);
-        statusText.setText("Status: Not Connected");
-
         AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
         alertDiaglogBuilder.setTitle("Connection Error");
         alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException).");
@@ -125,5 +123,11 @@ public class MainActivity extends AppCompatActivity implements Callbacks {
         alertDiaglogBuilder.setCancelable(false);
         AlertDialog alertDialog = alertDiaglogBuilder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void showPackageContent(String Package) {
+        TextView PackageContent = (TextView) findViewById(R.id.PackageContent);
+        PackageContent.append("\n" + Package);
     }
 }

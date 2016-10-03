@@ -10,69 +10,63 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="beuchert.bluetoothtest.Activities.MainActivity">
 
-    <Button
-        android:text="Change MAC"
+    <TextView
+        android:text="Package content:"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/MACButton"
-        android:onClick="ChangeOnClick" />
+        android:layout_marginTop="27dp"
+        android:id="@+id/textView"
+        android:layout_below="@+id/DisconnectButton"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:id="@+id/PackageContent"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:maxLines="200"
+        android:minLines="1" />
+
+    <Button
+        android:text="Connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ConnectButton"
+        android:onClick="onConnectClick"
+        android:layout_marginEnd="14dp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/PackageContent" />
+
+    <Button
+        android:text="Disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DisconnectButton"
+        android:onClick="DisconnectOnClick"
+        android:layout_marginStart="17dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/PackageContent" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:layout_alignTop="@+id/MACButton"
-        android:layout_alignEnd="@+id/DisconnectButton"
-        android:id="@+id/NewMacText"
-        android:hint="Insert MAC" />
+        android:layout_below="@+id/PackageContent"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp"
+        android:id="@+id/communicationMessage"
+        android:hint="Insert text" />
 
     <Button
-        android:text="Disconnect"
+        android:text="SEND"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
-        android:id="@+id/DisconnectButton"
-        android:onClick="DisconnectOnClick"
-        android:layout_below="@+id/ConnectButton"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="Connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:id="@+id/ConnectButton"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="onConnectClick" />
-
-    <TextView
-        android:text="Package content:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/DisconnectButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:id="@+id/textView" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:id="@+id/PackageContent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/StatusText"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="Status: Not connected"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:textSize="14sp" />
+        android:layout_alignBottom="@+id/communicationMessage"
+        android:layout_toEndOf="@+id/textView"
+        android:id="@+id/sendButton"
+        android:layout_alignTop="@+id/communicationMessage"
+        android:onClick="sendOnClick" />
 </RelativeLayout>
