@@ -103,24 +103,14 @@ public class BluetoothController extends Thread implements IBluetoothController 
     private void BluetoothErrorMessage(){
         TextView statusText = (TextView) viewCalling.findViewById(R.id.StatusText);
         statusText.setText("Status: Not Connected");
+
         AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(viewCalling.getContext());
         alertDiaglogBuilder.setTitle("Connection Error");
-        alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException). Do you want to try again?");
-        alertDiaglogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException).");
+        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Connect();
-            }
-        });
-
-        alertDiaglogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    mSocket.close();
-                } catch (IOException e) {
-                    BluetoothErrorMessage();
-                }
+                dialog.dismiss();
             }
         });
 

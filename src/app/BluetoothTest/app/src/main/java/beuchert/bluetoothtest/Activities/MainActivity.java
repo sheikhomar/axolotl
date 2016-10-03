@@ -3,19 +3,23 @@ package beuchert.bluetoothtest.Activities;
 
 
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import beuchert.bluetoothtest.Interfaces.Callbacks;
 import beuchert.bluetoothtest.R;
 import beuchert.bluetoothtest.Services.BluetoothService;
 
-public class MainActivity extends AppCompatActivity implements BluetoothService.Callbacks {
+public class MainActivity extends AppCompatActivity implements Callbacks {
 
     // Fields:
     private BluetoothService blueService;
@@ -56,12 +60,11 @@ public class MainActivity extends AppCompatActivity implements BluetoothService.
 
     // onClick methods:
     public void onConnectClick(View view) {
-        // insert on click event
         blueService.connect();
     }
 
     public void DisconnectOnClick(View view){
-        // Insert OnClick event
+        blueService.disconnect();
     }
 
     public void ChangeOnClick(View view){
@@ -73,7 +76,54 @@ public class MainActivity extends AppCompatActivity implements BluetoothService.
 
     }
 
+    @Override
+    public void showBluetoothConnectionAlert() {
+        TextView statusText = (TextView) findViewById(R.id.StatusText);
+        statusText.setText("Status: Not Connected");
 
-    // Help methods:
+        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
+        alertDiaglogBuilder.setTitle("Connection Error");
+        alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException).");
+        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
 
+        alertDiaglogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void showBluetoothAdapterAlert() {
+        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
+        alertDiaglogBuilder.setTitle("No Bluetooth adapter");
+        alertDiaglogBuilder.setMessage("Your device does not have a working bluetooth adapter.");
+        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                System.exit(0);
+            }
+        });
+        alertDiaglogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void showBluetoothNotEnabledAlert() {
+        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
+        alertDiaglogBuilder.setTitle("Bluetooth not turned on.");
+        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+        });
+        alertDiaglogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialog.show();
+    }
 }
