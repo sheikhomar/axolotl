@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 import beuchert.bluetoothtest.Interfaces.Callbacks;
+import beuchert.bluetoothtest.Models.BluetoothHandler;
+import beuchert.bluetoothtest.Models.BluetoothThread;
 
 public class BluetoothService extends Service {
     // Fields:
@@ -25,11 +27,13 @@ public class BluetoothService extends Service {
     private BluetoothAdapter mAdapter = null;
     private BluetoothDevice mDevice = null;
     private BluetoothSocket mSocket = null;
-
+    private BluetoothHandler mHandler = null;
+    private BluetoothThread mBlueThread = null;
 
     // Constructor
     public BluetoothService(){
         mBinder = new LocalBinder();
+        mHandler = new BluetoothHandler();
         initializeAdapter();
         mDevice = mAdapter.getRemoteDevice(bluetoothMacAdress);
     }
@@ -57,6 +61,7 @@ public class BluetoothService extends Service {
     //Here Activity register to the service as Callbacks client
     public void registerClient(Activity activity){
         this.activity = (Callbacks) activity;
+        mHandler.setActivity(this.activity);
     }
 
     // Methods:
@@ -65,6 +70,8 @@ public class BluetoothService extends Service {
         try {
             mSocket = mDevice.createRfcommSocketToServiceRecord(myUUID);
             mSocket.connect();
+            mBlueThread = new BluetoothThread(mSocket, mHandler);
+            mBlueThread.start();
         } catch (IOException e) {
             activity.showBluetoothConnectionAlert();
         }
@@ -76,6 +83,10 @@ public class BluetoothService extends Service {
         } catch (IOException e) {
             activity.showBluetoothConnectionAlert();
         }
+    }
+
+    public void sendMessage(String message){
+        mBlueThread.write(message);
     }
 
     private void initializeAdapter(){
@@ -94,4 +105,6 @@ public class BluetoothService extends Service {
             return BluetoothService.this;
         }
     }
+
+
 }
