@@ -3,6 +3,7 @@ import unittest
 from lib import Bin
 from lib import Package
 from lib import PackedPosition
+from lib import PackingAdvisor
 
 class PackagePositionIsTakenTests(unittest.TestCase):
 
@@ -35,7 +36,27 @@ class PackagePositionIsTakenTests(unittest.TestCase):
         for x in range(-50, 0):
             for y in range(-50, 0):
                 self.assertFalse(package.position_is_taken(x, y))
-        
+
+class PackingAdvisorHandleTests(unittest.TestCase):
+    def test_handle_test(self):
+        bin1 = Bin(width=8, length=8, max_layers=3)
+
+        p1 = Package(width=4, length=2)
+        p2 = Package(width=4, length=2)
+        p3 = Package(width=2, length=2)
+
+        pa = PackingAdvisor([bin1])
+        pa.handle(p1)
+        pa.handle(p2)
+        pa.handle(p3)
+
+        self.assertEqual(bin1.current_layer.packages[0].position.x, 0)
+        self.assertEqual(bin1.current_layer.packages[0].position.y, 0)
+        self.assertEqual(bin1.current_layer.packages[1].position.x, 0)
+        self.assertEqual(bin1.current_layer.packages[1].position.y, 4)
+        self.assertEqual(bin1.current_layer.packages[2].position.x, 2)
+        self.assertEqual(bin1.current_layer.packages[2].position.y, 0)
+
 
 if __name__ == '__main__':
     unittest.main()
