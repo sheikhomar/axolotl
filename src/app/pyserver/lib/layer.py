@@ -17,3 +17,10 @@ class Layer:
     def pack(self, package, x, y):
         package.position = PackedPosition(x, y)
         self.packages.append(package)
+
+    def find_occupying_package(self, x, y):
+        for p in self.packages:
+            if p.position_is_taken(x, y):
+                return p
+        
+        return None
