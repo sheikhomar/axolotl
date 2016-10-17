@@ -8,3 +8,5 @@ from .bin import Bin
 from .package import Package
 from .packing_advisor import PackingAdvisor
 from .position import Position
+from .position import PackedPosition
+from .position import ConveyorPosition

@@ -1,7 +1,8 @@
 import unittest
-from testing import Bin
-from testing import Package
-from testing import PackedPosition
+
+from lib import Bin
+from lib import Package
+from lib import PackedPosition
 
 class PackagePositionIsTakenTests(unittest.TestCase):
 
