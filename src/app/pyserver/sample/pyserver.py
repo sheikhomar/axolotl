@@ -16,7 +16,7 @@ def setup_server():
     s.bind((MAC_ADDR, PORT))
     s.listen(BACKLOG)
     bluetooth.advertise_service(s, "PiServer Service", SERVICE_ID)
-    print "Server startet {mac_addr}...".format(mac_addr=MAC_ADDR)
+    print('Server startet {mac_addr}...'.format(mac_addr=MAC_ADDR))
     return s
 
 def handle_client(client):
@@ -35,7 +35,7 @@ def handle_client(client):
 def server_loop(server_socket):
     while True:
         client, client_info = server_socket.accept()
-        print "Accepting connection from {clientInfo}".format(clientInfo=client_info)
+        print('Accepting connection from {clientInfo}'.format(clientInfo=client_info))
         handle_client(client)
 
 s = setup_server()
