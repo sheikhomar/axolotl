@@ -48,6 +48,8 @@ class Layer:
         package.position = PackedPosition(x, y)
         self.packages.append(package)
 
+    
+
 
 class Bin:
     def __init__(self, width, length, max_layers):
@@ -72,16 +74,23 @@ class PackingAdvisor:
     def handle(self, package):
         print('Handling package...')
         
-        bin = find_bin(package)
-        if bin.current_layer.can_fit(package):
+        bin = self.find_bin(package) #ATM just returns bin[0]
+        if self.can_fit(bin ,package):
             print('Package fits ')
-            x, y = CalcXY(package)
             bin.current_layer.pack(package, x, y)
         
     
     def find_bin(self, package):
         print('Find the correct bin for package {0}'.format(package))
-        return bins[0]
+        return self.bins[0]
+
+    def can_fit(self, bin, package):
+        if bin.current_layer == bin.layers[0]:
+            self.find_x_y(package)
+            return True
+        else:
+            return False #Make later
+
 
 
 
