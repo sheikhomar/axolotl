@@ -6,7 +6,8 @@
     <ProjectGuid>f6c99b2c-2674-428a-8120-0ac4cb1ab84d</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>testing.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -27,11 +28,40 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="testing.py">
+    <Compile Include="lib\bin.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="pyserver.py" />
-    <Compile Include="server1.py" />
+    <Compile Include="lib\invalid_arg_error.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\layer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\package.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\packing_advisor.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\position.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="main.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sample\pyserver.py" />
+    <Compile Include="sample\server1.py" />
+    <Compile Include="tests\unit_testing.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib\" />
+    <Folder Include="sample\" />
+    <Folder Include="tests\" />
   </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
   <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
