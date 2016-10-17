@@ -11,25 +11,25 @@ public class TimeConTest {
     public static void main(String[] args) throws InterruptedException {
         //System.out.println("Arduino Connection Test");
 		//LCD.drawString("A-mei-zing!",3,3);
-		int succesful = 0, count = 0, countMax = 256;
+		int succesful = 0, count = 0, countMax = 26;
         int[][] finalBuff = new int[countMax][3];
 		byte[] recBuff = new byte[countMax];
 		String recString = new String("");
 		recBuff[0] = (byte)0;
 		
 		
-		RS485.hsEnable(9600, 0);//57600
+		RS485.hsEnable(57600, 0);//57600
 		Stopwatch stopwatch = new Stopwatch();
+		stopwatch.reset();
 		
 		System.out.println("Waiting");
 		while(true){
 			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
-			Delay.msDelay(100);
+			//Delay.msDelay(100);
 			if(succesful != 0)
 				break;
 		}
 		System.out.println("Done waiting");
-		stopwatch.reset();
 		while(count < countMax){
 			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
 			if(count != 0)
@@ -47,23 +47,55 @@ public class TimeConTest {
 				finalBuff[count][2] = 0;
 			}
 			count++;
-			if(stopwatch.elapsed() > 10000){
-				System.out.println("Count: " + Integer.toString(count));
-				System.out.println("To long time");
-				Delay.msDelay(1000);
-				break;
-			}
+			//if(stopwatch.elapsed()-finalBuff[0][1] > 15000){
+			//	System.out.println("Count: " + Integer.toString(count));
+			//	System.out.println("To long time");
+			//	Delay.msDelay(1000);
+			//	break;
+			//}
 		}
 		System.out.println("Done recieving");
 		Delay.msDelay(1000);
 		for(int i = 0; i < countMax; i++){
-			System.out.println(Integer.toString(finalBuff[i][0]));// + ", " + Integer.toString(finalBuff[i][2]));
+			System.out.println(decideChar(finalBuff[i][0]));// + ", " + Integer.toString(finalBuff[i][2]));
 			Delay.msDelay(500);
 		}
 		System.out.println("Done printing");
 		
 		Button.waitForAnyPress();
     }
+	
+	private static String decideChar(int input){
+		switch(input){
+			case 97: return "a";
+			case 98: return "b";
+			case 99: return "c";
+			case 100: return "d";
+			case 101: return "e";
+			case 102: return "f";
+			case 103: return "g";
+			case 104: return "h";
+			case 105: return "i";
+			case 106: return "j";
+			case 107: return "k";
+			case 108: return "l";
+			case 109: return "m";
+			case 110: return "n";
+			case 111: return "o";
+			case 112: return "p";
+			case 113: return "q";
+			case 114: return "r";
+			case 115: return "s";
+			case 116: return "t";
+			case 117: return "u";
+			case 118: return "v";
+			case 119: return "w";
+			case 120: return "x";
+			case 121: return "y";
+			case 122: return "z";
+			default: return "Invalid";
+		}
+	}
 	
 	private static String determineRecString(byte[] input){
 		switch(input[0]){
