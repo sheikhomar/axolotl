@@ -30,7 +30,7 @@ class Package:
     def position_is_taken(self, x, y):
         #Assumes position is initialized and test proposed position of new package
         if self.position != None:
-            return (self.position.x <= x and x <= self.position.x + self.length) and (self.position.y <= y and y <= self.position.y + self.width)
+            return (self.position.x <= x and x < self.position.x + self.length) and (self.position.y <= y and y < self.position.y + self.width)
         else:
             return False
 
