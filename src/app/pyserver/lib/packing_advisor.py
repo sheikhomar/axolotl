@@ -31,9 +31,9 @@ class PackingAdvisor:
     def propose_x_y(self, layer, package_to_pack):
         for p in layer.packages:
             if p.position_is_taken(self.x, self.y):
-                if self.y + p.width + package_to_pack.width >= layer.width: #package_to_pack does not fit in current column
+                if self.y + p.width + package_to_pack.width > layer.width: #package_to_pack does not fit in current column
                     self.y = 0 
-                    if self.x + layer.find_occupying_package(self.x, self.y).length + package_to_pack.length >= layer.length:
+                    if self.x + layer.find_occupying_package(self.x, self.y).length + package_to_pack.length > layer.length:
                         self.package_fits = False #No further columns are available in layer
                     else:
                         self.x = self.x + layer.find_occupying_package(self.x, self.y).length #start new column
