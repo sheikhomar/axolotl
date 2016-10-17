@@ -18,6 +18,7 @@ build/
 [Oo]bj/
 /test/
 deploy/
+
  
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
@@ -187,3 +188,9 @@ $RECYCLE.BIN/
 
 # Always use newest version of paket.exe
 tools/paket/paket.exe
+
+
+
+
+# Python
+__pycache__
