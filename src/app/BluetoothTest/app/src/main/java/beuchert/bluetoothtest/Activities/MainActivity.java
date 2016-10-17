@@ -13,12 +13,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 import beuchert.bluetoothtest.Interfaces.Callbacks;
 import beuchert.bluetoothtest.R;
 import beuchert.bluetoothtest.Services.BluetoothService;
+import beuchert.bluetoothtest.Views.DrawingView;
 
 public class MainActivity extends AppCompatActivity implements Callbacks {
 
@@ -48,6 +54,14 @@ public class MainActivity extends AppCompatActivity implements Callbacks {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         blueIntent = new Intent(MainActivity.this, BluetoothService.class);
+
+        RelativeLayout DrawLayout = (RelativeLayout) findViewById(R.id.rectCanvas);
+        DrawingView myDrawingView = new DrawingView(this,320,480);
+        DrawLayout.addView(myDrawingView);
+        myDrawingView.drawRectangle(0, 0, 100, 100, 0);
+        myDrawingView.drawRectangle(100, 0, 100, 100, 1);
+        myDrawingView.drawRectangle(0, 100, 100, 100, 2);
+        myDrawingView.drawRectangle(100, 100, 100, 100, 3);
     }
 
     @Override
