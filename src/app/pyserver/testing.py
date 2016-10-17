@@ -27,6 +27,13 @@ class Package:
         #self.destination = destination
         self.position = None
 
+    def position_is_taken(self, x, y):
+        #Assumes position is initialized and test proposed position of new package
+        if self.position != None:
+            return (self.position.x <= x and x <= self.position.x + self.length) and (self.position.y <= y and y <= self.position.y + self.width)
+        else:
+            return False
+
     def __str__(self):
         return 'P[{0}x{1}]'.format(self.width, self.length)
 
@@ -86,11 +93,29 @@ class PackingAdvisor:
 
     def can_fit(self, bin, package):
         if bin.current_layer == bin.layers[0]:
-            self.find_x_y(package)
+            self.find_x_y(bin.current_layer, package)
             return True
         else:
             return False #Make later
 
+    def find_x_y(self, layer, package_to_pack):
+        if len(layer.packages)  == 0:
+            layer.pack(package_to_pack, 0, 0)
+        else:
+            self.x = 0
+            self.y = 0 #Have it run in loop after SOE lecture
+            for p in layer.packages:
+                if p.position_is_taken(self.x, self.y):
+                    if self.y + p.width + package_to_pack.width >= layer.width:
+                        self.y = 0
+                        if self.x + layer.find_occupying_package(self.x, self.y).length + package_to_pack.length >= layer.length:
+                            raise EnvironmentError()
+                        else:
+                            self.x = self.x + layer.find_occupying_package(self.x, self.y).length
+                            break
+                    else:
+                        self.y = self.y + p.width
+                        break
 
 
 
