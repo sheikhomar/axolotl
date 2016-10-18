@@ -127,7 +127,7 @@ class LayerPackTests(unittest.TestCase):
         self.assertEqual(len(layer.packages), 2)
         self.assertIs(layer.packages[0], p1)
         self.assertIs(layer.packages[1], p2)
-
+        
     def test_should_not_allow_same_package_to_be_repacked(self):
         layer = Layer(10, 10)
         p1 = Package(width=5, length=5)
@@ -136,6 +136,21 @@ class LayerPackTests(unittest.TestCase):
 
         with self.assertRaises(InvalidArgError):
             layer.pack(p1, 5, 5)
+        
+    def test_should_not_pack_outside_defined_area(self):
+        p1 = Package(width=5, length=5)
+        
+        with self.assertRaises(InvalidArgError):
+            for x in range(6, 16):
+                for y in range(0, 5):
+                    layer = Layer(10, 10)
+                    layer.pack(p1, x, y)
+
+        with self.assertRaises(InvalidArgError):
+            for x in range(0, 5):
+                for y in range(6, 16):
+                    layer = Layer(10, 10)
+                    layer.pack(p1, x, y)
         
 
 

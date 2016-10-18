@@ -16,10 +16,13 @@ class Layer:
         return packages_area / max_area
 
     def pack(self, package, x, y):
+        if x + package.length > self.length or y + package.width > self.width:
+            raise InvalidArgError('Package area is too large to find within the bounds of this layer.')
+
         for p in self.packages:
             if p is package:
                 raise InvalidArgError('Package is already packed.')
-
+        
         package.position = PackedPosition(x, y)
         self.packages.append(package)
 
