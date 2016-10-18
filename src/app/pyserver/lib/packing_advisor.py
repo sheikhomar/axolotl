@@ -51,7 +51,7 @@ class PackingAdvisor:
         #This is the case when the position is not taken by any other package. No position that would go out of bounds is ever proposed
         #We can now check if the layers below the current position are packed to a certain degree
         gravity = self.check_gravity(layer, package_to_pack)
-        print(str(gravity))
+
         if gravity > 0.75:
             self.package_fits = True
         else:
