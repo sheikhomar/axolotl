@@ -7,7 +7,7 @@ class Layer:
         self.packages = []
 
     # Calculate fill level and returns a number from 0 to 1
-    def fill_level(self):
+    def calc_fill_level(self):
         packages_area = 0
         for package in self.packages:
             packages_area = packages_area + (package.width * package.length)

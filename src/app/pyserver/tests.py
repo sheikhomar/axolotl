@@ -97,7 +97,20 @@ class LayerFindOccupyingPackageTests(unittest.TestCase):
                 self.assertIsNone(layer.find_occupying_package(x, y))
 
 
+class LayerCalcFillLevelTests(unittest.TestCase):
+    def test_should_return_zero_if_layer_is_empty(self):
+        layer = Layer(10, 10)
+        self.assertEqual(layer.calc_fill_level(), 0)
+        
+    def test_should_return_correct_fill_ratio_1(self):
+        layer = Layer(10, 10)
+        p1 = Package(width=5, length=5)
+        p2 = Package(width=5, length=5)
 
+        layer.pack(p1, 0, 0)
+        self.assertEqual(layer.calc_fill_level(), 0.25)
+        layer.pack(p2, 5, 5)
+        self.assertEqual(layer.calc_fill_level(), 0.5)
 
 if __name__ == '__main__':
     unittest.main()
