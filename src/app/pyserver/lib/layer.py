@@ -2,10 +2,11 @@ from .position import *
 from .invalid_arg_error import *
 
 class Layer:
-    def __init__(self, width, length):
+    def __init__(self, width, length, previous_layer):
         self.width = width
         self.length = length
         self.packages = []
+        self.previous_layer = previous_layer
 
     # Calculate fill level and returns a number from 0 to 1
     def calc_fill_level(self):
