@@ -56,9 +56,20 @@
     <Compile Include="tests.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="tests\layer_calc_fill_level_tests.py" />
+    <Compile Include="tests\layer_find_occupying_package_tests.py" />
+    <Compile Include="tests\package_position_is_taken_tests.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\packing_advisor_handle_tests.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\layer_pack_tests.py" />
+    <Compile Include="tests\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lib\" />
+    <Folder Include="tests\" />
     <Folder Include="sample\" />
   </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
