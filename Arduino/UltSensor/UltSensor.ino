@@ -5,17 +5,13 @@
 */
 
 //Pins 
-  //LEDs
-  #define ult1_LED 11
-  #define ult2_LED 10
-  #define ult3_LED 9
   //Ult Sensors
-  #define ult1_TrigPin 13
-  #define ult1_echoPin 12
-  #define ult2_TrigPin 8
-  #define ult2_echoPin 7
-  #define ult3_TrigPin 4
-  #define ult3_echoPin 2
+  #define ult1_TrigPin 2
+  #define ult1_echoPin 3
+  #define ult2_TrigPin 4
+  #define ult2_echoPin 5
+  #define ult3_TrigPin 6
+  #define ult3_echoPin 7
   //
 
 //Values
@@ -26,6 +22,7 @@
 //Forward declaration
 void PrintData(bool Tag, double distance, double duration);
 double GetUltDistance(int trigPin, int echoPin, bool delay);
+void TestUltSensorsPrint(double distance, bool tag);
 
 /***************************
 setup
@@ -34,14 +31,9 @@ Initiate all pins on the Arduino.
 ***************************/
 void setup() {
   //Initiate Serial Communication
-  Serial.begin(9600);
+  Serial.begin(57600);
   
   //Initiate Pins
-    //LEDs
-    pinMode(ult1_LED, OUTPUT);
-    pinMode(ult2_LED, OUTPUT);
-    pinMode(ult3_LED, OUTPUT);
-    
     //Ult Sensors
     pinMode(ult1_TrigPin, OUTPUT);
     pinMode(ult1_echoPin,INPUT);
@@ -50,11 +42,6 @@ void setup() {
     pinMode(ult3_TrigPin, OUTPUT);
     pinMode(ult3_echoPin,INPUT);
   //Set default values of pins
-    //LEDs
-    digitalWrite(ult1_LED,LOW);
-    digitalWrite(ult2_LED,LOW);
-    digitalWrite(ult3_LED,LOW);
-  
     //Ult Sensors
     digitalWrite(ult1_TrigPin, LOW);
     digitalWrite(ult2_TrigPin, LOW);
@@ -107,20 +94,19 @@ to its idle distance.
 ***************************/
 void TestUltSensors(){
   double distance;
-  Serial.println("Beginning UltraSound Sensor Test v. 1.0");
-  
-  Serial.println("Sensor 1");
+
+  Serial.print("Sensor 1 |");
   distance = GetUltDistance(ult1_TrigPin,ult1_echoPin,false);
-  TestUltSensorsPrint(distance, distance < 60, ult1_LED);
-  
-  Serial.println("Sensor 2");
+  TestUltSensorsPrint(distance, distance < 45);
+    
+  Serial.print("Sensor 2 |");
   distance = GetUltDistance(ult2_TrigPin,ult2_echoPin,false);
-  TestUltSensorsPrint(distance, distance < 60, ult2_LED);
-  
-  Serial.println("Sensor 3");
+  TestUltSensorsPrint(distance, distance < 60);
+
+  Serial.print("Sensor 3 |");
   distance = GetUltDistance(ult3_TrigPin,ult3_echoPin,false);
-  TestUltSensorsPrint(distance, distance < 60, ult3_LED);
-  
+  TestUltSensorsPrint(distance, distance < 33);
+
   delay(ultMeasurementCycle);
 }
 
@@ -129,16 +115,14 @@ PrintDistance
 
 Prints the distance on the serial port and turns on/off the led based on tag
 ***************************/
-void TestUltSensorsPrint(double distance, bool tag, int LED){
+void TestUltSensorsPrint(double distance, bool tag){
   Serial.print(distance);
   Serial.print(" mm ");
   
   if(tag){
     Serial.println("| Tag");
-    digitalWrite(LED,HIGH);
   }
   else{
   Serial.println("");
-  digitalWrite(LED,LOW);
   }
 }
