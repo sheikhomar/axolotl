@@ -5,6 +5,7 @@ from lib import Package
 from lib import PackedPosition
 from lib import PackingAdvisor
 from lib import Layer
+from lib import InvalidArgError
 
 class PackagePositionIsTakenTests(unittest.TestCase):
 
@@ -96,7 +97,7 @@ class LayerFindOccupyingPackageTests(unittest.TestCase):
             for y in range(5, 10):
                 self.assertIsNone(layer.find_occupying_package(x, y))
 
-
+                
 class LayerCalcFillLevelTests(unittest.TestCase):
     def test_should_return_zero_if_layer_is_empty(self):
         layer = Layer(10, 10)
@@ -111,6 +112,32 @@ class LayerCalcFillLevelTests(unittest.TestCase):
         self.assertEqual(layer.calc_fill_level(), 0.25)
         layer.pack(p2, 5, 5)
         self.assertEqual(layer.calc_fill_level(), 0.5)
+
+class LayerPackTests(unittest.TestCase):
+    def test_should_add_packages_to_list(self):
+        layer = Layer(10, 10)
+        p1 = Package(width=5, length=5)
+        p2 = Package(width=5, length=5)
+
+        self.assertEqual(len(layer.packages), 0)
+        layer.pack(p1, 0, 0)
+        self.assertEqual(len(layer.packages), 1)
+        layer.pack(p2, 5, 5)
+
+        self.assertEqual(len(layer.packages), 2)
+        self.assertIs(layer.packages[0], p1)
+        self.assertIs(layer.packages[1], p2)
+
+    def test_should_not_allow_same_package_to_be_repacked(self):
+        layer = Layer(10, 10)
+        p1 = Package(width=5, length=5)
+        p2 = Package(width=5, length=5)
+        layer.pack(p1, 0, 0)
+
+        with self.assertRaises(InvalidArgError):
+            layer.pack(p1, 5, 5)
+        
+
 
 if __name__ == '__main__':
     unittest.main()

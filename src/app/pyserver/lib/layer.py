@@ -1,4 +1,5 @@
 from .position import *
+from .invalid_arg_error import *
 
 class Layer:
     def __init__(self, width, length):
@@ -15,6 +16,10 @@ class Layer:
         return packages_area / max_area
 
     def pack(self, package, x, y):
+        for p in self.packages:
+            if p is package:
+                raise InvalidArgError('Package is already packed.')
+
         package.position = PackedPosition(x, y)
         self.packages.append(package)
 
