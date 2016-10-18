@@ -72,12 +72,20 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:id="@+id/rectCanvas"
         android:layout_height="match_parent"
-        android:layout_below="@+id/communicationMessage"
-        android:layout_marginTop="26dp"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/rectCanvas">
+        android:layout_below="@+id/spinner"
+        android:layout_alignParentStart="true">
 
     </RelativeLayout>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="200.0sp"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/communicationMessage"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
