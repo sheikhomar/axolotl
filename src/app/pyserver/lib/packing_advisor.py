@@ -48,5 +48,27 @@ class PackingAdvisor:
                     self.propose_x_y(layer, package_to_pack)
                     return
         
-        self.package_fits = True
-        return #This is the case when the position is not taken by any other package. No position that would go out of bounds is ever proposed
+        #This is the case when the position is not taken by any other package. No position that would go out of bounds is ever proposed
+        #We can now check if the layers below the current position are packed to a certain degree
+        gravity = self.check_gravity(layer, package_to_pack)
+        print(str(gravity))
+        if gravity > 0.75:
+            self.package_fits = True
+        else:
+            self.package_fits = False
+        return 
+
+    def check_gravity(self, layer, package_to_pack): #recursively check product of ratio of occupied coordinates below package proposal
+        Total = 0
+        Total_occupied = 0
+
+        if layer.previous_layer is not None:
+            for x_grav in range(self.x, self.x+package_to_pack.length):
+                for y_grav in range(self.y, self.y+package_to_pack.width):
+                    Total = Total + 1
+                    if layer.previous_layer.find_occupying_package(x_grav, y_grav) is not None:
+                        Total_occupied = Total_occupied + 1
+
+            return (Total_occupied / Total) * self.check_gravity(layer.previous_layer, package_to_pack)
+        else:
+            return 1
