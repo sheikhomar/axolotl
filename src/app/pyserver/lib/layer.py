@@ -23,6 +23,9 @@ class Layer:
             if p is package:
                 raise InvalidArgError('Package is already packed.')
         
+        if self.find_occupying_package(x, y) is not None:
+            raise InvalidArgError('Package overlaps already packed package')
+
         package.position = PackedPosition(x, y)
         self.packages.append(package)
 

@@ -6,7 +6,6 @@ class PackingAdvisor:
         self.package_fits = False
 
     def handle(self, package):
-        print('Handling package...')
         
         bin = self.find_bin(package) #ATM just returns bin[0]
         
@@ -29,15 +28,17 @@ class PackingAdvisor:
         self.propose_x_y(layer, package_to_pack) #Recursively propose x,y coordinates until a valid set is found
 
     def propose_x_y(self, layer, package_to_pack):
+        #print('proposing ' + str(self.x) + ',' + str(self.y))
         for p in layer.packages:
             if p.position_is_taken(self.x, self.y):
                 if self.y + p.width + package_to_pack.width > layer.width: #package_to_pack does not fit in current column
                     self.y = 0 
                     if self.x + layer.find_occupying_package(self.x, self.y).length + package_to_pack.length > layer.length:
                         self.package_fits = False #No further columns are available in layer
+                        return
                     else:
                         self.x = self.x + layer.find_occupying_package(self.x, self.y).length #start new column
-                        self.propose_x_y
+                        self.propose_x_y(layer, package_to_pack)
                         return
                 else: #package_to_pack does fit further down in current column
                     self.y = self.y + p.width
