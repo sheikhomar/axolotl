@@ -1,7 +1,7 @@
 from lib import *
 
 
-bin1 = Bin(width=5, length=10, max_layers=1)
+bin1 = Bin(width=5, length=10, max_layers=3)
 bin2 = Bin(width=8, length=8, max_layers=4)
 
 p1 = Package(width=3, length=2)
