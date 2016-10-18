@@ -12,7 +12,7 @@ public class BluetoothHandler extends Handler {
     @Override
     public void handleMessage(Message msg){
         String data = (String) msg.obj;
-        mActivity.showPackageContent(data);
+        mActivity.handlePackage(data);
     }
 
     public void setActivity(Callbacks activity){
