@@ -40,3 +40,10 @@ class LayerPackTests(unittest.TestCase):
                 for y in range(6, 16):
                     layer = Layer(10, 10)
                     layer.pack(self.p1, x, y)
+
+    def test_should_not_pack_overlapping(self):
+        self.layer.pack(self.p1, 0, 0)
+        with self.assertRaises(InvalidArgError):
+            for x in range(0, 5):
+                for y in range(0, 5):
+                    self.layer.pack(self.p2, x, y)
