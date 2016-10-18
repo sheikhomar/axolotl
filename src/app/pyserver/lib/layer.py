@@ -2,7 +2,7 @@ from .position import *
 from .invalid_arg_error import *
 
 class Layer:
-    def __init__(self, width, length, previous_layer):
+    def __init__(self, width, length, previous_layer = None):
         self.width = width
         self.length = length
         self.packages = []
