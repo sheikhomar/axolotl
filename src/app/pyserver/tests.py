@@ -4,6 +4,7 @@ from lib import Bin
 from lib import Package
 from lib import PackedPosition
 from lib import PackingAdvisor
+from lib import Layer
 
 class PackagePositionIsTakenTests(unittest.TestCase):
 
@@ -36,10 +37,10 @@ class PackagePositionIsTakenTests(unittest.TestCase):
         for x in range(-50, 0):
             for y in range(-50, 0):
                 self.assertFalse(package.position_is_taken(x, y))
-
+                
 class PackingAdvisorHandleTests(unittest.TestCase):
-    def test_handle_test(self):
-        bin1 = Bin(width=8, length=8, max_layers=3)
+    def test_handle(self):
+        bin1 = Bin(width=8, length=8, max_layers=1)
 
         p1 = Package(width=4, length=2)
         p2 = Package(width=4, length=2)
@@ -56,6 +57,46 @@ class PackingAdvisorHandleTests(unittest.TestCase):
         self.assertEqual(bin1.current_layer.packages[1].position.y, 4)
         self.assertEqual(bin1.current_layer.packages[2].position.x, 2)
         self.assertEqual(bin1.current_layer.packages[2].position.y, 0)
+
+
+class LayerFindOccupyingPackageTests(unittest.TestCase):
+    def test_should_return_none_if_layer_contains_no_packages(self):
+        layer = Layer(10, 10)
+        for x in range(-10, 21):
+            for y in range(-10, 21):
+                self.assertIsNone(layer.find_occupying_package(x, y))
+        
+    def test_should_return_valid_package_instance(self):
+        layer = Layer(10, 10)
+        p1 = Package(width=5, length=5)
+        p2 = Package(width=5, length=5)
+        layer.pack(p1, 0, 0)
+        layer.pack(p2, 5, 5)
+        
+        for x in range(0, 5):
+            for y in range(0, 5):
+                self.assertIs(layer.find_occupying_package(x, y), p1)
+
+        for x in range(5, 10):
+            for y in range(5, 10):
+                self.assertIs(layer.find_occupying_package(x, y), p2)
+
+    def test_should_return_none_if_no_package_found(self):
+        layer = Layer(10, 10)
+        p1 = Package(width=5, length=5)
+        p2 = Package(width=5, length=5)
+        layer.pack(p1, 0, 0)
+        layer.pack(p2, 5, 5)
+        
+        for x in range(5, 10):
+            for y in range(0, 5):
+                self.assertIsNone(layer.find_occupying_package(x, y))
+
+        for x in range(0, 5):
+            for y in range(5, 10):
+                self.assertIsNone(layer.find_occupying_package(x, y))
+
+
 
 
 if __name__ == '__main__':
