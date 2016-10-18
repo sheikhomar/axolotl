@@ -9,13 +9,16 @@ class PackingAdvisor:
         
         bin = self.find_bin(package) #ATM just returns bin[0]
         
-        self.find_x_y(bin.current_layer, package)
+        while(True):
+            self.find_x_y(bin.current_layer, package)
 
-        if self.package_fits:
-            print('Package fits ')
-            bin.current_layer.pack(package, self.x, self.y)
-        else:
-            print('Package does not fit in current layer')
+            if self.package_fits:
+                print('Package fits ')
+                bin.current_layer.pack(package, self.x, self.y)
+                return
+            else:
+                print('Package does not fit in current layer')
+                bin.new_layer()
         
     
     def find_bin(self, package):
