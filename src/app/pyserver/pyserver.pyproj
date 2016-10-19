@@ -52,7 +52,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="sample\pyserver.py" />
-    <Compile Include="sample\server1.py" />
     <Compile Include="tests.py">
       <SubType>Code</SubType>
     </Compile>
