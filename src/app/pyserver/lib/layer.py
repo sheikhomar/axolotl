@@ -27,7 +27,7 @@ class Layer:
         if self.find_occupying_package(x, y) is not None:
             raise InvalidArgError('Package overlaps already packed package')
 
-        package.position = PackedPosition(x, y)
+        package.position = PackedPosition(x, y, self)
         self.packages.append(package)
 
     def find_occupying_package(self, x, y):
@@ -36,3 +36,12 @@ class Layer:
                 return p
         
         return None
+    
+    def find_layer_number(self):
+        i = 1
+        layer = self
+        while layer.previous_layer is not None:
+            layer = self.previous_layer
+            i = i + 1
+
+        return i
