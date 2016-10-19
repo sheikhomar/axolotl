@@ -13,7 +13,7 @@ public class TimeConTest {
 		//LCD.drawString("A-mei-zing!",3,3);
 		int succesful = 0, count = 0, countMax = 26;
         int[][] finalBuff = new int[countMax][3];
-		byte[] recBuff = new byte[countMax];
+		byte[] recBuff = new byte[1];
 		String recString = new String("");
 		recBuff[0] = (byte)0;
 		
@@ -31,28 +31,21 @@ public class TimeConTest {
 		}
 		System.out.println("Done waiting");
 		while(count < countMax){
-			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
-			if(count != 0)
-				if(finalBuff[count-1][0] != recBuff[0]){
+			if(succesful != 0){
+				if(count != 0){
 					finalBuff[count][0] = recBuff[0];
 					finalBuff[count][1] = stopwatch.elapsed();
 					finalBuff[count][2] = finalBuff[count][1] - finalBuff[count-1][1];
 				}
 				else{
-					count--;
+					finalBuff[count][0] = recBuff[0];
+					finalBuff[count][1] = stopwatch.elapsed();
+					finalBuff[count][2] = 0;
 				}
-			else{
-				finalBuff[count][0] = recBuff[0];
-				finalBuff[count][1] = stopwatch.elapsed();
-				finalBuff[count][2] = 0;
+				succesful = 0;
 			}
+			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
 			count++;
-			//if(stopwatch.elapsed()-finalBuff[0][1] > 15000){
-			//	System.out.println("Count: " + Integer.toString(count));
-			//	System.out.println("To long time");
-			//	Delay.msDelay(1000);
-			//	break;
-			//}
 		}
 		System.out.println("Done recieving");
 		Delay.msDelay(1000);
