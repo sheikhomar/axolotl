@@ -6,22 +6,25 @@ public class ControlBrick {
 	private static NXTMotor ma = new NXTMotor(MotorPort.A);
 	private static NXTMotor mb = new NXTMotor(MotorPort.B);
 	private static NXTMotor mc = new NXTMotor(MotorPort.C);
-	private static byte[] recBuff = {0,0,0};
+	private static byte[] recBuff = {0};
 
     public static void main(String[] args) throws InterruptedException {
-		LCD.drawString("A-mei-zing!",3,3);
-		int succesful = 0;
+		//LCD.drawString("A-mei-zing!",3,3);
+		mc.setPower(50);
+		mc.stop();
 		String recString = new String("");
 		
 		RS485.hsEnable(57600, 0);
 		
 		while(true){
-			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
-			if(succesful != 0 && recBuff[0] == 110){
-				recString = determineRecString(recBuff);
-				LCD.clear();
+			readInput();
+			if(recBuff[0] == 110){ //Checking if NXJ should do something or not
+				recString = determineRecString();
 				System.out.println("Running " + recString);
 				control(recString);
+			}
+			else{
+				skipInput();
 			}
 		}
     }
@@ -38,8 +41,10 @@ public class ControlBrick {
 		}
 	}
 	
-	private static String determineRecString(byte[] input){
-		switch(input[1]){
+	private static String determineRecString(){
+		readInput(); //Reading and discarding length of message/input
+		readInput(); //Function to be performed
+		switch(recBuff[0]){
 			case 0: return "A";
 			case 1: return "B";
 			case 2: return "AB";
@@ -72,7 +77,7 @@ public class ControlBrick {
 				readAndSendColour();
 				break;
 			case "CSpeed":
-				adjustSpeedC(recBuff[2]);
+				adjustSpeedC();
 				break;
 			default:
 				break;
@@ -82,17 +87,17 @@ public class ControlBrick {
 	private static void readAndSendColour(){
 		ColorSensor sensor = new ColorSensor(SensorPort.S1);
 		int succesful = 0, colour = -1;
-		byte[] sendBuff = new byte[1];
-		sendBuff[0] = (byte)-1;
+		byte[] sendBuff = new byte[4];
+		sendBuff[0] = 'a';
+		sendBuff[1] = 2;
+		sendBuff[2] = 1;
 		
-		System.out.println("Scanning colour");
 		colour = sensor.getColorID();
-		sendBuff[0] = (byte)colour;
+		sendBuff[3] = (byte)colour;
 		System.out.println("Sending " + ConvertColorEnum(colour));
 		while(succesful == 0){
 			succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
 		}
-		System.out.println("Colour send");
 	}
 	
 	private static void backAndForthA(){
@@ -159,7 +164,6 @@ public class ControlBrick {
 	}
 	
 	private static void fullSpeedC(){
-		mc.setPower(50);
 		mc.backward();
 	}
 	
@@ -167,7 +171,32 @@ public class ControlBrick {
 		mc.stop();
 	}
 	
-	private static void adjustSpeedC(int speed){
-		mc.setPower(speed);
+	private static void adjustSpeedC(){
+		readInput();
+		if(0 <= recBuff[0] && recBuff[0] <= 100){
+			mc.setPower(recBuff[0]);
+			System.out.println("Speed is now " + Byte.toString(recBuff[0]));
+		}
+		else{
+			System.out.println(Byte.toString(recBuff[0]) + " is no speed");
+		}
+	}
+	
+	private static void readInput(){
+		int succesful = 0;
+		while(succesful == 0){
+			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
+		}
+	}
+	
+	private static void skipInput(){ //Skipping irrelevant inputs
+		int inputToSkip = 0;
+		if(recBuff[0] == 97 || recBuff[0] == 114){
+			readInput();
+			inputToSkip = recBuff[0];
+		}
+		for(int i = 0; i < inputToSkip; i++){
+			readInput();
+		}
 	}
 }
