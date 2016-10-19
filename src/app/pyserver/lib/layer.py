@@ -41,7 +41,7 @@ class Layer:
         i = 1
         layer = self
         while layer.previous_layer is not None:
-            layer = self.previous_layer
+            layer = layer.previous_layer
             i = i + 1
 
         return i
