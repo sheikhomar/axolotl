@@ -194,3 +194,4 @@ tools/paket/paket.exe
 
 # Python
 __pycache__
+*.class
