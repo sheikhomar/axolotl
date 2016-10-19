@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private int i = 0;
     // onClick methods:
     public void onConnectClick(View view) {
-        //blueService.connect();
-        if(drawingViewCreated){
+        blueService.connect();
+        /*if(drawingViewCreated){
             Package p1, p2, p3;
             p1 = new Package(0, 0, 100, 100, 1, 1);
             p2 = new Package(0, 0, 100, 100, 2, 2);
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             }
         }
         else
-            createDrawingView(100, 100);
+            createDrawingView(100, 100);*/
     }
 
     public void DisconnectOnClick(View view){
@@ -159,12 +159,14 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         String[] PackSplit = Package.split(" ");
 
         if(PackSplit[0] == "B:"){
+            Log.d(MainActivity.class.getName(), "Bin Recieved");
             PackSplit[2] = PackSplit[2].replaceAll("\n", "");
             int length = Integer.parseInt(PackSplit[1]);
             int width = Integer.parseInt(PackSplit[2]);
             createDrawingView(length, width);
         }
         else if(PackSplit[0] == "P:"){
+            Log.d(MainActivity.class.getName(), "Package Recieved");
             PackSplit[6] = PackSplit[6].replaceAll("\n", "");
             int x = Integer.parseInt(PackSplit[1]);
             int y = Integer.parseInt(PackSplit[2]);
