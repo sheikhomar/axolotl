@@ -69,23 +69,38 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     // onClick methods:
     public void onConnectClick(View view) {
         blueService.connect();
-        /*if(drawingViewCreated){
-            Package p1, p2, p3;
-            p1 = new Package(0, 0, 100, 100, 1, 1);
-            p2 = new Package(0, 0, 100, 100, 2, 2);
-            p3 = new Package(100, 100, 100, 100, 1, 1);
 
-            if (i == 0){
-                drawingView.addPackage(p1);
-                i++;
-            }
-            else if (i == 1){
-                drawingView.addPackage(p2);
-                i++;
-            }
+        // bin packing example
+        /*if(i == 0){
+            handlePackage("B: 500 250");
+        }
+        else if (i == 1){
+            handlePackage("P: 0 0 100 150 1 1");
+        }
+        else if (i == 2){
+            handlePackage("P: 0 150 100 100 1 1");
+        }
+        else if (i == 3){
+            handlePackage("P: 100 0 100 200 1 1");
+        }
+        else if (i == 4){
+            handlePackage("P: 200 0 100 150 1 1");
+        }
+        else if (i == 5){
+            handlePackage("P: 300 0 100 200 1 1");
+        }
+        else if (i == 6){
+            handlePackage("P: 200 150 100 100 0 1");
+        }
+        else if (i == 7){
+            handlePackage("P: 400 0 100 200 1 1");
+        }
+        else if (i == 8){
+            handlePackage("P: 0 0 100 100 2 2");
         }
         else
-            createDrawingView(100, 100);*/
+            showBluetoothConnectionAlert();
+        i++;*/
     }
 
     public void DisconnectOnClick(View view){
@@ -158,14 +173,14 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     public void handlePackage(String Package) {
         String[] PackSplit = Package.split(" ");
 
-        if(PackSplit[0] == "B:"){
+        if(PackSplit[0].equals("B:")){
             Log.d(MainActivity.class.getName(), "Bin Recieved");
             PackSplit[2] = PackSplit[2].replaceAll("\n", "");
             int length = Integer.parseInt(PackSplit[1]);
             int width = Integer.parseInt(PackSplit[2]);
-            createDrawingView(length, width);
+            createDrawingView(width, length);
         }
-        else if(PackSplit[0] == "P:"){
+        else if(PackSplit[0].equals("P:")){
             Log.d(MainActivity.class.getName(), "Package Recieved");
             PackSplit[6] = PackSplit[6].replaceAll("\n", "");
             int x = Integer.parseInt(PackSplit[1]);
