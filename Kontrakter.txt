@@ -1,0 +1,33 @@
+Kontrakter:
+	Farvekoder:
+		switch(input) {
+			case 0: return "Red";
+			case 1: return "Green";
+			case 2: return "Blue"; 
+			case 3: return "Yellow";
+			case 6: return "White";
+			case 7: return "Black";
+			default: return "Irrelevant";
+		}
+	
+	NXJ modtag:
+		switch(input[2]){
+			case 0: return "A";
+			case 1: return "B";
+			case 2: return "AB";
+			case 3: return "CStart";
+			case 4: return "CStop";
+			case 5: return "Colour";
+			case 6: return "CSpeed";
+			default: return "Error";
+		}
+		
+	Arduino modtag:
+	
+	
+	
+	
+	
+	
+	Rasberry Pi modtag:
+	
