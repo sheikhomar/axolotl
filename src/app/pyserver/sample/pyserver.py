@@ -21,12 +21,8 @@ def setup_server():
 
 def handle_client(client):
     try:
-        while True:
-            client.send("Hello from piserver\n")
-            data = client.recv(BUFFER_SIZE)
-            if data:
-                print(data)
-                client.send(data)
+        client.send("B: 500 250 3 \n")
+        client.send("P: 0 0 100 150 1 1 \n")
     except EOFError:
         client.close()
     except bluetooth.btcommon.BluetoothError:
