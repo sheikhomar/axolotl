@@ -52,6 +52,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #define PSTR(string_literal) ((const PROGMEM char *)(string_literal))")
 #include "Master.ino"
 #include "LED.ino"
+#include "ObjectIdentification.ino"
 #include "Serial.ino"
 #include "UltDist.ino"
 #endif

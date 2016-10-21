@@ -82,6 +82,7 @@
     <None Include="Master.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="ObjectIdentification.ino" />
     <None Include="Serial.ino" />
     <None Include="UltDist.ino" />
   </ItemGroup>
