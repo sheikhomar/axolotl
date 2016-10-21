@@ -30,29 +30,32 @@ public class BluetoothThread extends Thread {
         try {
             tmpIn = socket.getInputStream();
             tmpOut = socket.getOutputStream();
-        } catch (IOException e) { }
+        } catch (IOException e) {
+            Log.d("BluetoothThread", "There was an IOException " + e.getMessage());
+        }
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
     }
 
     public void run() {
-        Log.d("BluetoothThread", "BluetoothThread was started");
         byte[] buffer = new byte[1024];  // buffer store for the stream
         int bytes; // bytes returned from read()
+        BufferedReader r = new BufferedReader(new InputStreamReader(mmInStream));
 
 
         while (true) {
             try {
                 // Read from the InputStream
-                BufferedReader r = new BufferedReader(new InputStreamReader(mmInStream));
                 String realResult = r.readLine();
+                Log.d("BluetoothThread", "Recieved realResult: " + realResult);
                 // Send the obtained bytes to the UI activity
                 Message msg = mHandler.obtainMessage();
                 msg.obj = realResult;
                 msg.sendToTarget();
+
             } catch (IOException e) {
-                Log.d("BluetoothThread", "BluetoothThread was ended");
+                Log.d("BluetoothThread", "BluetoothThread was ended " + e.getMessage());
                 break;
             }
         }
