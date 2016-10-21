@@ -42,6 +42,13 @@ void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFu
 	digitalWrite(SerialTransmitPin, LOW);
 }
 
+void serialDebug(String message) {
+  int msgLen = message.length();
+  byte data[msgLen];
+  message.getBytes(data, msgLen);
+  serialSendData(DEBUG, data, msgLen, '-');
+}
+
 
 void serialReadData(byte data[], int data_length) {
 	byte id, length, command;
