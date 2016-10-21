@@ -4,10 +4,11 @@ class PackingAdvisor:
         self.x = 0
         self.y = 0
         self.package_fits = False
+        self.current_bin = 0
 
     def handle(self, package):
         
-        bin = self.find_bin(package) #ATM just returns bin[0]
+        bin = self.find_bin(package)
         
         while(True):
             self.find_x_y(bin.current_layer, package)
@@ -16,14 +17,22 @@ class PackingAdvisor:
                 print('Package fits ')
                 bin.current_layer.pack(package, self.x, self.y)
                 return
-            else:
+            else: #The package does not fit in the current layer
                 print('Package does not fit in current layer')
-                bin.new_layer()
+                layer_success = bin.new_layer()
+                if not layer_success:
+                    print('No more layers available in bin')
+                    self.current_bin = self.current_bin + 1
+                    self.handle(package)
+                    return
         
     
     def find_bin(self, package):
         print('Find the correct bin for package {0}'.format(package))
-        return self.bins[0]
+        if len(self.bins) > self.current_bin:
+            return self.bins[self.current_bin]
+        else:
+            raise EOFError('NO MORE BINS AVAILABE')
 
     def find_x_y(self, layer, package_to_pack):
         self.x = 0
