@@ -32,7 +32,7 @@ void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFu
 	digitalWrite(SerialTransmitPin, HIGH);
 
 	Serial.write(reciver);
-	Serial.write(sizeOfData + 1);
+	Serial.write(sizeOfData);
 	Serial.write(reciverFunction);
 
 	for (i = 0; i < sizeOfData; i++) {
