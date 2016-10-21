@@ -192,8 +192,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             drawingView.addPackage(new Package(x, y, length, width, color, layer));
         }
         else {
-            Error e = new Error("The string from the bluetooth device was not eligible");
-            throw e;
+            showInvalidPackageError();
         }
     }
 
@@ -252,6 +251,22 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
 
     public void setSelectedElementInSpinner(int index){
         spinner.setSelection(index);
+    }
+
+    public void showInvalidPackageError(){
+        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
+        alertDiaglogBuilder.setTitle("Package error");
+        alertDiaglogBuilder.setMessage("The application don't know how to handle the message which was recieved.");
+        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDiaglogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialog.show();
     }
 
 }
