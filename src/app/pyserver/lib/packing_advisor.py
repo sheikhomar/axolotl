@@ -55,8 +55,13 @@ class PackingAdvisor:
         if gravity > 0.75:
             self.package_fits = True
         else:
-            self.package_fits = False
-        return 
+            if self.x + 2 + package_to_pack.length > layer.length: #TODO: Softcode '2' as longest package in current column
+                self.package_fits = False #No further columns are available in layer
+                return
+            else:
+                self.x = self.x + 2 #start new column
+                self.propose_x_y(layer, package_to_pack)
+                return
 
     def check_gravity(self, layer, package_to_pack): #recursively check product of ratio of occupied coordinates below package proposal
         Total = 0
