@@ -9,7 +9,7 @@ public class ControlBrick {
 	private static byte[] recBuff = {0};
 
     public static void main(String[] args) throws InterruptedException {
-		//LCD.drawString("A-mei-zing!",3,3);
+		System.out.println("A-mei-zing!");
 		mc.setPower(50);
 		mc.stop();
 		String recString = new String("");
@@ -89,7 +89,7 @@ public class ControlBrick {
 		int succesful = 0, colour = -1;
 		byte[] sendBuff = new byte[4];
 		sendBuff[0] = 'a';
-		sendBuff[1] = 2;
+		sendBuff[1] = 1;
 		sendBuff[2] = 1;
 		
 		colour = sensor.getColorID();
@@ -193,7 +193,7 @@ public class ControlBrick {
 		int inputToSkip = 0;
 		if(recBuff[0] == 97 || recBuff[0] == 114){
 			readInput();
-			inputToSkip = recBuff[0];
+			inputToSkip = recBuff[0] + 1;
 		}
 		for(int i = 0; i < inputToSkip; i++){
 			readInput();
