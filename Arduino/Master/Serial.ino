@@ -16,6 +16,8 @@ client serialCheck() {
 		default:
 			return unknown;
 	}
+
+ return unknown;
 }
 
 
@@ -41,15 +43,15 @@ void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFu
 }
 
 
-void serialReadData(bool readAll) {
-	byte id, length, command, data[serialMaxDataSize];
+void serialReadData(byte data[], int data_length) {
+	byte id, length, command;
 	int i;
 
 	//read id and length
 	id = Serial.read();
 	length = Serial.read();
 
-	if (id == -1)
+	if (id == none)
 		return;
 
 	if (id != Arduino) {
