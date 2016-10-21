@@ -5,7 +5,7 @@
 */
 //Enums
 typedef enum client {
-  none = '0',
+  none = 0,
   unknown = 'u',
   RaspberryPi = 'r',
   NXT = 'n',
@@ -82,43 +82,23 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-	//Test code
-	byte dataD[] = { '.' };
-	byte dataS[] = { 50 };
-	bool ta = false;
-	bool da;
-
-	serialSendData(NXT, dataS, 0, 3);
-	serialSendData(NXT, dataS, 1, 6);
-	delay(1000);
-	serialSendData(NXT, dataS, 1, 6);
-
-	while (true) {
-		if ((ta = tag()) && da) {
-			serialSendData(DEBUG, dataD, 2, 10);
-			delay(1900);
-			serialSendData(NXT, dataS, 1, 0);
-		}
-		else {
-			delay(25);
-		}
-		da = ta;
-	}
-	
-	//We cannot be sure of exe time of functions b/c of serial comm.
-	
-	
-	
-	//if (very soon) time to push lego or read colour - wait and push
+    byte data[100];
+    data[0] = 5;
+    serialSendData(NXT, data, 0, 5);
+    client whichClient = serialCheck();
+    if (whichClient == NXT)
+    {
+        serialReadData(data, 100);
+    }
 
 	//check serial
-		//if handshake - answer 
-		//if message for me and not busy - read
-		//else if not busy - read
+	//if time to push lego
+	//if handshake / message for me
+	//answer
+	//if bussy wait a few iterations before we read the buffer
+	//read colour
 
-	//read distSensors
-	//if not tagging (seeing object) - if possible, identify the latest object
-		//send this to R when possible
+    while(1);
 }
 
 
