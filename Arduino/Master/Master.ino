@@ -104,13 +104,19 @@ void loop() {
 		}
 		da = ta;
 	}
+	
+	//We cannot be sure of exe time of functions b/c of serial comm.
+	
+	
+	
+	//if (very soon) time to push lego or read colour - wait and push
 
 	//check serial
-	//if time to push lego
-	//if handshake / message for me
-	//answer
-	//if bussy wait a few iterations before we read the buffer
-	//read colour
+		//if handshake - answer 
+
+	//read distSensors
+	//if not tagging (seeing object) - if possible, identify the latest object
+		//send this to R when possible
 }
 
 
