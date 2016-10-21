@@ -75,13 +75,7 @@ void setup() {
 	delayMicroseconds(20);
 }
 
-
-/***************************
-loop
-
-Main control loop of the Arduino.
-***************************/
-void loop() {
+int readColour() {
     byte data[100];
     data[0] = 5;
     serialSendData(NXT, data, 0, 5);
@@ -89,14 +83,28 @@ void loop() {
     if (whichClient == NXT)
     {
         serialReadData(data, 100);
+        int colourInfo = data[0];
+        if (colourInfo == 0) {
+            serialDebug(" Reading red color.");
+        }
     }
+}
 
-	//check serial
-	//if time to push lego
-	//if handshake / message for me
-	//answer
-	//if bussy wait a few iterations before we read the buffer
-	//read colour
+/***************************
+loop
+
+Main control loop of the Arduino.
+***************************/
+void loop() {
+    serialDebug(" Reading red color.");
+    //readColour();
+    
+  	//check serial
+  	//if time to push lego
+  	//if handshake / message for me
+  	//answer
+  	//if bussy wait a few iterations before we read the buffer
+  	//read colour
 
     while(1);
 }
