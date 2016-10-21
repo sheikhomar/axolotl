@@ -1,3 +1,24 @@
+client serialCheck() {
+	byte read;
+
+	read = Serial.peek();
+
+	switch (read)
+	{
+		case none:
+		case unknown:
+		case RaspberryPi:
+		case NXT:
+		case DEBUG:
+		case Arduino:
+		return (client)read;
+
+		default:
+			return unknown;
+	}
+}
+
+
 void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFunction) {
 	int i = 0;
 
