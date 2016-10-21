@@ -113,6 +113,8 @@ void loop() {
 
 	//check serial
 		//if handshake - answer 
+		//if message for me and not busy - read
+		//else if not busy - read
 
 	//read distSensors
 	//if not tagging (seeing object) - if possible, identify the latest object
