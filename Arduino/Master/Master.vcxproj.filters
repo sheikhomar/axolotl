@@ -20,6 +20,7 @@
     <None Include="LED.ino" />
     <None Include="UltDist.ino" />
     <None Include="ObjectIdentification.ino" />
+    <None Include="PositionTest.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Master.vsarduino.h">
