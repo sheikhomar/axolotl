@@ -60,13 +60,16 @@
     <Compile Include="tests\package_position_is_taken_tests.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="tests\packing_advisor_gravity_check_test.py">
+    <Compile Include="tests\packing_advisor_gravity_check_tests.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\packing_advisor_handle_tests.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\layer_pack_tests.py" />
+    <Compile Include="tests\bin_new_layer_tests.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tests\__init__.py" />
   </ItemGroup>
   <ItemGroup>
