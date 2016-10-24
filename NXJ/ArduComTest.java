@@ -2,7 +2,7 @@ import lejos.nxt.*;
 import lejos.util.*;
 import lejos.nxt.comm.RS485;
 
-public class ControlBrick {
+public class ArduComTest {
 	private static NXTMotor ma = new NXTMotor(MotorPort.A);
 	private static NXTMotor mb = new NXTMotor(MotorPort.B);
 	private static NXTMotor mc = new NXTMotor(MotorPort.C);
@@ -52,6 +52,7 @@ public class ControlBrick {
 			case 4: return "CStop";
 			case 5: return "Colour";
 			case 6: return "CSpeed";
+			case 10: return "ArduComTest";
 			default: return "Error";
 		}
 	}
@@ -78,6 +79,9 @@ public class ControlBrick {
 				break;
 			case "CSpeed":
 				adjustSpeedC();
+				break;
+			case "ArduComTest":
+				arduComTest();
 				break;
 			default:
 				break;
@@ -198,6 +202,98 @@ public class ControlBrick {
 		}
 		for(int i = 0; i < inputToSkip; i++){
 			readInput();
+		}
+	}
+	
+	private static void arduComTest(){
+		int succesful = 0, count = 0, countMax = 26;
+        int[] finalBuff = new int[countMax];
+		byte[] recBuff = new byte[1];
+		byte[] sendBuff = new byte[4];
+		String recString = new String("");
+		recBuff[0] = 0;
+		sendBuff[0] = 'a';
+		sendBuff[1] = 1;
+		sendBuff[2] = 10;
+		sendBuff[3] = 0;
+		
+		System.out.println("Processing 'a'");
+		while(true){
+			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
+			if(succesful != 0){
+				finalBuff[count] = recBuff[0];
+				succesful = 0;
+				sendBuff[3] = (byte)(recBuff[0] + 1);
+				while(succesful == 0){
+					System.out.println("Sending");
+					succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
+				}
+				System.out.println("Sent");
+				succesful = 0;
+				count++;
+				finalBuff[count] = sendBuff[0];
+				count++;
+				break;
+			}
+		}
+		System.out.println("Moving on to 'c'");
+		
+		while(count < countMax){
+			if(succesful != 0 && recBuff[0] != 'n'){
+				readInput();
+				readInput();
+				readInput();
+				finalBuff[count] = recBuff[0];
+				succesful = 0;
+				sendBuff[3] = (byte)(recBuff[0] + 1);
+				while(succesful == 0){
+					succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
+				}
+				succesful = 0;
+				count++;
+				finalBuff[count] = sendBuff[0];
+				count++;
+			}
+			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
+		}
+		System.out.println("Done communicating");
+		Delay.msDelay(1000);
+		for(int i = 0; i < countMax; i++){
+			System.out.println(decideChar(finalBuff[i]));
+			Delay.msDelay(500);
+		}
+		System.out.println("Done printing");
+	}
+	
+	private static String decideChar(int input){
+		switch(input){
+			case 97: return "a";
+			case 98: return "b";
+			case 99: return "c";
+			case 100: return "d";
+			case 101: return "e";
+			case 102: return "f";
+			case 103: return "g";
+			case 104: return "h";
+			case 105: return "i";
+			case 106: return "j";
+			case 107: return "k";
+			case 108: return "l";
+			case 109: return "m";
+			case 110: return "n";
+			case 111: return "o";
+			case 112: return "p";
+			case 113: return "q";
+			case 114: return "r";
+			case 115: return "s";
+			case 116: return "t";
+			case 117: return "u";
+			case 118: return "v";
+			case 119: return "w";
+			case 120: return "x";
+			case 121: return "y";
+			case 122: return "z";
+			default: return "Invalid";
 		}
 	}
 }
