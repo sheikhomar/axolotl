@@ -10,6 +10,7 @@ GetDistance
 
 Get the distance from a specified ultraSoundSensor via its triggerPin and echoPin.
 The delay can be used to avoid polling issues should the same sensor be called multiple times in a row.
+Returns the distance in mm * 100
 ***************************/
 double GetUltDistance(int trigPin, int echoPin, bool wait) {
 	double duration, distance;

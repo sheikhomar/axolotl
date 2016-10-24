@@ -8,7 +8,7 @@
 //read all 3 sensor data - return bool if tagging | save data somewhere
 bool readSensors() {
 	bool sensor1, sensor2, sensor3;
-	double distance;
+	unsigned short distance;
 
 	distance = GetUltDistance(ult1_TrigPin, ult1_echoPin, false);
 	sensor1 = distance < ult1_TagDist;
