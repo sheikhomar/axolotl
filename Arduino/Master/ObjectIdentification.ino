@@ -83,7 +83,7 @@ int findMode(SensorData buffer[], unsigned short firstBufferItemIndex, unsigned 
 	unsigned short mostCommonValue = 0;
 	unsigned short largestCount = 0;
 
-	for (int i = 0; i <= ARRAY_SIZE; i++) {
+	for (int i = 0; i < ARRAY_SIZE; i++) {
 		if (countArray[i][1] > largestCount) {
 			largestCount = countArray[i][1];
 			mostCommonValue = countArray[i][0];
