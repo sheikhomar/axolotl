@@ -12,8 +12,8 @@ Get the distance from a specified ultraSoundSensor via its triggerPin and echoPi
 The delay can be used to avoid polling issues should the same sensor be called multiple times in a row.
 Returns the distance in mm * 100
 ***************************/
-double GetUltDistance(int trigPin, int echoPin, bool wait) {
-	double duration, distance;
+unsigned short GetUltDistance(int trigPin, int echoPin, bool wait) {
+	unsigned long duration, distance;
 
 	if (wait)
 		delay(ultMeasurementCycle);
@@ -26,7 +26,7 @@ double GetUltDistance(int trigPin, int echoPin, bool wait) {
 	//Receive echo signal
 	duration = pulseIn(echoPin, HIGH);
 
-	return duration*ultMmPerUS;
+	return (unsigned short)(duration*ultMmPerUS*100);
 }
 
 
@@ -38,7 +38,7 @@ Prints the measured distance of all UltSensors and turns on their LEDs in acc.
 to its idle distance.
 ***************************/
 void TestUltSensors() {
-	double distance;
+	unsigned short distance;
 
 	serialDebug("Sensor 1 |");
 	distance = GetUltDistance(ult1_TrigPin, ult1_echoPin, false);
@@ -60,7 +60,7 @@ PrintDistance
 
 Prints the distance on the serial port and turns on/off the led based on tag
 ***************************/
-void PrintUltSensorData(double distance, bool tag) {
+void PrintUltSensorData(unsigned short distance, bool tag) {
 	serialDebug(String(distance));
 	serialDebug(" mm ");
 
