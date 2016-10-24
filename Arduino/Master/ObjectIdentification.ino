@@ -30,6 +30,7 @@ bool readSensors(int index) {
 		return true;
 	}
 	else {
+		heigthBetweenSensorAndBelt = dist1;
 		lengthBetweenSensors = (dist2 + dist3) / 2;
 		return false;
 	}
@@ -46,7 +47,7 @@ void handleSensorData(short dimensionSize, short packageIndex, short lastBufferI
 	sensor2 = findMode(dimensionSize, 2);
 	sensor3 = findMode(dimensionSize, 3);
 
-	packages[packageIndex].height = sensor1; 
+	packages[packageIndex].height = heigthBetweenSensorAndBelt - sensor1; 
 	packages[packageIndex].width = lengthBetweenSensors - sensor2 - sensor3;
 	packageTime = (sensorBuffer[lastBufferItemIndex].time - sensorBuffer[0].time);
 	packages[packageIndex].length = packageTime * SPEED;

@@ -106,6 +106,7 @@ typedef struct {
 SensorData sensorBuffer[100];
 
 unsigned short lengthBetweenSensors = 0;
+unsigned short heigthBetweenSensorAndBelt = 0;
 
 void loop() {
     serialDebug(" Reading red color.");
