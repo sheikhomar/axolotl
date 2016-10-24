@@ -13,6 +13,12 @@ typedef enum client {
   Arduino = 'a'
 } client;
 
+typedef struct {
+  byte length;
+  byte width;
+  byte height;
+} Shape;
+
 
 //Pins 
 	//LEDs
@@ -88,6 +94,14 @@ int readColour() {
             serialDebug(" Reading red color.");
         }
     }
+}
+
+// Identify the package on the conveyor belt and returns 
+// its dimensions.
+Shape readShape() {
+  Shape shape = {0, 0, 0};
+
+  return shape;
 }
 
 /***************************
