@@ -40,27 +40,27 @@ bool readSensors(SensorData buffer[], unsigned short index) {
 
 
 //based on the collected data (so far) create the object
-void handleSensorData(Package packageBuffer[], SensorData buffer[], unsigned short packageIndex, unsigned short lastBufferItemIndex) {
+void handleSensorData(Package *package, SensorData buffer[], unsigned short firstBufferItemIndex, unsigned short lastBufferItemIndex) {
 	unsigned short sensor1, sensor2, sensor3;
 	unsigned short packageTime;
 
-	sensor1 = findMode(buffer, lastBufferItemIndex, 1);
-	sensor2 = findMode(buffer, lastBufferItemIndex, 2);
-	sensor3 = findMode(buffer, lastBufferItemIndex, 3);
+	sensor1 = findMode(buffer, firstBufferItemIndex, lastBufferItemIndex, 1);
+	sensor2 = findMode(buffer, firstBufferItemIndex, lastBufferItemIndex, 2);
+	sensor3 = findMode(buffer, firstBufferItemIndex, lastBufferItemIndex, 3);
 
-	packageBuffer[packageIndex].height = heigthBetweenSensorAndBelt - sensor1;
-	packageBuffer[packageIndex].width = lengthBetweenSensors - sensor2 - sensor3;
+	package->height = heigthBetweenSensorAndBelt - sensor1;
+	package->width = lengthBetweenSensors - sensor2 - sensor3;
 	packageTime = (buffer[lastBufferItemIndex].time - buffer[0].time);
-	packageBuffer[packageIndex].length = packageTime * SPEED;
+	package->length = packageTime * SPEED;
 }
 
-int findMode(SensorData buffer[], unsigned short lastBufferItemIndex, unsigned short sensor) {
+int findMode(SensorData buffer[], unsigned short firstBufferItemIndex, unsigned short lastBufferItemIndex, unsigned short sensor) {
 	unsigned short countArray[ARRAY_SIZE][2];
 	unsigned short currentLength = 0;
 	unsigned short sensorData = 0;
 	bool wasDetected = false;
 	
-	for (int i = 0; i <= lastBufferItemIndex; i++) {
+	for (int i = firstBufferItemIndex; i <= lastBufferItemIndex; i++) {
 		if (sensor == 1)
 			sensorData = buffer[i].sensor1;
 		else if (sensor == 2)
