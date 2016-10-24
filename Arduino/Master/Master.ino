@@ -109,6 +109,25 @@ loop
 
 Main control loop of the Arduino.
 ***************************/
+
+typedef struct {
+  byte length;
+  byte width;
+  byte height;
+  byte colour;
+} Package;
+
+Package packages[5];
+
+typedef struct {
+  unsigned short sensor1;
+  unsigned short sensor2;
+  unsigned short sensor3;
+  unsigned long time;
+} SensorData;
+
+SensorData sensorBuffer[100];
+
 void loop() {
     serialDebug(" Reading red color.");
     //readColour();
