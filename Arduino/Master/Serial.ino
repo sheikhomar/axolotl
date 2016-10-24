@@ -43,7 +43,7 @@ void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFu
 }
 
 void serialDebug(String message) {
-  int msgLen = message.length();
+  int msgLen = message.length()+1;
   byte data[msgLen];
   message.getBytes(data, msgLen);
   serialSendData(DEBUG, data, msgLen, '-');
