@@ -20,6 +20,21 @@ typedef struct {
 } Shape;
 
 
+typedef struct {
+  byte length;
+  byte width;
+  byte height;
+  byte colour;
+} Package;
+
+typedef struct {
+  unsigned short sensor1;
+  unsigned short sensor2;
+  unsigned short sensor3;
+  unsigned long time;
+} SensorData;
+
+
 //Pins 
 	//LEDs
 	#define LED1 8
@@ -44,7 +59,11 @@ typedef struct {
 
 //Global variables
 
+Package packages[5];
+SensorData sensorBuffer[100];
 
+unsigned short lengthBetweenSensors = 0;
+unsigned short heigthBetweenSensorAndBelt = 0;
 
 /***************************
 setup
@@ -86,55 +105,6 @@ loop
 
 Main control loop of the Arduino.
 ***************************/
-
-typedef struct {
-  byte length;
-  byte width;
-  byte height;
-  byte colour;
-} Package;
-
-Package packages[5];
-
-typedef struct {
-  unsigned short sensor1;
-  unsigned short sensor2;
-  unsigned short sensor3;
-  unsigned long time;
-} SensorData;
-
-SensorData sensorBuffer[100];
-
-unsigned short lengthBetweenSensors = 0;
-unsigned short heigthBetweenSensorAndBelt = 0;
-
 void loop() {
-    serialDebug(" Reading red color.");
-    //readColour();
     
-  	//check serial
-  	//if time to push lego
-  	//if handshake / message for me
-  	//answer
-  	//if bussy wait a few iterations before we read the buffer
-  	//read colour
-
-    while(1);
-}
-
-
-bool tag() {
-	bool sensor1, sensor2, sensor3;
-	double distance;
-
-	distance = GetUltDistance(ult1_TrigPin, ult1_echoPin, false);
-	sensor1 = distance < 45;
-
-	distance = GetUltDistance(ult2_TrigPin, ult2_echoPin, false);
-	sensor2 = distance < 60;
-
-	distance = GetUltDistance(ult3_TrigPin, ult3_echoPin, false);
-	sensor3 = distance < 33;
-
-	return (sensor1 && sensor2);
 }
