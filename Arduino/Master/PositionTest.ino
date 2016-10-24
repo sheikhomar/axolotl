@@ -7,7 +7,7 @@ void determineTimeBetweenSensors() {
 
 //serialDebug("Her ");
 	while (!sensorRead) {
-		sensorRead = readSensors();
+		sensorRead = readSensors(NULL, NULL);
    //switch(sensorRead){
    // case false: serialDebug("false"); break;
    // case true: serialDebug("true"); break;
