@@ -81,29 +81,6 @@ void setup() {
 	delayMicroseconds(20);
 }
 
-int readColour() {
-    byte data[100];
-    data[0] = 5;
-    serialSendData(NXT, data, 0, 5);
-    client whichClient = serialCheck();
-    if (whichClient == NXT)
-    {
-        serialReadData(data, 100);
-        int colourInfo = data[0];
-        if (colourInfo == 0) {
-            serialDebug(" Reading red color.");
-        }
-    }
-}
-
-// Identify the package on the conveyor belt and returns 
-// its dimensions.
-Shape readShape() {
-  Shape shape = {0, 0, 0};
-
-  return shape;
-}
-
 /***************************
 loop
 
