@@ -9,7 +9,7 @@
 
 
 //read all 3 sensor data - save data somewhere - return boolean to tell if an object was deteced
-bool readSensors(SensorData buffer[], int index) {
+bool readSensors(SensorData buffer[], unsigned short index) {
 	bool sensor1, sensor2, sensor3;
 	unsigned short dist1, dist2, dist3;
 
@@ -40,7 +40,7 @@ bool readSensors(SensorData buffer[], int index) {
 
 
 //based on the collected data (so far) create the object
-void handleSensorData(Package packageBuffer[], SensorData buffer[], short packageIndex, short lastBufferItemIndex) {
+void handleSensorData(Package packageBuffer[], SensorData buffer[], unsigned short packageIndex, unsigned short lastBufferItemIndex) {
 	unsigned short sensor1, sensor2, sensor3;
 	unsigned short packageTime;
 
@@ -54,9 +54,9 @@ void handleSensorData(Package packageBuffer[], SensorData buffer[], short packag
 	packageBuffer[packageIndex].length = packageTime * SPEED;
 }
 
-int findMode(SensorData buffer[], short lastBufferItemIndex, short sensor) {
-	int countArray[ARRAY_SIZE][2];
-	int currentLength = 0;
+int findMode(SensorData buffer[], unsigned short lastBufferItemIndex, unsigned short sensor) {
+	unsigned short countArray[ARRAY_SIZE][2];
+	unsigned short currentLength = 0;
 	unsigned short sensorData = 0;
 	bool wasDetected = false;
 	
@@ -81,7 +81,7 @@ int findMode(SensorData buffer[], short lastBufferItemIndex, short sensor) {
 	}
 
 	unsigned short mostCommonValue = 0;
-	short largestCount = 0;
+	unsigned short largestCount = 0;
 
 	for (int i = 0; i <= ARRAY_SIZE; i++) {
 		if (countArray[i][1] > largestCount) {
