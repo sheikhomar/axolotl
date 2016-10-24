@@ -84,6 +84,8 @@ void serialReadData(byte data[], int data_length) {
 	case 0:
 		//do stuff
 		break;
+  case 10: //Arduino NXT talk
+    return;
 	default:
 		break;
 	}
@@ -101,4 +103,24 @@ void serialCountTest()
 	}
 
 	serialSendData(NXT, myArr, sizeOfData, 0);
+}
+
+void serialArduinoNXTTalk() {
+	byte data = 'a';
+
+	//serialDebugLN("Starting Arduino NXT talk..");
+	delay(2000);
+
+	while (data <= 'y')
+	{
+		serialSendData(NXT, &data, 1, 10);
+		while (serialCheck() != NXT) {
+			serialReadData(&data, 1);
+		}
+    data += 1;
+
+		serialReadData(&data, 1);
+	}
+
+	serialDebugLN("Finished..");
 }
