@@ -5,18 +5,24 @@ void determineTimeBetweenSensors() {
 	byte data[] = { 'T','r','a','v','e','l','t','i','m','e',':',' ' };
 	byte data2[32];
 
-serialDebug("Her ");
+//serialDebug("Her ");
 	while (!sensorRead) {
-		sensorRead = tag();
+		sensorRead = readSensors();
+   //switch(sensorRead){
+   // case false: serialDebug("false"); break;
+   // case true: serialDebug("true"); break;
+   // default: break;
+   //}
+   delay(ultMeasurementCycle);
 	}
 serialDebug("Her1");
 	iniTime = millis();
 	sensorRead = false;
-
+//serialDebug("Her2");
 	while (!sensorRead) {
 		sensorRead = colourSensorReady();
 	}
-
+serialDebug("Her3");
 	timeColour = millis();
 	timeColour = timeColour - iniTime;
 	travelTime = (double)timeColour;
@@ -29,12 +35,14 @@ bool colourSensorReady() {
 	bool ready = false;
 	byte dataS[] = {5};
   byte dataRec[1];
-	int colour = -1;
-	serialSendData(NXT, dataS, 0, 5);
+	byte colour = -1;
 
 	while (colour != 0 || colour != 1 || colour != 2 || colour != 3 || colour != 6 || colour != 7) {
+    serialSendData(NXT, dataS, 0, 5);
 		serialReadData(dataRec, 1);
-    colour = dataRec[0];
+    colour = dataRec[0] +52;
+    serialDebug("" + colour);
+    delay(500);
 	}
 	return true;
 }
