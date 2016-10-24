@@ -1,3 +1,6 @@
+#define SENSOR_BUFFER_SIZE 100
+#define PACKAGE_BUFFER_SIZE 10
+
 /*
 * Master Program
 * Created by us
@@ -58,11 +61,13 @@ typedef struct {
 
 //Global variables
 
-Package packages[5];
-SensorData sensorBuffer[100];
-
 unsigned short lengthBetweenSensors = 0;
 unsigned short heigthBetweenSensorAndBelt = 0;
+
+void runConveyorBeltAtSpeed(byte speed) {
+   byte data[1] = { speed };
+   serialSendData(NXT, data, 1, 3);
+}
 
 /***************************
 setup
@@ -99,6 +104,10 @@ void setup() {
 		digitalWrite(SerialTransmitPin, LOW);
 
 	delayMicroseconds(20);
+
+  runConveyorBeltAtSpeed(50);
+
+  delayMicroseconds(20); 
 }
 
 /***************************
@@ -107,5 +116,35 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-    
+  Package packages[PACKAGE_BUFFER_SIZE];
+  unsigned short packageStartIndex = 0;
+  unsigned short packageEndIndex = 0;
+
+  SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
+  unsigned short sensorBufferStartIndex = 0;
+  unsigned short sensorBufferEndIndex = 0;
+
+  runConveyorBeltAtSpeed(50);
+  
+  while (true) {
+    bool newPackageDetected = readSensors(sensorBuffer, sensorBufferEndIndex);
+    if (newPackageDetected) {
+      // We have detected a new package in the conveyor belt
+
+      sensorBufferEndIndex++;
+    } else {
+      
+      if (sensorBufferStartIndex != sensorBufferEndIndex) {
+        // At this stage we have collected distance information for a single package.
+        // The function 'handleSensorData' builds an instance of Package based 
+        // on the data in the sensorData.
+        handleSensorData(&packages[packageEndIndex], 
+          sensorBuffer, sensorBufferStartIndex, sensorBufferEndIndex);
+
+        Package p = packages[packageEndIndex];
+        String t2 = String(p.width);
+        serialDebug("Package: " + String(p.width) + " x " + String(p.height) + " x " + String(p.length) + "\n");
+      }
+    }
+  }
 }
