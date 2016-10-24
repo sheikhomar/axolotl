@@ -195,3 +195,7 @@ tools/paket/paket.exe
 # Python
 __pycache__
 *.class
+
+
+# VMicro
+Arduino/Master/__vm/*.*
