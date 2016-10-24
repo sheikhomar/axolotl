@@ -39,17 +39,17 @@ to its idle distance.
 void TestUltSensors() {
 	double distance;
 
-	Serial.print("Sensor 1 |");
+	serialDebug("Sensor 1 |");
 	distance = GetUltDistance(ult1_TrigPin, ult1_echoPin, false);
-	PrintUltSensorData(distance, distance < 45);
+	PrintUltSensorData(distance, distance < ult1_TagDist);
 
-	Serial.print("Sensor 2 |");
+	serialDebug("Sensor 2 |");
 	distance = GetUltDistance(ult2_TrigPin, ult2_echoPin, false);
-	PrintUltSensorData(distance, distance < 60);
+	PrintUltSensorData(distance, distance < ult2_TagDist);
 
-	Serial.print("Sensor 3 |");
+	serialDebug("Sensor 3 |");
 	distance = GetUltDistance(ult3_TrigPin, ult3_echoPin, false);
-	PrintUltSensorData(distance, distance < 33);
+	PrintUltSensorData(distance, distance < ult3_TagDist);
 
 	delay(ultMeasurementCycle);
 }
@@ -60,13 +60,13 @@ PrintDistance
 Prints the distance on the serial port and turns on/off the led based on tag
 ***************************/
 void PrintUltSensorData(double distance, bool tag) {
-	Serial.print(distance);
-	Serial.print(" mm ");
+	serialDebug(String(distance));
+	serialDebug(" mm ");
 
 	if (tag) {
-		Serial.println("| Tag");
+		serialDebugLN("| Tag");
 	}
 	else {
-		Serial.println("");
+		serialDebugLN("");
 	}
 }
