@@ -49,6 +49,9 @@ void serialDebug(String message) {
   serialSendData(DEBUG, data, msgLen, '-');
 }
 
+void serialDebugLN(String message) {
+	serialDebug(message + '\n');
+}
 
 void serialReadData(byte data[], int data_length) {
 	byte id, length, command;
