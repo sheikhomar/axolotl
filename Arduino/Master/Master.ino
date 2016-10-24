@@ -5,7 +5,6 @@
 */
 //Enums
 typedef enum client {
-  none = 0,
   unknown = 'u',
   RaspberryPi = 'r',
   NXT = 'n',
@@ -96,6 +95,8 @@ void setup() {
 		digitalWrite(ult1_TrigPin, LOW);
 		digitalWrite(ult2_TrigPin, LOW);
 		digitalWrite(ult2_TrigPin, LOW);
+		//RS485
+		digitalWrite(SerialTransmitPin, LOW);
 
 	delayMicroseconds(20);
 }

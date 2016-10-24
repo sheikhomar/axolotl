@@ -5,7 +5,6 @@ client serialCheck() {
 
 	switch (read)
 	{
-		case none:
 		case unknown:
 		case RaspberryPi:
 		case NXT:
@@ -61,7 +60,7 @@ void serialReadData(byte data[], int data_length) {
 	id = Serial.read();
 	length = Serial.read();
 
-	if (id == none)
+	if (id == -1)
 		return;
 
 	if (id != Arduino) {
