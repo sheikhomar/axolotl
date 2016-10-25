@@ -11,13 +11,15 @@ public class Package {
     public int y;
     public Paint paint;
     public int layer;
+    public int bin;
 
-    public Package(int startX, int startY, int packLength, int packWidth, int paintColor, int layerNumber){
+    public Package(int startX, int startY, int packLength, int packWidth, int paintColor, int layerNumber, int binNumber){
         x = startX;
         y = startY;
         length = packLength;
         width = packWidth;
         layer = layerNumber;
+        bin = binNumber;
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
