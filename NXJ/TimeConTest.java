@@ -11,7 +11,7 @@ public class TimeConTest {
     public static void main(String[] args) throws InterruptedException {
         //System.out.println("Arduino Connection Test");
 		//LCD.drawString("A-mei-zing!",3,3);
-		int succesful = 0, count = 0, countMax = 20;
+		int succesful = 0, count = 0, countMax = 26;
         int[][] finalBuff = new int[countMax][3];
 		byte[] recBuff = new byte[1];
 		String recString = new String("");
