@@ -11,9 +11,6 @@
 #define FROM_ULT_TO_ARM1_MS 300
 #define FROM_ULT_TO_ARM2_MS 300
 
-#define SENSOR_BUFFER_SIZE 100
-#define PACKAGE_BUFFER_SIZE 10
-
 void readColourInfo(Package *package) {
   byte dataSend[0];
   byte dataReceived[1];
@@ -25,14 +22,14 @@ void readColourInfo(Package *package) {
 }
 
 void sendPackageInfoToRaspberryPi(Package *package) {
-  byte dataSend[4] = { package->width, package->length, package->height, package->colour };
-  serialSendData(RaspberryPi, dataSend, 4, 1);
+  //byte dataSend[4] = { package->width, package->length, package->height, package->colour };
+  //serialSendData(RaspberryPi, dataSend, 4, 1);
 }
 
-void handlePackages(Package packages[], int bufferStartIndex, int bufferEndIndex) {
-    
-    for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
-        int index = (i + bufferStartIndex) % PACKAGE_BUFFER_SIZE;
+void handlePackages(Package packages[], int startIndex, int numberOfPackages) {
+    int index = 0;
+    for (int i = startIndex; i < startIndex + numberOfPackages; i++) {
+        index = i % PACKAGE_BUFFER_SIZE;
         Package p = packages[index];
         if (p.colour == COLOUR_NONE) {
             // Calculate when we can read the colour sensor
@@ -55,51 +52,67 @@ void resetPackage(Package *package) {
   package->isHandled = false;
 }
 
-void resetUnusedPackages(Package packages[], int startIndex, int numberOfElements) {
-  int index;
-  for (int i = startIndex + numberOfElements; i < PACKAGES_BUFFER_SIZE + startIndex; i++) {
-    index = i % PACKAGES_BUFFER_SIZE
-    resetPackage(packages[index]);
+void resetPackages(Package packages[]) {
+  for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
+    resetPackage(&packages[i]);
   }
 }
 
-void schedule() {
+void runScheduler() {
     Package packages[PACKAGE_BUFFER_SIZE];
-    unsigned short packageStartIndex = 0;
-    unsigned short packageCount = 0;
+    int packageStartIndex = 0;
+    int packageCount = 0;
 
     SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
-    unsigned short sensorBufferStartIndex = 0;
-    unsigned short sensorBufferEndIndex = 0;
+    int sensorBufferStartIndex = 0;
+    int sensorBufferCount = 0;
 
-    resetUnusedPackages(packages, packageStartIndex, packageCount);
+    resetPackages(packages);
 
     while (true) {
-        bool newPackageDetected = readSensors(sensorBuffer, sensorBufferEndIndex);
+        SensorData *sd = &sensorBuffer[(sensorBufferStartIndex + sensorBufferCount) % SENSOR_BUFFER_SIZE];
+        bool newPackageDetected = readSensors(sd);
         if (newPackageDetected) {
             // We have detected a new package in the conveyor belt
 
-            sensorBufferEndIndex++;
+            if (sensorBufferCount == SENSOR_BUFFER_SIZE) {
+                die("Panic! Buffer for sensor data is full.");
+            }
+            
+            sensorBufferCount++;
         }
         else {
-
-            if (sensorBufferStartIndex != sensorBufferEndIndex) {
-                // At this stage we have collected distance information for a single package.
+            if (sensorBufferCount > 0) {
+                // At this stage, we have collected distance information for a single package.
                 // The function 'handleSensorData' builds an instance of Package based 
                 // on the data in the sensorData.
-                handleSensorData(&packages[packageEndIndex],
-                    sensorBuffer, sensorBufferStartIndex, sensorBufferEndIndex);
 
-                //prepareNextPackage(packages);
-                sensorBufferStartIndex = sensorBufferEndIndex;
+                
+                if (packageCount == PACKAGE_BUFFER_SIZE) {
+                    die("Panic! Buffer for packages is full.");
+                }
+                
+                // Find current package
+                Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
+
+                // Prepare next package
+                packageCount++;
+
+                // Fill Package object using collected sensor data
+                handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
 
                 //Package p = packages[packageEndIndex];
                 //String t2 = String(p.width);
                 //serialDebug("Package: " + String(p.width) + " x " + String(p.height) + " x " + String(p.length) + "\n");
+
+                // Reset buffer for sensor data
+                sensorBufferStartIndex = 0;
+                sensorBufferCount = 0;
+
             }
         }
 
-        handlePackages(packages, packageStartIndex, packageEndIndex);
+        handlePackages(packages, packageStartIndex, packageCount);
 
     }
 }
