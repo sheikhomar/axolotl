@@ -11,11 +11,19 @@
 #define FROM_ULT_TO_ARM1_MS 300
 #define FROM_ULT_TO_ARM2_MS 300
 
+#define COMM_NXT_PUSH_ARM1 0
+#define COMM_NXT_PUSH_ARM2 1
+#define COMM_NXT_PUSH_BOTH_ARMS 2
+#define COMM_NXT_START_BELT 3
+#define COMM_NXT_STOP_BELT 4
+#define COMM_NXT_GET_COLOUR 5
+#define COMM_NXT_ADJUST_BELT_SPEED 6
+
 void readColourInfo(Package *package) {
   byte buf[] = { 0 };
 
   // Request colour information from the NXT
-  serialSendData(NXT, buf, 0, 5);
+  serialSendData(NXT, buf, 0, COMM_NXT_GET_COLOUR);
 
   // Block until data is recieved from the NXT.
   while (serialCheck() != Arduino);
@@ -29,27 +37,42 @@ void sendPackageInfoToRaspberryPi(Package *package) {
   serialSendData(RaspberryPi, buf, 4, 1);
 }
 
-void readPackingAdviceIfAny(Package packages[], int startIndex, int numberOfPackages) {
+bool readPackingAdvice(Package *package) {
   byte buf[1];
   serialReadData(buf, 1);
   // TODO: Ensure that the received data is correct before we continue.
+  package->bin = buf[0];
+  return true;
 }
 
-void handlePackages(Package packages[], int startIndex, int numberOfPackages) {
-    int index = 0;
-    for (int i = startIndex; i < startIndex + numberOfPackages; i++) {
-        index = i % PACKAGE_BUFFER_SIZE;
-        Package p = packages[index];
-        if (p.colour == COLOUR_NONE) {
-            // Calculate when we can read the colour sensor
-            unsigned long currentTime = millis();
-
-            if (currentTime - p.middleTime >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
-                readColourInfo(&p);
-                sendPackageInfoToRaspberryPi(&p);
-            }
-        }
+bool pushArm(Package *package) {
+  if (package->bin != -1) {
+    unsigned long currentTime = millis();
+    
+    if (package->bin == 1 && currentTime - package->middleTime >= FROM_ULT_TO_ARM1_MS) {
+      byte buf[] = { 0 };
+      serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM1);
+      return true;
+    } else if (package->bin == 2 && currentTime - package->middleTime >= FROM_ULT_TO_ARM2_MS) {
+      byte buf[] = { 0 };
+      serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM2);
+      return true;
     }
+  }
+  return false;
+}
+
+bool finalisePackage(Package *package) {
+  if (package->colour == COLOUR_NONE) {
+    unsigned long currentTime = millis();
+  
+    if (currentTime - package->middleTime >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
+      readColourInfo(package);
+      sendPackageInfoToRaspberryPi(package);
+      return true;
+    }
+  }
+  return false;
 }
 
 void resetPackage(Package *package) {
@@ -117,8 +140,16 @@ void runScheduler() {
         }
 
         if (packageCount > 0) {
-          handlePackages(packages, packageStartIndex, packageCount);
-          readPackingAdviceIfAny(packages, packageStartIndex, packageCount);
+          Package *p = &packages[packageStartIndex];
+          if (finalisePackage(p)) {
+            if (readPackingAdvice(p)) {
+              if (pushArm(p)) {
+                packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
+                sensorBufferCount--;
+              }
+            }
+          }
         }
-    }
+        
+    }//while
 }
