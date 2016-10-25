@@ -109,6 +109,7 @@ void setup() {
     digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
 
   delayMicroseconds(20);
+  serialDebugLN("Starting Arduino");
 }
 
 
@@ -164,5 +165,5 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-	Serial.write(".");
+	serialDebug(".");
 }

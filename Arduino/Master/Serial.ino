@@ -37,7 +37,6 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 
 	//Additional debug messages
 	{
-		Serial.write("|(RS485):");
 		Serial.write(receiver);
 		Serial.write(sizeOfData);
 		Serial.write(reciverFunction);
