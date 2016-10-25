@@ -30,6 +30,7 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 }
 
 void handlePackages(Package packages[], int bufferStartIndex, int bufferEndIndex) {
+    
     for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
         int index = (i + bufferStartIndex) % PACKAGE_BUFFER_SIZE;
         Package p = packages[index];
@@ -45,14 +46,33 @@ void handlePackages(Package packages[], int bufferStartIndex, int bufferEndIndex
     }
 }
 
+void resetPackage(Package *package) {
+  package->length = 0;
+  package->width = 0;
+  package->height = 0;
+  package->colour =  COLOUR_NONE;
+  package->middleTime = 0;
+  package->isHandled = false;
+}
+
+void resetUnusedPackages(Package packages[], int startIndex, int numberOfElements) {
+  int index;
+  for (int i = startIndex + numberOfElements; i < PACKAGES_BUFFER_SIZE + startIndex; i++) {
+    index = i % PACKAGES_BUFFER_SIZE
+    resetPackage(packages[index]);
+  }
+}
+
 void schedule() {
     Package packages[PACKAGE_BUFFER_SIZE];
     unsigned short packageStartIndex = 0;
-    unsigned short packageEndIndex = 0;
+    unsigned short packageCount = 0;
 
     SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
     unsigned short sensorBufferStartIndex = 0;
     unsigned short sensorBufferEndIndex = 0;
+
+    resetUnusedPackages(packages, packageStartIndex, packageCount);
 
     while (true) {
         bool newPackageDetected = readSensors(sensorBuffer, sensorBufferEndIndex);
