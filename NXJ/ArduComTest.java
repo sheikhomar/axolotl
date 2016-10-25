@@ -18,12 +18,14 @@ public class ArduComTest {
 		
 		while(true){
 			readInput();
+			//System.out.println("rec: " + recBuff[0]);
+			//Delay.msDelay(500);
 			if(recBuff[0] == 110){ //Checking if NXJ should do something or not
 				recString = determineRecString();
 				System.out.println("Running " + recString);
 				control(recString);
 			}
-			else{
+			else if(recBuff[0] == 97 || recBuff[0] == 114 || recBuff[0] == 32){
 				skipInput();
 			}
 		}
@@ -208,42 +210,48 @@ public class ArduComTest {
 	private static void arduComTest(){
 		int succesful = 0, count = 0, countMax = 26;
         int[] finalBuff = new int[countMax];
-		byte[] recBuff = new byte[1];
 		byte[] sendBuff = new byte[4];
 		String recString = new String("");
-		recBuff[0] = 0;
-		sendBuff[0] = 'a';
-		sendBuff[1] = 1;
-		sendBuff[2] = 10;
-		sendBuff[3] = 0;
+		sendBuff[0] = (byte)97;
+		sendBuff[1] = (byte)1;
+		sendBuff[2] = (byte)10;
+		sendBuff[3] = (byte)0;
 		
 		System.out.println("Processing 'a'");
 		while(true){
 			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
 			if(succesful != 0){
 				finalBuff[count] = recBuff[0];
+				System.out.println("R " + recBuff[0]);
 				succesful = 0;
 				sendBuff[3] = (byte)(recBuff[0] + 1);
 				while(succesful == 0){
-					System.out.println("Sending");
+					System.out.println("Sending " + sendBuff[3]);
+					Delay.msDelay(500);
 					succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
 				}
 				System.out.println("Sent");
 				succesful = 0;
 				count++;
-				finalBuff[count] = sendBuff[0];
+				finalBuff[count] = sendBuff[3];
+				System.out.println("S " + sendBuff[3]);
 				count++;
 				break;
 			}
 		}
 		System.out.println("Moving on to 'c'");
+		Delay.msDelay(1000);
 		
 		while(count < countMax){
-			if(succesful != 0 && recBuff[0] != 'n'){
+			if(succesful != 0 && recBuff[0] == 'n'){
 				readInput();
+				System.out.println("R1 " + recBuff[0]);
 				readInput();
+				System.out.println("R2 " + recBuff[0]);
 				readInput();
+				System.out.println("R3 " + recBuff[0]);
 				finalBuff[count] = recBuff[0];
+				System.out.println("R " + recBuff[0]);
 				succesful = 0;
 				sendBuff[3] = (byte)(recBuff[0] + 1);
 				while(succesful == 0){
@@ -251,12 +259,14 @@ public class ArduComTest {
 				}
 				succesful = 0;
 				count++;
-				finalBuff[count] = sendBuff[0];
+				finalBuff[count] = sendBuff[3];
+				System.out.println("S " + sendBuff[3]);
+				Delay.msDelay(1000);
 				count++;
 			}
 			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
 		}
-		System.out.println("Done communicating");
+		System.out.println("Done transmit");
 		Delay.msDelay(1000);
 		for(int i = 0; i < countMax; i++){
 			System.out.println(decideChar(finalBuff[i]));
