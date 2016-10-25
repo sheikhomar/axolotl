@@ -32,7 +32,7 @@ def server_loop(server_socket):
     while True:
         client, client_info = server_socket.accept()
         print('Accepting connection from {clientInfo}'.format(clientInfo=client_info))
-        handle_client(client)
+        handle_client(client) #Have it return 'client' to use in main. Then just do 'client.send'
 
 s = setup_server()
 server_loop(s)

@@ -100,7 +100,7 @@ class PackingAdvisor:
         self.propose_x_y(lower_layer, package_to_pack)
         if self.package_fits == True:
             return self.check_airspace(bin, package_to_pack)
-        print('I tried')
+
         return False
 
     def check_airspace(self, bin, package_to_pack):
