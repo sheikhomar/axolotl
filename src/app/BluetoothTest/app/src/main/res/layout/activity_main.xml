@@ -82,10 +82,33 @@
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="200.0sp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown"
         android:layout_below="@+id/communicationMessage"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="&lt;"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/leftArrowButton"
+        android:textSize="25sp"
+        android:onClick="leftArrowOnClick"
+        android:layout_below="@+id/communicationMessage"
+        android:layout_toStartOf="@+id/spinner" />
+
+    <Button
+        android:text="&gt;"
+        android:layout_width="50dp"
+        android:id="@+id/rightArrowButton"
+        android:textSize="25sp"
+        android:onClick="rightArrowOnClick"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:padding="0dp"
+        android:layout_below="@+id/sendButton"
+        android:layout_toEndOf="@+id/spinner"
+        android:layout_height="50dp" />
 
 </RelativeLayout>

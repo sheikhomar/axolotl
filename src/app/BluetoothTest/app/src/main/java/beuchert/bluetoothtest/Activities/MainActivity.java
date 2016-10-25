@@ -114,7 +114,13 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         blueService.sendMessage(message.getText().toString());
     }
 
+    public void rightArrowOnClick(View view){
+        drawingView.shiftRight();
+    }
 
+    public void leftArrowOnClick(View view){
+        drawingView.shiftLeft();
+    }
 
     // interface methods:
     @Override

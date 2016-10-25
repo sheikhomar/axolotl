@@ -99,7 +99,7 @@ public class DrawingView extends View {
         invalidate();
     }
 
-    public void redrawSelectedBinAndLayer(){
+    private void redrawSelectedBinAndLayer(){
         frameDrawer.drawColor(Color.WHITE);
 
         Rect r = new Rect(0, 0, width-1, length-1);
@@ -147,4 +147,39 @@ public class DrawingView extends View {
         drawSize();
     }
 
+    public void shiftRight(){
+        if(bins.size() != 0){
+            if(selectedLayer != bins.get(selectedBin-1).layers.size()){
+                selectedLayer = selectedLayer+1;
+                selectBinAndLayer(selectedBin, selectedLayer);
+            }
+            else{
+                if(selectedBin != bins.size()){
+                    selectedBin = selectedBin + 1;
+                    selectedLayer = 1;
+                }
+            }
+
+            selectBinAndLayer(selectedBin, selectedLayer);
+            mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
+        }
+    }
+
+    public void shiftLeft(){
+        if(bins.size() != 0){
+            if(selectedLayer != 1){
+                selectedLayer = selectedLayer-1;
+                selectBinAndLayer(selectedBin, selectedLayer);
+            }
+            else{
+                if(selectedBin != 1){
+                    selectedBin = selectedBin - 1;
+                    selectedLayer = 3;
+                }
+            }
+
+            selectBinAndLayer(selectedBin, selectedLayer);
+            mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
+        }
+    }
 }
