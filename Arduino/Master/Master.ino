@@ -6,6 +6,11 @@
 * Created by us
 *
 */
+
+//Includes
+#include <SoftwareSerial.h>
+
+
 //Enums
 typedef enum client {
   unknown = 'u',
@@ -37,29 +42,41 @@ typedef struct {
 } SensorData;
 
 
-//Pins 
-	//LEDs
-	#define LED1 8
-	#define LED2 9
-	#define LED3 10
-	//Ult Sensors
-	#define ult1_TrigPin 2
-	#define ult1_echoPin 3
-	#define ult2_TrigPin 4
-	#define ult2_echoPin 5
-	#define ult3_TrigPin 6
-	#define ult3_echoPin 7
-	//Rs485
-	#define SerialTransmitPin 12
 
-//Values
-	#define ultMmPerUS 0.170145 //based on speed of sound * 0.5
-	#define ultMeasurementCycle 60 //60 ms, from manual
-	#define ultTrigPulse 10 //uS, from manual
-	#define baud 57600
-	#define serialMaxDataSize 12
+//Program variables
+#define BAUD 57600
+#define BAUD_DEBUG 9600
+#define SERIAL_MAX_DATA_SIZE 12
+
+//Pins 
+  //LEDs
+  #define LED1 8
+  #define LED2 9
+  #define LED3 10
+  //add built-in LED todo
+
+  //Ult Sensors
+  #define ult1_TrigPin 2
+  #define ult1_echoPin 3
+  #define ult2_TrigPin 4
+  #define ult2_echoPin 5
+  #define ult3_TrigPin 6
+  #define ult3_echoPin 7
+  //Rs485
+  #define RS485_TX 10
+  #define RS485_RX 11
+  #define SerialTransmitPin 13
+
+//Constants
+  #define ultMmPerUS 0.170145 //based on speed of sound * 0.5
+  #define ultMeasurementCycle 60 //60 ms, from manual
+  #define ultTrigPulse 10 //uS, from manual
+
 
 //Global variables
+
+//Objects
+SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
 
 unsigned short lengthBetweenSensors = 0;
 unsigned short heigthBetweenSensorAndBelt = 0;
@@ -75,39 +92,38 @@ setup
 Initiate all pins on the Arduino.
 ***************************/
 void setup() {
-	//Initiate Serial Communication
-	Serial.begin(baud);
+  //Initiate Serial Communication
+    Serial.begin(BAUD_DEBUG);
+    RS485Serial.begin(BAUD);
 
-	//Initiate Pins
-		//LEDs
-		pinMode(LED1, OUTPUT);
-		pinMode(LED2, OUTPUT);
-		pinMode(LED3, OUTPUT);
-		//Ult Sensors
-		pinMode(ult1_TrigPin, OUTPUT);
-		pinMode(ult1_echoPin, INPUT);
-		pinMode(ult2_TrigPin, OUTPUT);
-		pinMode(ult2_echoPin, INPUT);
-		pinMode(ult3_TrigPin, OUTPUT);
-		pinMode(ult3_echoPin, INPUT);
+  //Initiate Pins
+    //LEDs
+    pinMode(LED1, OUTPUT);
+    pinMode(LED2, OUTPUT);
+    pinMode(LED3, OUTPUT);
+    //Ult Sensors
+    pinMode(ult1_TrigPin, OUTPUT);
+    pinMode(ult1_echoPin, INPUT);
+    pinMode(ult2_TrigPin, OUTPUT);
+    pinMode(ult2_echoPin, INPUT);
+    pinMode(ult3_TrigPin, OUTPUT);
+    pinMode(ult3_echoPin, INPUT);
+    //RS485
+    pinMode(SerialTransmitPin, OUTPUT);
 
-	//Set default values of pins
-		//LEDs
-		digitalWrite(LED1, LOW);
-		digitalWrite(LED2, LOW);
-		digitalWrite(LED3, LOW);
-		//Ult Sensors
-		digitalWrite(ult1_TrigPin, LOW);
-		digitalWrite(ult2_TrigPin, LOW);
-		digitalWrite(ult2_TrigPin, LOW);
-		//RS485
-		digitalWrite(SerialTransmitPin, LOW);
+  //Set default values of pins
+    //LEDs
+    digitalWrite(LED1, LOW);
+    digitalWrite(LED2, LOW);
+    digitalWrite(LED3, LOW);
+    //Ult Sensors
+    digitalWrite(ult1_TrigPin, LOW);
+    digitalWrite(ult2_TrigPin, LOW);
+    digitalWrite(ult2_TrigPin, LOW);
+    //RS485
+    digitalWrite(SerialTransmitPin, LOW);
 
-	delayMicroseconds(20);
-
-  runConveyorBeltAtSpeed(50);
-
-  delayMicroseconds(20); 
+  delayMicroseconds(20);
 }
 
 bool tag() {
@@ -157,6 +173,19 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
+  byte byteReceived;
+  while(true){
+    if (RS485Serial.available())  //Look for data from other Arduino
+     {
+      digitalWrite(LED1, HIGH);  // Show activity
+      byteReceived = RS485Serial.read();    // Read received byte
+      Serial.write(byteReceived);        // Show on Serial Monitor
+      delay(10);
+      digitalWrite(LED1, LOW);  // Show activity   
+     }  
+
+  }
+  
   Package packages[PACKAGE_BUFFER_SIZE];
   unsigned short packageStartIndex = 0;
   unsigned short packageEndIndex = 0;
@@ -187,3 +216,4 @@ void loop() {
     }
   }
 }
+
