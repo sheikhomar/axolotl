@@ -23,7 +23,7 @@ public class ControlBrick {
 				System.out.println("Running " + recString);
 				control(recString);
 			}
-			else{
+			else if(recBuff[0] == 97 || recBuff[0] == 114 || recBuff[0] == 32){
 				skipInput();
 			}
 		}
