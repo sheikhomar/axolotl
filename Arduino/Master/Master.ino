@@ -110,6 +110,32 @@ void setup() {
   delayMicroseconds(20); 
 }
 
+
+void simplifiedDemo() {
+    //Test code
+  byte dataD[] = { '.' };
+  byte dataS[] = { 50 };
+  bool ta = false;
+  bool da;
+
+  serialSendData(NXT, dataS, 0, 3);
+  serialSendData(NXT, dataS, 1, 6);
+  delay(1000);
+  serialSendData(NXT, dataS, 1, 6);
+
+  while (true) {
+    if ((ta = tag()) && da) {
+      serialSendData(DEBUG, dataD, 2, 10);
+      delay(1900);
+      serialSendData(NXT, dataS, 1, 0);
+    }
+    else {
+      delay(25);
+    }
+    da = ta;
+  }
+}
+
 /***************************
 loop
 
