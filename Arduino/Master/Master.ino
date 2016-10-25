@@ -110,6 +110,21 @@ void setup() {
   delayMicroseconds(20); 
 }
 
+bool tag() {
+  bool sensor1, sensor2, sensor3;
+  double distance;
+
+  distance = GetUltDistance(ult1_TrigPin, ult1_echoPin, false);
+  sensor1 = distance < 45;
+
+  distance = GetUltDistance(ult2_TrigPin, ult2_echoPin, false);
+  sensor2 = distance < 60;
+
+  distance = GetUltDistance(ult3_TrigPin, ult3_echoPin, false);
+  sensor3 = distance < 33;
+
+  return (sensor1 && sensor2);
+}
 
 void simplifiedDemo() {
     //Test code
@@ -149,8 +164,6 @@ void loop() {
   SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
   unsigned short sensorBufferStartIndex = 0;
   unsigned short sensorBufferEndIndex = 0;
-
-  runConveyorBeltAtSpeed(50);
   
   while (true) {
     bool newPackageDetected = readSensors(sensorBuffer, sensorBufferEndIndex);
