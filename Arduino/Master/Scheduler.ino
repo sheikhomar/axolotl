@@ -12,13 +12,16 @@
 #define FROM_ULT_TO_ARM2_MS 300
 
 void readColourInfo(Package *package) {
-  byte dataSend[0];
-  byte dataReceived[1];
+  byte buf[1] = { 0 };
 
-  serialSendData(NXT, dataSend, 0, 5);
+  // Request colour information from the NXT
+  serialSendData(NXT, buf, 0, 5);
+
+  // Block until data is recieved from the NXT.
   while (serialCheck() != Arduino);
-  serialReadData(dataReceived, 1);
-  package->colour = dataReceived[0];
+
+  serialReadData(buf, 1);
+  package->colour = buf[0];
 }
 
 void sendPackageInfoToRaspberryPi(Package *package) {
