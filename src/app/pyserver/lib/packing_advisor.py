@@ -10,6 +10,13 @@ class PackingAdvisor:
         
         bin = self.find_bin(package)
         
+        if bin.current_layer.previous_layer is not None: #Perform test to see if package could be placed in layer below current
+            if bin.current_layer.previous_layer.calc_fill_level() + ((package.length * package.width) / (bin.width * bin.length)) <= 1:
+                if self.find_x_y_lower_layer(bin, bin.current_layer.previous_layer, package):
+                    print('Package fits in layer below')
+                    bin.current_layer.previous_layer.pack(package, self.x, self.y)
+                    return
+
         while(True):
             self.find_x_y(bin.current_layer, package)
 
@@ -86,3 +93,20 @@ class PackingAdvisor:
             return (Total_occupied / Total) * self.check_gravity(layer.previous_layer, package_to_pack)
         else:
             return 1
+
+    def find_x_y_lower_layer(self, bin, lower_layer, package_to_pack):
+        self.x = 0
+        self.y = 0
+        self.propose_x_y(lower_layer, package_to_pack)
+        if self.package_fits == True:
+            return self.check_airspace(bin, package_to_pack)
+        print('I tried')
+        return False
+
+    def check_airspace(self, bin, package_to_pack):
+        for x_air in range(self.x, self.x+package_to_pack.length):
+            for y_air in range(self.y, self.y+package_to_pack.width):
+                if bin.current_layer.find_occupying_package(x_air, y_air) is not None: #There is a package in the airspace above
+                    return False
+
+        return True

@@ -4,7 +4,7 @@ from lib import *
 bin1 = Bin(width=5, length=10, max_layers=3)
 bin2 = Bin(width=8, length=8, max_layers=4)
 
-bluetooth_scale = 50
+bluetooth_scale = 1
 
 def bluetooth_format_package(package):
     if package.position is not None:
@@ -27,7 +27,7 @@ p9 = Package(width=4, length=2)
 p10 = Package(width=2, length=2)
 p11 = Package(width=4, length=2)
 p12 = Package(width=4, length=2)
-p13 = Package(width=4, length=2)
+p13 = Package(width=2, length=2)
 p14 = Package(width=4, length=2)
 
 
