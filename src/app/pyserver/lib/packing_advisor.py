@@ -68,7 +68,7 @@ class PackingAdvisor:
         #We can now check if the layers below the current position are packed to a certain degree
         gravity = self.check_gravity(layer, package_to_pack)
 
-        if gravity > 0.75:
+        if gravity >= 0.75:
             self.package_fits = True
         else:
             if self.x + 2 + package_to_pack.length > layer.length: #TODO: Softcode '2' as longest package in current column

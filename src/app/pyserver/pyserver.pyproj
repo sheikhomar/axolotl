@@ -60,6 +60,9 @@
     <Compile Include="tests\package_position_is_taken_tests.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="tests\packing_advisor_airspace_tests.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tests\packing_advisor_gravity_check_tests.py">
       <SubType>Code</SubType>
     </Compile>
