@@ -12,7 +12,7 @@
 #define FROM_ULT_TO_ARM2_MS 300
 
 void readColourInfo(Package *package) {
-  byte buf[1] = { 0 };
+  byte buf[] = { 0 };
 
   // Request colour information from the NXT
   serialSendData(NXT, buf, 0, 5);
@@ -25,8 +25,14 @@ void readColourInfo(Package *package) {
 }
 
 void sendPackageInfoToRaspberryPi(Package *package) {
-  //byte dataSend[4] = { package->width, package->length, package->height, package->colour };
-  //serialSendData(RaspberryPi, dataSend, 4, 1);
+  byte buf[] = { (byte)package->width, (byte)package->length, (byte)package->height, (byte)package->colour };
+  serialSendData(RaspberryPi, buf, 4, 1);
+}
+
+void readPackingAdviceIfAny(Package packages[], int startIndex, int numberOfPackages) {
+  byte buf[1];
+  serialReadData(buf, 1);
+  // TODO: Ensure that the received data is correct before we continue.
 }
 
 void handlePackages(Package packages[], int startIndex, int numberOfPackages) {
@@ -52,7 +58,7 @@ void resetPackage(Package *package) {
   package->height = 0;
   package->colour =  COLOUR_NONE;
   package->middleTime = 0;
-  package->isHandled = false;
+  package->bin = -1;
 }
 
 void resetPackages(Package packages[]) {
@@ -90,7 +96,6 @@ void runScheduler() {
                 // The function 'handleSensorData' builds an instance of Package based 
                 // on the data in the sensorData.
 
-                
                 if (packageCount == PACKAGE_BUFFER_SIZE) {
                     die("Panic! Buffer for packages is full.");
                 }
@@ -104,18 +109,16 @@ void runScheduler() {
                 // Fill Package object using collected sensor data
                 handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
 
-                //Package p = packages[packageEndIndex];
-                //String t2 = String(p.width);
                 //serialDebug("Package: " + String(p.width) + " x " + String(p.height) + " x " + String(p.length) + "\n");
 
-                // Reset buffer for sensor data
-                sensorBufferStartIndex = 0;
+                // Empty buffer for sensor data
                 sensorBufferCount = 0;
-
             }
         }
 
-        handlePackages(packages, packageStartIndex, packageCount);
-
+        if (packageCount > 0) {
+          handlePackages(packages, packageStartIndex, packageCount);
+          readPackingAdviceIfAny(packages, packageStartIndex, packageCount);
+        }
     }
 }

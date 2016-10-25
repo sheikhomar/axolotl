@@ -22,7 +22,7 @@ typedef struct {
     unsigned short height;
     byte colour;
     unsigned long middleTime;
-    bool isHandled;
+    byte bin;
 } Package;
 
 typedef struct {
