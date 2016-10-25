@@ -1,7 +1,7 @@
 client serialCheck() {
 	byte read;
 
-	read = Serial.peek();
+	read = RS485Serial.peek();
 
 	switch (read)
 	{
@@ -19,26 +19,32 @@ client serialCheck() {
  return unknown;
 }
 
-
-void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFunction) {
+void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverFunction) {
 	int i = 0;
 
 	//if() check that data is nonempty, if data fits buffer...
 
-	//handshake
-
-
 	digitalWrite(SERIAL_TRANSMIT_PIN, HIGH);
 
-	Serial.write(reciver);
-	Serial.write(sizeOfData);
-	Serial.write(reciverFunction);
+	RS485Serial.write(receiver);
+	RS485Serial.write(sizeOfData);
+	RS485Serial.write(reciverFunction);
 
 	for (i = 0; i < sizeOfData; i++) {
-		Serial.write(data[i]);
-		//delay(10);
+		RS485Serial.write(data[i]);
 	}
 	digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
+
+	//Additional debug messages
+	{
+		Serial.write("|(RS485):");
+		Serial.write(receiver);
+		Serial.write(sizeOfData);
+		Serial.write(reciverFunction);
+		for (i = 0; i < sizeOfData; i++) {
+			Serial.write(data[i]);
+		}
+	}
 }
 
 void serialDebug(String message) {
@@ -57,8 +63,8 @@ void serialReadData(byte data[], int data_length) {
 	int i;
 
 	//read id and length
-	id = Serial.read();
-	length = Serial.read();
+	id = RS485Serial.read();
+	length = RS485Serial.read();
 
 	if (id == -1)
 		return;
@@ -66,16 +72,16 @@ void serialReadData(byte data[], int data_length) {
 	if (id != Arduino) {
 		for (i = 0; i < length; i++)
 		{
-			Serial.read();
+			RS485Serial.read();
 		}
 		return;
 	}
 
 	//save Arduino message
-	command = Serial.read();
+	command = RS485Serial.read();
 	for (i = 0; i < length - 1; i++)
 	{
-		data[i] = Serial.read();
+		data[i] = RS485Serial.read();
 	}
 
 	switch (command)
@@ -89,8 +95,6 @@ void serialReadData(byte data[], int data_length) {
 		break;
 	}
 }
-
-
 
 void serialCountTest()
 {
@@ -122,4 +126,17 @@ void serialArduinoNXTTalk() {
 	}
 
 	serialDebugLN("Finished..");
+}
+
+void serialReceiveTest(){
+	byte byteReceived;
+
+	if (RS485Serial.available())  //Look for data from other Arduino
+	{
+		digitalWrite(LED1_PIN, HIGH);  // Show activity
+		byteReceived = RS485Serial.read();    // Read received byte
+		Serial.write(byteReceived);        // Show on Serial Monitor
+		delay(10);
+		digitalWrite(LED1_PIN, LOW);  // Show activity   
+	}
 }
