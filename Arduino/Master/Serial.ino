@@ -28,7 +28,7 @@ void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFu
 	//handshake
 
 
-	digitalWrite(SerialTransmitPin, HIGH);
+	digitalWrite(SERIAL_TRANSMIT_PIN, HIGH);
 
 	Serial.write(reciver);
 	Serial.write(sizeOfData);
@@ -38,7 +38,7 @@ void serialSendData(client reciver, byte data[], byte sizeOfData, byte reciverFu
 		Serial.write(data[i]);
 		//delay(10);
 	}
-	digitalWrite(SerialTransmitPin, LOW);
+	digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
 }
 
 void serialDebug(String message) {

@@ -13,13 +13,13 @@ bool readSensors(SensorData buffer[], unsigned short index) {
 	bool sensor1, sensor2, sensor3;
 	unsigned short dist1, dist2, dist3;
 
-	dist1 = GetUltDistance(ult1_TrigPin, ult1_echoPin, false);
+	dist1 = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
 	sensor1 = dist1 < ult1_TagDist;
 
-	dist2 = GetUltDistance(ult2_TrigPin, ult2_echoPin, false);
+	dist2 = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
 	sensor2 = dist2 < ult2_TagDist;
 
-	dist3 = GetUltDistance(ult3_TrigPin, ult3_echoPin, false);
+	dist3 = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
 	sensor3 = dist3 < ult3_TagDist;
 
 	if (sensor1 && sensor2) {

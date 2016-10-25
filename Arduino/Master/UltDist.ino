@@ -16,17 +16,17 @@ unsigned short GetUltDistance(int trigPin, int echoPin, bool wait) {
 	unsigned long duration, distance;
 
 	if (wait)
-		delay(ultMeasurementCycle);
+		delay(ULT_MEASUREMENT_CYCLE);
 
 	//TriggerPulse
 	digitalWrite(trigPin, HIGH);
-	delayMicroseconds(ultTrigPulse);
+	delayMicroseconds(ULT_TRIG_PULSE);
 	digitalWrite(trigPin, LOW);
 
 	//Receive echo signal
 	duration = pulseIn(echoPin, HIGH);
 
-	return (unsigned short)(duration*ultMmPerUS*100);
+	return (unsigned short)(duration*ULT_MM_PER_US*100);
 }
 
 
@@ -41,18 +41,18 @@ void TestUltSensors() {
 	unsigned short distance;
 
 	serialDebug("Sensor 1 |");
-	distance = GetUltDistance(ult1_TrigPin, ult1_echoPin, false);
+	distance = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
 	PrintUltSensorData(distance, distance < ult1_TagDist);
 
 	serialDebug("Sensor 2 |");
-	distance = GetUltDistance(ult2_TrigPin, ult2_echoPin, false);
+	distance = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
 	PrintUltSensorData(distance, distance < ult2_TagDist);
 
 	serialDebug("Sensor 3 |");
-	distance = GetUltDistance(ult3_TrigPin, ult3_echoPin, false);
+	distance = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
 	PrintUltSensorData(distance, distance < ult3_TagDist);
 
-	delay(ultMeasurementCycle);
+	delay(ULT_MEASUREMENT_CYCLE);
 }
 
 /***************************
