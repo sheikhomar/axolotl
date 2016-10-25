@@ -14,11 +14,34 @@
 #define SENSOR_BUFFER_SIZE 100
 #define PACKAGE_BUFFER_SIZE 10
 
+void readColourInfo(Package *package) {
+  byte dataSend[0];
+  byte dataReceived[1];
+
+  serialSendData(NXT, dataSend, 0, 5);
+  while (serialCheck() != Arduino);
+  serialReadData(dataReceived, 1);
+  package->colour = dataReceived[0];
+}
+
+void sendPackageInfoToRaspberryPi(Package *package) {
+  byte dataSend[4] = { package->width, package->length, package->height, package->colour };
+  serialSendData(RaspberryPi, dataSend, 4, 1);
+}
 
 void handlePackages(Package packages[], int bufferStartIndex, int bufferEndIndex) {
     for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
         int index = (i + bufferStartIndex) % PACKAGE_BUFFER_SIZE;
-        // Do stuff with packages[index]
+        Package p = packages[index];
+        if (p.colour == COLOUR_NONE) {
+            // Calculate when we can read the colour sensor
+            unsigned long currentTime = millis();
+
+            if (currentTime - p.middleTime >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
+                readColourInfo(&p);
+                sendPackageInfoToRaspberryPi(&p);
+            }
+        }
     }
 }
 

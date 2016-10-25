@@ -21,8 +21,8 @@ typedef struct {
     unsigned short width;
     unsigned short height;
     byte colour;
-    unsigned long startTime;
-    unsigned long endTime;
+    unsigned long middleTime;
+    bool isHandled;
 } Package;
 
 typedef struct {
