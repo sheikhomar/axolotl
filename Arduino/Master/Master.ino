@@ -58,9 +58,9 @@ typedef struct {
 
 
 //Program variables
-#define BAUD 57600
-#define BAUD_DEBUG 9600
-#define SERIAL_MAX_DATA_SIZE 12
+  #define BAUD 57600
+  #define BAUD_DEBUG 9600
+  #define SERIAL_MAX_DATA_SIZE 12
 
 //Global variables
 unsigned short lengthBetweenSensors = 0;
@@ -164,16 +164,5 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-  byte byteReceived;
-  while(true){
-    if (RS485Serial.available())  //Look for data from other Arduino
-     {
-      digitalWrite(LED1_PIN, HIGH);  // Show activity
-      byteReceived = RS485Serial.read();    // Read received byte
-      Serial.write(byteReceived);        // Show on Serial Monitor
-      delay(10);
-      digitalWrite(LED1_PIN, LOW);  // Show activity   
-     }  
-
-  }
+	Serial.write(".");
 }
