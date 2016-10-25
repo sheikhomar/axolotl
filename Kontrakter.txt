@@ -30,4 +30,6 @@ Kontrakter:
 	
 	
 	Rasberry Pi modtag:
-	
+		switch(input){
+			case 1: return "Package info"
+		}
