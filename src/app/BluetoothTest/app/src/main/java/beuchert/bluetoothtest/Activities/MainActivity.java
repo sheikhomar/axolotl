@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private ArrayAdapter<String> spinnerAdapter;
     Spinner spinner;
     private boolean drawingViewCreated = false;
-
+    private int binLayers;
 
 
     //Activity methods
@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         Log.d("MainActivity", "MainActivity Started");
         Intent blueIntent = new Intent(this, BluetoothService.class);
         bindService(blueIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+        createDrawingView(1, 1);
     }
 
 
@@ -68,39 +70,39 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private int i = 0;
     // onClick methods:
     public void onConnectClick(View view) {
-        blueService.connect();
+        //blueService.connect();
 
         // bin packing example
-        /*if(i == 0){
-            handlePackage("B: 500 250");
+        if(i == 0){
+            handlePackage("B: 500 250 3");
         }
         else if (i == 1){
             handlePackage("P: 0 0 100 150 1 1");
         }
         else if (i == 2){
-            handlePackage("P: 0 150 100 100 1 1");
+            handlePackage("P: 0 150 100 100 1 2");
         }
         else if (i == 3){
-            handlePackage("P: 100 0 100 200 1 1");
+            handlePackage("P: 100 0 100 200 1 3");
         }
         else if (i == 4){
-            handlePackage("P: 200 0 100 150 1 1");
+            handlePackage("B: 500 250 3");
         }
         else if (i == 5){
             handlePackage("P: 300 0 100 200 1 1");
         }
         else if (i == 6){
-            handlePackage("P: 200 150 100 100 0 1");
+            handlePackage("P: 200 150 100 100 0 2");
         }
         else if (i == 7){
-            handlePackage("P: 400 0 100 200 1 1");
+            handlePackage("P: 400 0 100 200 1 3");
         }
         else if (i == 8){
             handlePackage("P: 0 0 100 100 2 2");
         }
         else
             showBluetoothConnectionAlert();
-        i++;*/
+        i++;
     }
 
     public void DisconnectOnClick(View view){
@@ -169,16 +171,25 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         PackageContent.append("\n" + Package);
     }
 
+    int currentBin = 0;
+    boolean firstTime = true;
+
     @Override
     public void handlePackage(String Package) {
         String[] PackSplit = Package.split(" ");
 
         if(PackSplit[0].equals("B:")){
+            currentBin++;
             Log.d(MainActivity.class.getName(), "Bin Recieved");
             PackSplit[2] = PackSplit[2].replaceAll("\n", "");
             int length = Integer.parseInt(PackSplit[1]);
             int width = Integer.parseInt(PackSplit[2]);
-            createDrawingView(width, length);
+            binLayers = Integer.parseInt(PackSplit[3]);
+            if(firstTime) {
+                drawingView.setSize(width, length);
+                firstTime = false;
+            }
+
         }
         else if(PackSplit[0].equals("P:")){
             Log.d(MainActivity.class.getName(), "Package Recieved");
@@ -189,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             int width = Integer.parseInt(PackSplit[4]);
             int color = Integer.parseInt(PackSplit[5]);
             int layer = Integer.parseInt(PackSplit[6]);
-            drawingView.addPackage(new Package(x, y, length, width, color, layer));
+            drawingView.addPackage(new Package(x, y, length, width, color, layer, currentBin));
         }
         else {
             showInvalidPackageError();
@@ -199,9 +210,10 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         String s = parent.getItemAtPosition(pos).toString();
-        String newS = s.replace("Layer ", "");
-        int sAsInt = Integer.parseInt(newS);
-        drawingView.selectLayer(sAsInt);
+        String[] split = s.split(" ");
+        int sAsInt1 = Integer.parseInt(split[1]);
+        int sAsInt2 = Integer.parseInt(split[3]);
+        drawingView.selectBinAndLayer(sAsInt1, sAsInt2);
     }
 
     @Override
@@ -249,8 +261,8 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         spinnerAdapter.notifyDataSetChanged();
     }
 
-    public void setSelectedElementInSpinner(int index){
-        spinner.setSelection(index);
+    public void setSelectedElementInSpinner(int bin, int layer){
+        spinner.setSelection((bin-1)*binLayers + layer - 1);
     }
 
     public void showInvalidPackageError(){

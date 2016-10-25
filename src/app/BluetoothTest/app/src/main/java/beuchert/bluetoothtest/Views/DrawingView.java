@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import beuchert.bluetoothtest.Activities.MainActivity;
+import beuchert.bluetoothtest.Models.Bin;
 import beuchert.bluetoothtest.Models.Layer;
 import beuchert.bluetoothtest.Models.Package;
 import beuchert.bluetoothtest.R;
@@ -31,8 +32,9 @@ public class DrawingView extends View {
     Random random ;
     MainActivity mainActivity;
     int width , length;
-    List<Layer> layers;
+    List<Bin> bins;
     int selectedLayer = 0;
+    private int selectedBin = 0;
 
     public DrawingView(Context context, int length, int width) {
         super(context);
@@ -41,7 +43,7 @@ public class DrawingView extends View {
         this.length = length;
         this.width = width;
 
-        layers = new ArrayList<Layer>();
+        bins = new ArrayList<Bin>();
 
         frame = Bitmap.createBitmap(width,length,Bitmap.Config.ARGB_8888);
         frameDrawer = new Canvas(frame);
@@ -55,41 +57,57 @@ public class DrawingView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Rect r = new Rect(0, 0, width-1, length-1);
-        frameDrawer.drawRect(r, borderPaint);
-
         canvas.drawBitmap(frame, null, bounds , null);
     }
 
     public void addPackage(Package pack){
+        Bin bin = null;
         Layer layer = null;
 
-        if (layers.size()-1 < pack.layer){
-            while(layers.size()-1 < pack.layer){
-                layers.add(new Layer());
-                if (layers.size()-1 == pack.layer){
-                    layer = layers.get(pack.layer);
-                    mainActivity.addElementToSpinner("Layer " + pack.layer);
-                }
+        if(bins.size() < pack.bin) {
+            while (bins.size() < pack.bin) {
+                bins.add(new Bin());
             }
+            bin = bins.get(pack.bin-1);
         }
         else
-            layer = layers.get(pack.layer);
+            bin = bins.get(pack.bin-1);
+
+        if (bin.layers.size() < pack.layer){
+            while(bin.layers.size() < pack.layer) {
+                bin.layers.add(new Layer());
+                mainActivity.addElementToSpinner("Bin: " + pack.bin + " Layer: " + pack.layer);
+            }
+            layer = bin.layers.get(pack.layer-1);
+        }
+        else
+            layer = bin.layers.get(pack.layer-1);
 
         layer.addPackageToLayer(pack);
 
-        selectLayer(pack.layer);
-
-        redrawSelectedLayer();
+        selectBinAndLayer(pack.bin, pack.layer);
     }
 
-    private void redrawSelectedLayer(){
+    private void drawSize(){
         frameDrawer.drawColor(Color.WHITE);
 
         Rect r = new Rect(0, 0, width-1, length-1);
         frameDrawer.drawRect(r, borderPaint);
 
-        Layer layer = layers.get(selectedLayer);
+        frameDrawer.drawBitmap(frame, null, bounds , null);
+
+        invalidate();
+    }
+
+    public void redrawSelectedBinAndLayer(){
+        frameDrawer.drawColor(Color.WHITE);
+
+        Rect r = new Rect(0, 0, width-1, length-1);
+        frameDrawer.drawRect(r, borderPaint);
+
+        Bin bin = bins.get(selectedBin-1);
+
+        Layer layer = bin.layers.get(selectedLayer-1);
         List<Package> packList = layer.Packages;
 
         for (Package pack:packList) {
@@ -105,10 +123,12 @@ public class DrawingView extends View {
         invalidate();
     }
 
-    public void selectLayer(int selector){
-        selectedLayer = selector;
-        mainActivity.setSelectedElementInSpinner(selector-1);
-        redrawSelectedLayer();
+
+    public void selectBinAndLayer(int bin, int layer){
+        selectedBin = bin;
+        selectedLayer = layer;
+        mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
+        redrawSelectedBinAndLayer();
     }
 
     public void setSize(int length, int width){
@@ -124,7 +144,7 @@ public class DrawingView extends View {
         frameDrawer.drawRect(r, borderPaint);
 
         invalidate();
-        redrawSelectedLayer();
+        drawSize();
     }
 
 }
