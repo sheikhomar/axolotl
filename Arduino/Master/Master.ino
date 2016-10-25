@@ -17,25 +17,20 @@ typedef enum client {
 } client;
 
 typedef struct {
-  byte length;
-  byte width;
-  byte height;
-} Shape;
-
-typedef struct {
-  byte length;
-  byte width;
-  byte height;
-  byte colour;
+    unsigned short length;
+    unsigned short width;
+    unsigned short height;
+    byte colour;
+    unsigned long startTime;
+    unsigned long endTime;
 } Package;
 
 typedef struct {
-  unsigned short sensor1;
-  unsigned short sensor2;
-  unsigned short sensor3;
-  unsigned long time;
+    unsigned short sensor1;
+    unsigned short sensor2;
+    unsigned short sensor3;
+    unsigned long time;
 } SensorData;
-
 
 //Pins 
   //LEDs
@@ -61,12 +56,11 @@ typedef struct {
   #define ULT_MEASUREMENT_CYCLE 60 //60 ms, from manual
   #define ULT_TRIG_PULSE 10 //uS, from manual
 
+
 //Program variables
 #define BAUD 57600
 #define BAUD_DEBUG 9600
 #define SERIAL_MAX_DATA_SIZE 12
-#define SENSOR_BUFFER_SIZE 100
-#define PACKAGE_BUFFER_SIZE 10
 
 //Global variables
 unsigned short lengthBetweenSensors = 0;
@@ -182,35 +176,4 @@ void loop() {
      }  
 
   }
-  
-  Package packages[PACKAGE_BUFFER_SIZE];
-  unsigned short packageStartIndex = 0;
-  unsigned short packageEndIndex = 0;
-
-  SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
-  unsigned short sensorBufferStartIndex = 0;
-  unsigned short sensorBufferEndIndex = 0;
-  
-  while (true) {
-    bool newPackageDetected = readSensors(sensorBuffer, sensorBufferEndIndex);
-    if (newPackageDetected) {
-      // We have detected a new package in the conveyor belt
-
-      sensorBufferEndIndex++;
-    } else {
-      
-      if (sensorBufferStartIndex != sensorBufferEndIndex) {
-        // At this stage we have collected distance information for a single package.
-        // The function 'handleSensorData' builds an instance of Package based 
-        // on the data in the sensorData.
-        handleSensorData(&packages[packageEndIndex], 
-          sensorBuffer, sensorBufferStartIndex, sensorBufferEndIndex);
-
-        Package p = packages[packageEndIndex];
-        String t2 = String(p.width);
-        serialDebug("Package: " + String(p.width) + " x " + String(p.height) + " x " + String(p.length) + "\n");
-      }
-    }
-  }
 }
-

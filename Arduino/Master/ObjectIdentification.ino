@@ -48,6 +48,9 @@ void handleSensorData(Package *package, SensorData buffer[], unsigned short firs
 	sensor2 = findMode(buffer, firstBufferItemIndex, lastBufferItemIndex, 2);
 	sensor3 = findMode(buffer, firstBufferItemIndex, lastBufferItemIndex, 3);
 
+
+    package->startTime = buffer[firstBufferItemIndex].time;
+    package->endTime = buffer[lastBufferItemIndex].time;
 	package->height = heigthBetweenSensorAndBelt - sensor1;
 	package->width = lengthBetweenSensors - sensor2 - sensor3;
 	packageTime = (buffer[lastBufferItemIndex].time - buffer[0].time);
