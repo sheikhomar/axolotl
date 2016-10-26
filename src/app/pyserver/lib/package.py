@@ -1,5 +1,5 @@
 class Package:
-    def __init__(self, width, length, colour = 1):
+    def __init__(self, width, length, colour = 0):
         self.width = width
         self.length = length
         #self.height = height
