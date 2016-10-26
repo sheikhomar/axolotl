@@ -11,13 +11,7 @@
 #define FROM_ULT_TO_ARM1_MS 300
 #define FROM_ULT_TO_ARM2_MS 300
 
-#define COMM_NXT_PUSH_ARM1 0
-#define COMM_NXT_PUSH_ARM2 1
-#define COMM_NXT_PUSH_BOTH_ARMS 2
-#define COMM_NXT_START_BELT 3
-#define COMM_NXT_STOP_BELT 4
-#define COMM_NXT_GET_COLOUR 5
-#define COMM_NXT_ADJUST_BELT_SPEED 6
+#define NOT_DETECTED_THRESHOLD 3
 
 void readColourInfo(Package *package) {
   byte buf[] = { 0 };
@@ -100,7 +94,7 @@ void runScheduler() {
     int sensorBufferStartIndex = 0;
     int sensorBufferCount = 0;
 
-    int count = 0;
+    int notDetectedCount = 0;
 
     serialDebug("Resetting packages.\n");
     resetPackages(packages);
@@ -119,14 +113,18 @@ void runScheduler() {
             }
             
             sensorBufferCount++;
+            notDetectedCount = 0;
         } else {
-            if (sensorBufferCount > 0) {
+            notDetectedCount++;
+            
+            if (sensorBufferCount > 0 && notDetectedCount > NOT_DETECTED_THRESHOLD) {
                 // At this stage, we have collected distance information for a single package.
                 // The function 'handleSensorData' builds an instance of Package based 
                 // on the data in the sensorData.
 
-                serialDebug("sensorBufferCount > 0.\n");
-
+                serialDebug("Constructing package using " + String(sensorBufferCount));
+                serialDebug(" sensor readings.\n");
+                
                 if (packageCount == PACKAGE_BUFFER_SIZE) {
                     die("Panic! Buffer for packages is full.");
                 }
