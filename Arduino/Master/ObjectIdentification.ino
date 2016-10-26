@@ -1,6 +1,6 @@
-#define ult1_TagDist 45
-#define ult2_TagDist 60
-#define ult3_TagDist 33
+#define ult1_TagDist 4500
+#define ult2_TagDist 6000
+#define ult3_TagDist 3300
 
 #define ARRAY_SIZE 20
 #define SPEED 140
