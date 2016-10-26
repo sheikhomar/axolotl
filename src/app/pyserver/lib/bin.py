@@ -8,7 +8,7 @@ class Bin:
         self.max_layers = max_layers
         self.current_layer = Layer(width=width, length=length, previous_layer=None)
         self.layers = [self.current_layer]
-        self.bin_id = bin_id
+        self.bin_id = 0
 
     # Closes the current layer and opens new layer in the bin.
     def new_layer(self):
