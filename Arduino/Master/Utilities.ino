@@ -6,5 +6,6 @@ void die(String abortMessage) {
 
 void runConveyorBeltAtSpeed(byte speed) {
 	byte data[1] = { speed };
-	serialSendData(NXT, data, 1, 3);
+	serialSendData(NXT, data, 1, COMM_NXT_ADJUST_BELT_SPEED);
+  serialSendData(NXT, data, 0, COMM_NXT_START_BELT);
 }
