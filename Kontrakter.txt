@@ -33,3 +33,5 @@ Kontrakter:
 		switch(input){
 			case 1: return "Package info"
 		}
+
+Farvernes betydning:
