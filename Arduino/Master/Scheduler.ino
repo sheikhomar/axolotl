@@ -95,19 +95,20 @@ void runScheduler() {
     int sensorBufferCount = 0;
 
     int notDetectedCount = 0;
+    int detectedCount = 0;
 
     serialDebug("Resetting packages.\n");
     resetPackages(packages);
     serialDebug("Before entering while loop\n");
     
     while (true) {
-        
+        delay(15);
         SensorData *sd = &sensorBuffer[(sensorBufferStartIndex + sensorBufferCount) % SENSOR_BUFFER_SIZE];
         bool newPackageDetected = readSensors(sd);
 
         if (newPackageDetected) {
             // We have detected a new package in the conveyor belt
-            
+
             if (sensorBufferCount == SENSOR_BUFFER_SIZE) {
                 die("Panic! Buffer for sensor data is full.");
             }
@@ -122,8 +123,8 @@ void runScheduler() {
                 // The function 'handleSensorData' builds an instance of Package based 
                 // on the data in the sensorData.
 
-                serialDebug("Constructing package using " + String(sensorBufferCount));
-                serialDebug(" sensor readings.\n");
+                String temp = String(sensorBufferCount);
+                serialDebug("Sensor size: " + temp + "\n");
                 
                 if (packageCount == PACKAGE_BUFFER_SIZE) {
                     die("Panic! Buffer for packages is full.");
@@ -132,7 +133,7 @@ void runScheduler() {
                 // Find current package
                 Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
 
-                serialDebug("Working with package: " + String((packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE) + " .\n");
+                //serialDebug("Working with package: " + String((packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE) + " .\n");
 
                 // Prepare next package
                 packageCount++;

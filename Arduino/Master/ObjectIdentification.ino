@@ -1,5 +1,5 @@
 #define ult1_TagDist 4500
-#define ult2_TagDist 6000
+#define ult2_TagDist 4500
 #define ult3_TagDist 3300
 
 #define ARRAY_SIZE 20
@@ -14,15 +14,26 @@ bool readSensors(SensorData *sensorData) {
 	unsigned short dist1, dist2, dist3;
 
 	dist1 = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
-	sensor1 = dist1 < ult1_TagDist;
-
+	delay(1);
+  
 	dist2 = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
-	sensor2 = dist2 < ult2_TagDist;
-
+	delay(1);
+  
 	dist3 = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
-	sensor3 = dist3 < ult3_TagDist;
+	delay(1);
 
+  //serialDebug("Dist1: "+ String(dist1));
+  //serialDebug(" Dist2: "+ String(dist2));
+  //serialDebug(" Dist3: "+ String(dist3));
+  //serialDebug("\n");
+  
+
+  sensor1 = dist1 < ult1_TagDist;
+  sensor2 = dist2 < ult2_TagDist;
+  sensor3 = dist3 < ult3_TagDist;
+  
 	if (sensor1 && sensor2) {
+    //serialDebug("Block detected!\n");
 		sensorData->sensor1 = dist1;
 		sensorData->sensor2 = dist2;
 		sensorData->sensor3 = dist3;
@@ -31,6 +42,7 @@ bool readSensors(SensorData *sensorData) {
 		return true;
 	}
 	else {
+    
 		heigthBetweenSensorAndBelt = dist1;
 		lengthBetweenSensors = (dist2 + dist3) / 2;
 		return false;
