@@ -35,3 +35,7 @@ Kontrakter:
 		}
 
 Farvernes betydning:
+Red: Mors
+Yellow: Mors, fragile
+Blue: Frankrig
+Green: Frankrig, fragile
