@@ -1,6 +1,8 @@
+from lib import Bin
+
 class PackingAdvisor:
-    def __init__(self, bins = []):
-        self.bins = bins
+    def __init__(self, bin):
+        self.bins = [bin]
         self.x = 0
         self.y = 0
         self.package_fits = False
@@ -39,7 +41,8 @@ class PackingAdvisor:
         if len(self.bins) > self.current_bin:
             return self.bins[self.current_bin]
         else:
-            raise EOFError('NO MORE BINS AVAILABE')
+            self.bins.append(Bin(self.bins[0].width, self.bins[0].length, self.bins[0].max_layers))
+            return self.bins[self.current_bin]
 
     def find_x_y(self, layer, package_to_pack):
         self.x = 0

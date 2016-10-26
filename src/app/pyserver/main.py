@@ -2,7 +2,6 @@ from lib import *
 
 
 bin1 = Bin(width=5, length=10, max_layers=3)
-bin2 = Bin(width=8, length=8, max_layers=4)
 
 bluetooth_scale = 1
 
@@ -31,7 +30,7 @@ p13 = Package(width=2, length=2)
 p14 = Package(width=4, length=2)
 
 
-pa = PackingAdvisor([bin1, bin2])
+pa = PackingAdvisor(bin1)
 pa.handle(p1)
 pa.handle(p2)
 pa.handle(p3)
