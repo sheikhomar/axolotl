@@ -1,3 +1,9 @@
+/***************************
+SerialCheck
+
+Returns the first client waiting to be read on the Rs485 buffer.  
+If no data exists in buffer none is returned.
+***************************/
 client serialCheck() {
 	byte read;
 
@@ -48,10 +54,12 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 }
 
 void serialDebug(String message) {
+	Serial.print(message);
+	/*
 	int msgLen = message.length() + 1;
 	byte data[msgLen];
 	message.getBytes(data, msgLen);
-	serialSendData(DEBUG, data, msgLen, '_');
+	serialSendData(DEBUG, data, msgLen, '_');*/
 }
 
 void serialDebugLN(String message) {
