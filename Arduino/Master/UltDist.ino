@@ -34,41 +34,31 @@ unsigned short GetUltDistance(int trigPin, int echoPin, bool wait) {
 /***************************
 TestUltSensors
 
-Prints the measured distance of all UltSensors and turns on their LEDs in acc.
-to its idle distance.
+Prints the measured distance of all UltSensors and whether they will TAG.
 ***************************/
 void TestUltSensors() {
-	unsigned short distance;
+	unsigned short distance1, distance2, distance3;
 
-	serialDebug("Sensor 1 |");
-	distance = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
-	PrintUltSensorData(distance, distance < ult1_TagDist);
+	distance1 = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
+	//delay?
+	distance2 = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
+	distance3 = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
 
-	serialDebug("Sensor 2 |");
-	distance = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
-	PrintUltSensorData(distance, distance < ult2_TagDist);
-
-	serialDebug("Sensor 3 |");
-	distance = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
-	PrintUltSensorData(distance, distance < ult3_TagDist);
-
-serialDebugLN("");
+	//Create debug string
+	String masterString;
+	masterString.concat(String(distance1));
+	masterString.concat("\t");
+	masterString.concat(String(distance2));
+	masterString.concat("\t");
+	masterString.concat(String(distance3));
+	masterString.concat("\t");
+	
+	masterString.concat(String(distance1 < ult1_TagDist));
+	masterString.concat("  ");
+	masterString.concat(String(distance2 < ult2_TagDist));
+	masterString.concat("  ");
+	masterString.concat(String(distance3 < ult3_TagDist));
+	serialDebugLN(masterString);
+	
 	delay(ULT_MEASUREMENT_CYCLE_MS);
-}
-
-/***************************
-PrintDistance
-
-Prints the distance on the serial port and turns on/off the led based on tag
-***************************/
-void PrintUltSensorData(unsigned short distance, bool tag) {
-	serialDebug(String(distance));
-	serialDebug(" mm ");
-
-	if (tag) {
-		serialDebug("| Tag");
-	}
-	else {
-		serialDebug("");
-	}
 }
