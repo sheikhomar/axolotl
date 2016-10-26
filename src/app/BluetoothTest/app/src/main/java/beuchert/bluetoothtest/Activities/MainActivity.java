@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private int i = 0;
     // onClick methods:
     public void onConnectClick(View view) {
-        //blueService.connect();
+        blueService.connect();
 
         // bin packing example
-        if(i == 0){
+        /*if(i == 0){
             handlePackage("B: 500 250 3");
         }
         else if (i == 1){
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         }
         else
             showBluetoothConnectionAlert();
-        i++;
+        i++;*/
     }
 
     public void DisconnectOnClick(View view){
