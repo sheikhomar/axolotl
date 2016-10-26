@@ -1,4 +1,5 @@
 from lib import Bin
+from lib import InvalidArgError
 
 class PackingAdvisor:
     def __init__(self, bin):
@@ -8,7 +9,12 @@ class PackingAdvisor:
         self.package_fits = False
         self.current_bin = 0
 
+        self.fragile = False
+        self.foreign = False
+
     def handle(self, package):
+
+        self.set_meta_data(package)
         
         bin = self.find_bin(package)
         
@@ -113,3 +119,19 @@ class PackingAdvisor:
                     return False
 
         return True
+
+    def set_meta_data(self, package):
+        if package.colour == 0:
+            self.foreign = False
+            self.fragile = False
+        elif package.colour == 1:
+            self.foreign = True
+            self.fragile = True
+        elif package.colour == 2:
+            self.foreign = True
+            self.fragile = False
+        elif package.colour == 3:
+            self.foreign = False
+            self.fragile = True
+        else:
+            raise InvalidArgError('Package had an undefined colour')
