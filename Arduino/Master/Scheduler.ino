@@ -91,6 +91,7 @@ void resetPackages(Package packages[]) {
 }
 
 void runScheduler() {
+    serialDebug("Schedule started.\n");
     Package packages[PACKAGE_BUFFER_SIZE];
     int packageStartIndex = 0;
     int packageCount = 0;
@@ -99,25 +100,32 @@ void runScheduler() {
     int sensorBufferStartIndex = 0;
     int sensorBufferCount = 0;
 
-    resetPackages(packages);
+    int count = 0;
 
+    serialDebug("Resetting packages.\n");
+    resetPackages(packages);
+    serialDebug("Before entering while loop\n");
+    
     while (true) {
+        
         SensorData *sd = &sensorBuffer[(sensorBufferStartIndex + sensorBufferCount) % SENSOR_BUFFER_SIZE];
         bool newPackageDetected = readSensors(sd);
+
         if (newPackageDetected) {
             // We have detected a new package in the conveyor belt
-
+            
             if (sensorBufferCount == SENSOR_BUFFER_SIZE) {
                 die("Panic! Buffer for sensor data is full.");
             }
             
             sensorBufferCount++;
-        }
-        else {
+        } else {
             if (sensorBufferCount > 0) {
                 // At this stage, we have collected distance information for a single package.
                 // The function 'handleSensorData' builds an instance of Package based 
                 // on the data in the sensorData.
+
+                serialDebug("sensorBufferCount > 0.\n");
 
                 if (packageCount == PACKAGE_BUFFER_SIZE) {
                     die("Panic! Buffer for packages is full.");
@@ -126,14 +134,18 @@ void runScheduler() {
                 // Find current package
                 Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
 
+                serialDebug("Working with package: " + String((packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE) + " .\n");
+
                 // Prepare next package
                 packageCount++;
+
+                serialDebug("Package count: " + String(packageCount) + "\n");
 
                 // Fill Package object using collected sensor data
                 handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
 
-                //serialDebug("Package: " + String(p.width) + " x " + String(p.height) + " x " + String(p.length) + "\n");
-
+                serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n");
+                
                 // Empty buffer for sensor data
                 sensorBufferCount = 0;
             }
