@@ -37,7 +37,7 @@ typedef struct {
   #define LED1_PIN 8
   #define LED2_PIN 9
   #define LED3_PIN 10
-  //add built-in LED todo
+  #define LEDB_PIN LED_BUILTIN
 
   //Ult Sensors
   #define ULT1_TRIG_PIN 2
@@ -53,8 +53,8 @@ typedef struct {
 
 //Constants
   #define ULT_MM_PER_US 0.170145 //based on speed of sound * 0.5
-  #define ULT_MEASUREMENT_CYCLE 60 //60 ms, from manual
-  #define ULT_TRIG_PULSE 10 //uS, from manual
+  #define ULT_MEASUREMENT_CYCLE_MS 60
+  #define ULT_TRIG_PULSE_US 10
 
 //Program variables
   #define BAUD 57600
@@ -113,58 +113,6 @@ void setup() {
   serialDebugLN("Starting Arduino");
 }
 
-
-/////////////TEMPORARY FUNCTIONS////////////
-bool tag() {
-  bool sensor1, sensor2, sensor3;
-  double distance;
-
-  distance = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
-  sensor1 = distance < 45;
-
-  distance = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
-  sensor2 = distance < 60;
-
-  distance = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
-  sensor3 = distance < 33;
-
-  return (sensor1 && sensor2);
-}
-
-void simplifiedDemo() {
-    //Test code
-  byte dataD[] = { '.' };
-  byte dataS[] = { 50 };
-  bool ta = false;
-  bool da;
-
-  serialSendData(NXT, dataS, 0, 3);
-  serialSendData(NXT, dataS, 1, 6);
-  delay(1000);
-  serialSendData(NXT, dataS, 1, 6);
-
-  while (true) {
-    if ((ta = tag()) && da) {
-      serialSendData(DEBUG, dataD, 2, 10);
-      delay(1900);
-      serialSendData(NXT, dataS, 1, 0);
-    }
-    else {
-      delay(25);
-    }
-    da = ta;
-  }
-}
-
-void die(String abortMessage) {
-  serialDebug(abortMessage);
-  while(1);
-}
-
-void runConveyorBeltAtSpeed(byte speed) {
-   byte data[1] = { speed };
-   serialSendData(NXT, data, 1, 3);
-}
 /***************************
 loop
 

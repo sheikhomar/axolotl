@@ -21,6 +21,7 @@
     <None Include="UltDist.ino" />
     <None Include="ObjectIdentification.ino" />
     <None Include="PositionTest.ino" />
+    <None Include="Utilities.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Master.vsarduino.h">
