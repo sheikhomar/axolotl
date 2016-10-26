@@ -3,12 +3,21 @@ from lib import InvalidArgError
 
 class PackingAdvisor:
     def __init__(self, bin):
+        bin.bin_id = 1
         self.bins = [bin]
+        bin2 = Bin(bin.width, bin.length, bin.max_layers)
+        bin2.bin_id = 2
+        self.bins_foreign = [bin2]
+
+        # Internal variables
         self.x = 0
         self.y = 0
         self.package_fits = False
         self.current_bin = 0
+        self.current_bin_foreign = 0
+        self.next_bin_id = 3
 
+        # Package metadata
         self.fragile = False
         self.foreign = False
 
@@ -37,18 +46,35 @@ class PackingAdvisor:
                 layer_success = bin.new_layer()
                 if not layer_success:
                     print('No more layers available in bin')
-                    self.current_bin = self.current_bin + 1
+
+                    if self.foreign == True:
+                        self.current_bin_foreign = self.current_bin_foreign + 1
+                    else:
+                        self.current_bin = self.current_bin + 1
+
                     self.handle(package)
                     return
         
     
     def find_bin(self, package):
         print('Find the correct bin for package {0}'.format(package))
-        if len(self.bins) > self.current_bin:
-            return self.bins[self.current_bin]
+
+        if self.foreign == False:
+            if len(self.bins) > self.current_bin:
+                return self.bins[self.current_bin]
+            else:
+                self.bins.append(Bin(self.bins[0].width, self.bins[0].length, self.bins[0].max_layers))
+                self.bins[self.current_bin].bin_id = self.next_bin_id
+                self.next_bin_id = self.next_bin_id + 1
+                return self.bins[self.current_bin]
         else:
-            self.bins.append(Bin(self.bins[0].width, self.bins[0].length, self.bins[0].max_layers))
-            return self.bins[self.current_bin]
+            if len(self.bins_foreign) > self.current_bin_foreign:
+                return self.bins_foreign[self.current_bin_foreign]
+            else:
+                self.bins_foreign.append(Bin(self.bins_foreign[0].width, self.bins_foreign[0].length, self.bins_foreign[0].max_layers))
+                self.bins_foreign[self.current_bin_foreign].bin_id = self.next_bin_id
+                self.next_bin_id = self.next_bin_id + 1
+                return self.bins_foreign[self.current_bin_foreign]
 
     def find_x_y(self, layer, package_to_pack):
         self.x = 0
