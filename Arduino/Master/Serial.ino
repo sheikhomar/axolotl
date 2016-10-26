@@ -40,6 +40,7 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 		Serial.write(receiver);
 		Serial.write(sizeOfData);
 		Serial.write(reciverFunction);
+		Serial.write("_");
 		for (i = 0; i < sizeOfData; i++) {
 			Serial.write(data[i]);
 		}
@@ -47,14 +48,15 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 }
 
 void serialDebug(String message) {
-  int msgLen = message.length() + 1;
-  byte data[msgLen];
-  message.getBytes(data, msgLen);
-  serialSendData(DEBUG, data, msgLen, '_');
+	int msgLen = message.length() + 1;
+	byte data[msgLen];
+	message.getBytes(data, msgLen);
+	serialSendData(DEBUG, data, msgLen, '_');
 }
 
 void serialDebugLN(String message) {
-	serialDebug(message + '\n');
+  message.concat("\r\n");  
+	serialDebug(message);
 }
 
 client serialReadData(byte data[], int data_length) {
