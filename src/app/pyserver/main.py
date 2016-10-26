@@ -5,9 +5,9 @@ bin1 = Bin(width=5, length=10, max_layers=3)
 
 bluetooth_scale = 1
 
-def bluetooth_format_package(package):
+def bluetooth_format_package(package, p_advisor):
     if package.position is not None:
-        return 'P: {x} {y} {length} {width} {colour} {layer}\n'.format(x=package.position.x*bluetooth_scale, y=package.position.y*bluetooth_scale, length=package.length*bluetooth_scale, width=package.width*bluetooth_scale, colour=package.colour, layer=package.position.layer.find_layer_number())
+        return 'P: {x} {y} {length} {width} {colour} {layer} {bin_id}\n'.format(x=package.position.x*bluetooth_scale, y=package.position.y*bluetooth_scale, length=package.length*bluetooth_scale, width=package.width*bluetooth_scale, colour=package.colour, layer=package.position.layer.find_layer_number(), bin_id=p_advisor.find_bin_id_containing_package(package))
     else:
         return 'P: error - position not set'
 
@@ -54,20 +54,20 @@ pa.handle(p17)
 
 
 print(bluetooth_format_bin(bin1))
-print(bluetooth_format_package(p1))
-print(bluetooth_format_package(p2))
-print(bluetooth_format_package(p3))
-print(bluetooth_format_package(p4))
-print(bluetooth_format_package(p5))
-print(bluetooth_format_package(p6))
-print(bluetooth_format_package(p7))
-print(bluetooth_format_package(p8))
-print(bluetooth_format_package(p9))
-print(bluetooth_format_package(p10))
-print(bluetooth_format_package(p11))
-print(bluetooth_format_package(p12))
-print(bluetooth_format_package(p13))
-print(bluetooth_format_package(p14))
-print(bluetooth_format_package(p15))
-print(bluetooth_format_package(p16))
-print(bluetooth_format_package(p17))
+print(bluetooth_format_package(p1, pa))
+print(bluetooth_format_package(p2, pa))
+print(bluetooth_format_package(p3, pa))
+print(bluetooth_format_package(p4, pa))
+print(bluetooth_format_package(p5, pa))
+print(bluetooth_format_package(p6, pa))
+print(bluetooth_format_package(p7, pa))
+print(bluetooth_format_package(p8, pa))
+print(bluetooth_format_package(p9, pa))
+print(bluetooth_format_package(p10, pa))
+print(bluetooth_format_package(p11, pa))
+print(bluetooth_format_package(p12, pa))
+print(bluetooth_format_package(p13, pa))
+print(bluetooth_format_package(p14, pa))
+print(bluetooth_format_package(p15, pa))
+print(bluetooth_format_package(p16, pa))
+print(bluetooth_format_package(p17, pa))
