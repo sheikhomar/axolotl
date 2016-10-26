@@ -1,5 +1,5 @@
 /***************************
-SerialCheck
+serialCheck
 
 Returns the first client waiting to be read on the Rs485 buffer.  
 If no data exists in buffer none is returned.
@@ -25,10 +25,13 @@ client serialCheck() {
  return unknown;
 }
 
+/***************************
+serialSendData
+
+Broadcasts a RS485 message to the specified receiver (of type client), starting the given function supplied with required data.
+***************************/
 void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverFunction) {
 	int i = 0;
-
-	//if() check that data is nonempty, if data fits buffer...
 
 	digitalWrite(SERIAL_TRANSMIT_PIN, HIGH);
 
@@ -53,20 +56,15 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 	}
 }
 
-void serialDebug(String message) {
-	Serial.print(message);
-	/*
-	int msgLen = message.length() + 1;
-	byte data[msgLen];
-	message.getBytes(data, msgLen);
-	serialSendData(DEBUG, data, msgLen, '_');*/
+void serialSendData(client receiver, byte reciverFunction) {
+	serialSendData(receiver, NULL, 0, reciverFunction);
 }
 
-void serialDebugLN(String message) {
-  message.concat("\r\n");  
-	serialDebug(message);
-}
+/***************************
+serialReadData
 
+Reads a RS485 message from the network and saves it in the given data array.
+***************************/
 client serialReadData(byte data[], int data_length) {
 	byte length, command;
 	int id, i;
@@ -126,7 +124,31 @@ client serialReadData(byte data[], int data_length) {
 	return Arduino;
 }
 
-void serialCountTest()
+/***************************
+serialDebug
+
+Broadcasts a RS485 message with a special DEBUG tag.
+***************************/
+void serialDebug(String message) {
+	Serial.print(message);
+	/*
+	int msgLen = message.length() + 1;
+	byte data[msgLen];
+	message.getBytes(data, msgLen);
+	serialSendData(DEBUG, data, msgLen, '_');*/
+}
+
+void serialDebugLN(String message) {
+	message.concat("\r\n");
+	serialDebug(message);
+}
+
+/***************************
+serialSendTest
+
+
+***************************/
+void serialSendTest()
 {
 	int i, sizeOfData = 26;
 	byte myArr[sizeOfData];
@@ -138,7 +160,31 @@ void serialCountTest()
 	serialSendData(NXT, myArr, sizeOfData, 0);
 }
 
-void serialArduinoNXTTalk() {
+/***************************
+serialReceiveTest
+
+
+***************************/
+void serialReceiveTest() {
+	byte byteReceived[] = {0};
+
+	if (RS485Serial.available())
+	{
+		LED(LED1_PIN, true);
+		serialReadData(byteReceived, 1);
+		serialDebug(String(byteReceived[0]));
+		delay(10);
+		LED(LED1_PIN, false);
+	}
+}
+
+/***************************
+serialArduinoNXTLoopTest
+
+Combines the sending and receiving of data together with the NXT. 
+A byte is incremented from 'a' to 'z', where both the Arduino and NXT increments the value by one.
+***************************/
+void serialArduinoNXTLoopTest() {
 	byte data = 'a';
 	client sender = unknown;
 
@@ -150,23 +196,10 @@ void serialArduinoNXTTalk() {
 			sender = serialReadData(&data, 1);
 			delay(10);
 		} while (sender != Arduino);
-		Serial.write("||Got: ");
-		Serial.write(data);
-		Serial.write("||");
+		String masterString = "|Data=";
+		masterString.concat(data);
+		masterString.concat("|");
 
 		data += 1;
-	}
-}
-
-void serialReceiveTest(){
-	byte byteReceived;
-
-	if (RS485Serial.available())  //Look for data from other Arduino
-	{
-		digitalWrite(LED1_PIN, HIGH);  // Show activity
-		byteReceived = RS485Serial.read();    // Read received byte
-		Serial.write(byteReceived);        // Show on Serial Monitor
-		delay(10);
-		digitalWrite(LED1_PIN, LOW);  // Show activity   
 	}
 }
