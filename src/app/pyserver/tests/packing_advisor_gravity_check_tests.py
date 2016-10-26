@@ -8,7 +8,7 @@ class PackingAdvisorGravityCheckTest(unittest.TestCase):
     
     def test_gravity_check(self):
         bin1 = Bin(4,4,3)
-        pa = PackingAdvisor(bins = [bin1])
+        pa = PackingAdvisor(bin1)
         p1 = Package(2, 2)
         p2 = Package(4, 2)
         p3 = Package(4, 2)

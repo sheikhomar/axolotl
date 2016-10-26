@@ -12,7 +12,7 @@ class PackingAdvisorHandleTests(unittest.TestCase):
         p2 = Package(width=4, length=2)
         p3 = Package(width=2, length=2)
 
-        pa = PackingAdvisor([bin1])
+        pa = PackingAdvisor(bin1)
         pa.handle(p1)
         pa.handle(p2)
         pa.handle(p3)

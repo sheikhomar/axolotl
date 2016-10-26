@@ -10,7 +10,7 @@ class PackingAdvisorAirspaceTests(unittest.TestCase):
         
         #Arrange
         bin1 = Bin(4,4,2)
-        pa = PackingAdvisor([bin1])
+        pa = PackingAdvisor(bin1)
         p1 = Package(4,2)
         p2 = Package(2,2)
         p3 = Package(4,2)
@@ -31,7 +31,7 @@ class PackingAdvisorAirspaceTests(unittest.TestCase):
                 
         #Arrange
         bin1 = Bin(4,4,2)
-        pa = PackingAdvisor([bin1])
+        pa = PackingAdvisor(bin1)
         p1 = Package(3,2)
         p2 = Package(4,2)
         p3 = Package(4,2)
