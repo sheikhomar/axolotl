@@ -7,6 +7,7 @@ public class ControlBrick {
 	private static NXTMotor mb = new NXTMotor(MotorPort.B);
 	private static NXTMotor mc = new NXTMotor(MotorPort.C);
 	private static byte[] recBuff = {0};
+	private static final int DATASIZE = 11;
 
     public static void main(String[] args) throws InterruptedException {
 		System.out.println("A-mei-zing!");
@@ -17,6 +18,7 @@ public class ControlBrick {
 		RS485.hsEnable(57600, 0);
 		
 		while(true){
+			//buttonFuncs();
 			readInput();
 			if(recBuff[0] == 110){ //Checking if NXJ should do something or not
 				recString = determineRecString();
@@ -43,16 +45,21 @@ public class ControlBrick {
 	
 	private static String determineRecString(){
 		readInput(); //Reading and discarding length of message/input
-		readInput(); //Function to be performed
-		switch(recBuff[0]){
-			case 0: return "A";
-			case 1: return "B";
-			case 2: return "AB";
-			case 3: return "CStart";
-			case 4: return "CStop";
-			case 5: return "Colour";
-			case 6: return "CSpeed";
-			default: return "Error";
+		if(recBuff[0] < DATASIZE + 1){ //OBS. See contract if confused
+			readInput(); //Function to be performed
+			switch(recBuff[0]){
+				case 0: return "A";
+				case 1: return "B";
+				case 2: return "AB";
+				case 3: return "CStart";
+				case 4: return "CStop";
+				case 5: return "Colour";
+				case 6: return "CSpeed";
+				default: return "Error";
+			}
+		}
+		else{
+			return "nothing";
 		}
 	}
 	
@@ -98,7 +105,6 @@ public class ControlBrick {
 		while(succesful == 0){
 			succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
 		}
-		System.out.println("I dida it");
 	}
 	
 	private static void backAndForthA(){
@@ -192,12 +198,27 @@ public class ControlBrick {
 	
 	private static void skipInput(){ //Skipping irrelevant inputs
 		int inputToSkip = 0;
-		if(recBuff[0] == 97 || recBuff[0] == 114){
-			readInput();
-			inputToSkip = recBuff[0] + 1;
+		readInput();
+		inputToSkip = recBuff[0] + 1;
+		if(inputToSkip < DATASIZE + 1){ //OBS. See contract if confused
+			for(int i = 0; i < inputToSkip; i++){
+				readInput();
+			}
 		}
-		for(int i = 0; i < inputToSkip; i++){
-			readInput();
+	}
+	
+	private static void buttonFuncs(){//Not working???
+		if(Button.ESCAPE.isPressed()){
+			mc.stop();
+		}
+		else if(Button.LEFT.isPressed()){
+			System.out.println("Godt arbejde! (Sarkasme)");
+		}
+		else if(Button.RIGHT.isPressed()){
+			System.out.println("Godt arbejde");
+		}
+		else if(Button.ENTER.isPressed()){
+			mc.backward();
 		}
 	}
 }
