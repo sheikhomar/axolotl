@@ -18,7 +18,7 @@ class PackingAdvisor:
         self.next_bin_id = 3
 
         # Package metadata
-        self.fragile = False
+        self.fragile = False #Currently obsolete
         self.foreign = False
 
     def handle(self, package):
@@ -116,14 +116,17 @@ class PackingAdvisor:
 
     def check_gravity(self, layer, package_to_pack): #recursively check product of ratio of occupied coordinates below package proposal
         Total = 0
-        Total_occupied = 0
+        Total_occupied = 0.0
 
         if layer.previous_layer is not None:
             for x_grav in range(self.x, self.x+package_to_pack.length):
                 for y_grav in range(self.y, self.y+package_to_pack.width):
                     Total = Total + 1
-                    if layer.previous_layer.find_occupying_package(x_grav, y_grav) is not None:
+                    occupying_package = layer.previous_layer.find_occupying_package(x_grav, y_grav) #Utilises short-circuiting below
+                    if occupying_package is not None and (occupying_package.colour == 0 or occupying_package.colour == 2):
                         Total_occupied = Total_occupied + 1
+                    elif occupying_package is not None and (occupying_package.colour == 1 or occupying_package.colour == 3):
+                        Total_occupied = Total_occupied + 0.5 #Fragile cargo only has 0.5 stability contribution
 
             return (Total_occupied / Total) * self.check_gravity(layer.previous_layer, package_to_pack)
         else:
