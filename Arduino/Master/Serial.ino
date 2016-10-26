@@ -47,40 +47,59 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 }
 
 void serialDebug(String message) {
-  int msgLen = message.length()+1;
+  int msgLen = message.length() + 1;
   byte data[msgLen];
   message.getBytes(data, msgLen);
-  serialSendData(DEBUG, data, msgLen, '-');
+  serialSendData(DEBUG, data, msgLen, '_');
 }
 
 void serialDebugLN(String message) {
 	serialDebug(message + '\n');
 }
 
-void serialReadData(byte data[], int data_length) {
-	byte id, length, command;
-	int i;
+client serialReadData(byte data[], int data_length) {
+	byte length, command;
+	int id, i;
 
-	//read id and length
+	//Noise handle
 	id = RS485Serial.read();
-	length = RS485Serial.read();
 
-	if (id == -1)
-		return;
+	if (id == -1){
+		return unknown;
+	}
+
+	Serial.write(id); //Additional debug messages
+
+	if (id != DEBUG && id != NXT && id != RaspberryPi && id != Arduino) { //make it so it's not recursive
+		return serialReadData(data, data_length);
+	}
+
+  delay(1000); //debug should be changed so we can handle reads of -1 and being stuck
+
+
+	//Read length and command
+	length = RS485Serial.read();
+	command = RS485Serial.read();
+
+	//Additional debug messages
+	{
+		Serial.write(length);
+		Serial.write(command);
+	}
 
 	if (id != Arduino) {
 		for (i = 0; i < length; i++)
 		{
-			RS485Serial.read();
+			Serial.write(RS485Serial.read()); //debug, should only read not print out.
 		}
-		return;
+		return (client)id;
 	}
 
-	//save Arduino message
-	command = RS485Serial.read();
-	for (i = 0; i < length - 1; i++)
+	//Handle Arduino message
+	for (i = 0; i < length; i++)
 	{
 		data[i] = RS485Serial.read();
+		Serial.write(data[i]);
 	}
 
 	switch (command)
@@ -89,10 +108,12 @@ void serialReadData(byte data[], int data_length) {
 		//do stuff
 		break;
   case 10: //Arduino NXT talk
-    return;
+    return Arduino;
 	default:
 		break;
 	}
+
+	return Arduino;
 }
 
 void serialCountTest()
@@ -109,22 +130,22 @@ void serialCountTest()
 
 void serialArduinoNXTTalk() {
 	byte data = 'a';
-
-	//serialDebugLN("Starting Arduino NXT talk..");
-	delay(2000);
+	client sender = unknown;
 
 	while (data <= 'y')
 	{
 		serialSendData(NXT, &data, 1, 10);
-		while (serialCheck() != NXT) {
-			serialReadData(&data, 1);
-		}
-    data += 1;
 
-		serialReadData(&data, 1);
+		do {
+			sender = serialReadData(&data, 1);
+			delay(10);
+		} while (sender != Arduino);
+		Serial.write("||Got: ");
+		Serial.write(data);
+		Serial.write("||");
+
+		data += 1;
 	}
-
-	serialDebugLN("Finished..");
 }
 
 void serialReceiveTest(){
