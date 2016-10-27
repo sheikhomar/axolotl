@@ -17,9 +17,9 @@ typedef enum client {
 } client;
 
 typedef struct {
-    unsigned short length;
-    unsigned short width;
-    unsigned short height;
+    unsigned int length;
+    unsigned int width;
+    unsigned int height;
     byte colour;
     unsigned long middleTime;
     byte bin;
