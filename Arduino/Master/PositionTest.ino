@@ -1,11 +1,12 @@
 void determineTimeBetweenSensors() {
   unsigned long iniTime = 0, timeColour = 0, travelTime = 0;
   bool sensorRead = false;
-  byte data2[0];
-  
-  serialSendData(NXT, data2, 0, 3);
-serialDebug("Her ");
-  while (!sensorRead) {
+  byte data2[1] = {50};
+
+  serialSendData(NXT, data2, 1, 6); //Set speed
+  serialSendData(NXT, data2, 1, 3); //Start conveyor belt
+
+  while (!sensorRead) { //Check when ult sensor register object
     sensorRead = readSensorsBest();
    //switch(sensorRead){
     //case false: serialDebug("false"); break;
@@ -14,41 +15,36 @@ serialDebug("Her ");
    //}
    delay(ULT_MEASUREMENT_CYCLE_MS);
   }
-serialDebug("Her1");
+
   iniTime = millis();
-  sensorRead = false;
-  while (!sensorRead) {
-    sensorRead = colourSensorReady();
-  }
-serialDebug("Her3");
+  readColourSensor(); //Reading colour sensor -- returning from func when a brick colour is read
+
   timeColour = millis();
-  travelTime = timeColour - iniTime;
+  travelTime = timeColour - iniTime; //The time from when ult sensor register object untill colour sensor do
   serialDebug("Time: ");
   serialDebug((String)travelTime);
+
+  //serialSendData(NXT, data2, 0, 4);
+  //while(1);
   return;
 }
 
-bool colourSensorReady() {
+void readColourSensor() {
   bool ready = false;
-  byte dataS[] = {5};
+  byte dataS[0];
   byte dataRec[1];
   byte colour = -1;
   client sender = unknown;
 
-  while (!(colour == 0 || colour == 1 || colour == 2 || colour == 3)) {
-    serialSendData(NXT, dataS, 1, 5);
-    do {
-       sender = serialReadData(dataRec, 1);
-       delay(10);
-    } while (sender != Arduino);
-    colour = dataRec[0];
-    //delay(500);
-  }
+  serialSendData(NXT, dataS, 0, 11);
+  do {
+     sender = serialReadData(dataRec, 1);
+  } while (sender != Arduino);
+  colour = dataRec[0];
   serialDebug(determineColour(colour));
-  return true;
 }
 
-bool readSensorsBest() {
+bool readSensorsBest() { //Returning true when an object is detected by ult sensors
   bool sensor1, sensor2, sensor3;
   unsigned short dist1, dist2, dist3;
 
