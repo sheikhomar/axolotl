@@ -52,7 +52,7 @@ def handle_client(client):      ###Reuse this code to exception handle the BT co
 def make_client(server_socket):
     client, client_info = server_socket.accept()
     print('Accepting connection from {clientInfo}'.format(clientInfo=client_info))
-    return client #Have it return 'client' to use in main. Then just do 'client.send'
+    return client 
 
 s = setup_server()
 client = make_client(s)	

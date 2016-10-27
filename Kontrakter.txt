@@ -24,7 +24,8 @@ Kontrakter:
 		
 	Arduino modtag:
 	
-	
+	R -> A (4 bytes)
+	'a' '1' 'p' 'bin_id % 2 (tal)'
 	
 	
 	
@@ -33,6 +34,9 @@ Kontrakter:
 		switch(input){
 			case 1: return "Package info"
 		}
+
+	A -> R (7 bytes)
+	'r' '4' 'p' 'length (tal)' 'width (tal)' 'height (tal)' 'colour (tal)'
 
 Farvernes betydning:
 Red: Mors
