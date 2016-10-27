@@ -32,7 +32,7 @@ class PackingAdvisor:
                 if self.find_x_y_lower_layer(bin, bin.current_layer.previous_layer, package):
                     print('Package fits in layer below')
                     bin.current_layer.previous_layer.pack(package, self.x, self.y)
-                    return
+                    return False
 
         while(True):
             self.find_x_y(bin.current_layer, package)
@@ -40,7 +40,7 @@ class PackingAdvisor:
             if self.package_fits:
                 print('Package fits ')
                 bin.current_layer.pack(package, self.x, self.y)
-                return
+                return False
             else: #The package does not fit in the current layer
                 print('Package does not fit in current layer')
                 layer_success = bin.new_layer()
@@ -53,7 +53,7 @@ class PackingAdvisor:
                         self.current_bin = self.current_bin + 1
 
                     self.handle(package)
-                    return
+                    return True
         
     
     def find_bin(self, package):
