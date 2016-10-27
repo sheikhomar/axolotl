@@ -1,11 +1,9 @@
-#define ult1_TagDist 4500
-#define ult2_TagDist 4500
-#define ult3_TagDist 3300
+#define ult1_TagDist 3400
+#define ult2_TagDist 4000
+#define ult3_TagDist 3300 // TODO: This must be adjusted.
 
 #define ARRAY_SIZE 20
 #define SPEED 140
-
-
 
 
 //read all 3 sensor data - save data somewhere - return boolean to tell if an object was deteced
@@ -26,7 +24,6 @@ bool readSensors(SensorData *sensorData) {
   //serialDebug(" Dist2: "+ String(dist2));
   //serialDebug(" Dist3: "+ String(dist3));
   //serialDebug("\n");
-  
 
   sensor1 = dist1 < ult1_TagDist;
   sensor2 = dist2 < ult2_TagDist;
@@ -40,11 +37,9 @@ bool readSensors(SensorData *sensorData) {
 		sensorData->time = millis();
 
 		return true;
-	}
-	else {
-    
-		heigthBetweenSensorAndBelt = dist1;
-		lengthBetweenSensors = (dist2 + dist3) / 2;
+	} else {
+		heigthBetweenSensorAndBelt = 5000;
+		lengthBetweenSensors = 8800;
 		return false;
 	}
 }
@@ -56,6 +51,7 @@ void handleSensorData(Package *package, SensorData buffer[], int bufferStartInde
 	unsigned short sensor1, sensor2, sensor3;
 	unsigned short packageTime;
 
+  // TODO: Find a better solution.
 	sensor1 = findMode(buffer, bufferStartIndex, bufferCount, 1);
 	sensor2 = findMode(buffer, bufferStartIndex, bufferCount, 2);
 	sensor3 = findMode(buffer, bufferStartIndex, bufferCount, 3);
@@ -68,6 +64,7 @@ void handleSensorData(Package *package, SensorData buffer[], int bufferStartInde
 	package->width = lengthBetweenSensors - sensor2 - sensor3;
 	packageTime = endTime - startTime;
 	package->length = packageTime / 10 * SPEED ;
+
 }
 
 int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte sensor) {
