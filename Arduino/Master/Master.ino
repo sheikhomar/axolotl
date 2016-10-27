@@ -71,6 +71,7 @@ typedef struct {
   #define SERIAL_MAX_DATA_SIZE 12
   #define SENSOR_BUFFER_SIZE 100
   #define PACKAGE_BUFFER_SIZE 10
+  #define RS485_DATA_LENGTH_MAX 11
 
 //Global variables
 unsigned short lengthBetweenSensors = 0;
@@ -78,9 +79,6 @@ unsigned short heigthBetweenSensorAndBelt = 0;
 
 //Objects
 SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
-
-
-
 
 
 /***************************
@@ -130,6 +128,5 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-	runConveyorBeltAtSpeed(50);
-  runScheduler();
+	serialArduinoNXTLoopTest();
 }

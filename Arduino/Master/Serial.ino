@@ -68,33 +68,33 @@ Reads a RS485 message from the network and saves it in the given data array.
 client serialReadData(byte data[], int data_length) {
 	byte length, command;
 	int id, i;
+	bool incorrectSender = false;
+
 
 	//Noise handle
-	id = RS485Serial.read();
-
-	if (id == -1){
-		return unknown;
-	}
-
-	Serial.write(id); //Additional debug messages
-
-	if (id != DEBUG && id != NXT && id != RaspberryPi && id != Arduino) { //make it so it's not recursive
-		return serialReadData(data, data_length);
-	}
-
-  delay(1000); //debug should be changed so we can handle reads of -1 and being stuck
-
+	do
+	{
+		id = RS485Serial.read();
+		if (id == -1) {
+			return unknown;
+		}
+		{Serial.write(id);} //Additional debug messages
+		incorrectSender = !(id == DEBUG || id == NXT || id == RaspberryPi || id == Arduino);
+	} while (incorrectSender);
 
 	//Read length and command
+	delayMicroseconds(1 / BAUD * 2);
 	length = RS485Serial.read();
 	command = RS485Serial.read();
+	{Serial.write(length);Serial.write(command);}//Additional debug messages
 
-	//Additional debug messages
-	{
-		Serial.write(length);
-		Serial.write(command);
+	//Kick if length is incorrect
+	if (length < 0 || length > RS485_DATA_LENGTH_MAX) {
+		return unknown;
 	}
+	delayMicroseconds(1 / BAUD * RS485_DATA_LENGTH_MAX);
 
+	//Read non-Arduino messages
 	if (id != Arduino) {
 		for (i = 0; i < length; i++)
 		{
@@ -115,7 +115,7 @@ client serialReadData(byte data[], int data_length) {
 	case 0:
 		//do stuff
 		break;
-  case 10: //Arduino NXT talk
+  case 10: //Reserved for DEBUG
     return Arduino;
 	default:
 		break;
@@ -194,7 +194,7 @@ void serialArduinoNXTLoopTest() {
 
 		do {
 			sender = serialReadData(&data, 1);
-			delay(10);
+			delay(10); //todo, can be removed?
 		} while (sender != Arduino);
 		String masterString = "|Data=";
 		masterString.concat(data);
