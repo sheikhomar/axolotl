@@ -165,15 +165,15 @@ class PackingAdvisor:
         else:
             raise InvalidArgError('Package had an undefined colour')
 
-    def find_bin_id_containing_package(self, p):
+    def find_bin_containing_package(self, p):
         for bin in self.bins:
             for layer in bin.layers:
                 for package in layer.packages:
                     if package is p:
-                        return bin.bin_id
+                        return bin
         for bin in self.bins_foreign:
             for layer in bin.layers:
                 for package in layer.packages:
                     if package is p:
-                        return bin.bin_id
+                        return bin
         

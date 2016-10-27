@@ -63,10 +63,13 @@ client = make_client(s)
 bin1 = Bin(width=5, length=10, max_layers=3)
 pa = PackingAdvisor(bin1)
 
+client.send(bluetooth_format_bin(pa.bins[0])
+client.send(bluetooth_format_bin(pa.bins_foreign[0])
+
 while True:
 	input_string = ser.readline()
 	package = format_serial_package(input_string) #####Make this function#####
 	if pa.handle(package):
-		client.send(bluetooth_format_bin(pa.find_bin_id_containing_package)) #####UPDATE THIS AND BLUETOOTH FORMAT BIN TO NEW CONVENTION#######
-	ser.sendline(str(pa.find_bin_id_containing_package % 2))
+		client.send(bluetooth_format_bin(pa.find_bin_containing_package(package)))
+	ser.sendline(str(pa.find_bin_containing_package(package).bin_id % 2))
 	client.send(bluetooth_format_package(package))
