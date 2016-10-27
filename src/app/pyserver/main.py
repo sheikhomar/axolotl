@@ -14,6 +14,12 @@ def bluetooth_format_package(package, p_advisor):
 def bluetooth_format_bin(bin):
     return 'B: {x} {y} {max_layers} {bin_id}\n'.format(x=bin.length*bluetooth_scale, y=bin.width*bluetooth_scale, max_layers=bin.max_layers, bin_id=bin.bin_id)
 
+def format_serial_package(input_array):
+    if len(input_array) == 7:
+        return Package(input_array[4], input_array[3], input_array[6])
+    else:
+        raise InvalidArgError('Input to format_serial_package was not array of length 7')
+
 p1 = Package(width=3, length=2)
 p2 = Package(width=2, length=2)
 p3 = Package(width=4, length=2)
@@ -30,6 +36,7 @@ p13 = Package(width=2, length=2)
 p14 = Package(width=4, length=2)
 p15 = Package(width=3, length=2, colour = 2)
 p16 = Package(width=4, length=2, colour = 2)
+#input = ['r', 4, 'p', 2, 2, 3, 2] for serial input debugging
 p17 = Package(width=2, length=2, colour = 2)
 
 
