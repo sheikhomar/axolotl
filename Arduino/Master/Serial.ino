@@ -74,16 +74,17 @@ client serialReadData(byte data[], int data_length) {
 	//Noise handle
 	do
 	{
-		id = RS485Serial.read();
-		if (id == -1) {
-			return unknown;
+		if (RS485Serial.available() < 1) {
+			return none;
 		}
+		id = RS485Serial.read();
 		{Serial.write(id);} //Additional debug messages
+
 		incorrectSender = !(id == DEBUG || id == NXT || id == RaspberryPi || id == Arduino);
 	} while (incorrectSender);
-
+  
 	//Read length and command
-	delayMicroseconds(1 / BAUD * 2);
+	serialBuffTimeout(2);
 	length = RS485Serial.read();
 	command = RS485Serial.read();
 	{Serial.write(length);Serial.write(command);}//Additional debug messages
@@ -92,7 +93,7 @@ client serialReadData(byte data[], int data_length) {
 	if (length < 0 || length > RS485_DATA_LENGTH_MAX) {
 		return unknown;
 	}
-	delayMicroseconds(1 / BAUD * RS485_DATA_LENGTH_MAX);
+	serialBuffTimeout(length);
 
 	//Read non-Arduino messages
 	if (id != Arduino) {
@@ -112,17 +113,34 @@ client serialReadData(byte data[], int data_length) {
 
 	switch (command)
 	{
-	case 0:
-		//do stuff
-		break;
-  case 10: //Reserved for DEBUG
-    return Arduino;
+	case   0: break;
+	case   5: break;  //NXT colour
+	case  10: break; //Reserved for DEBUG
+	case 'p': break; //PI motor to push
 	default:
 		break;
 	}
 
 	return Arduino;
 }
+/***************************
+serialBuffTimeout
+
+Continuously checks the RS485 buffer to see if # of required elements are present.
+***************************/
+bool serialBuffTimeout(byte numberOfRequiredElements) {
+	long time = micros();
+	bool reachedTarget, reachedTimeout;
+
+	do
+	{
+		reachedTimeout = time + RS485_TIMEOUT_US < micros();
+		reachedTarget = numberOfRequiredElements <= Serial.available();
+	} while (!reachedTarget && !reachedTimeout);
+
+	return reachedTarget;
+}
+
 
 /***************************
 serialDebug
@@ -185,21 +203,20 @@ Combines the sending and receiving of data together with the NXT.
 A byte is incremented from 'a' to 'z', where both the Arduino and NXT increments the value by one.
 ***************************/
 void serialArduinoNXTLoopTest() {
-	byte data = 'a';
+	byte data[] = { 'a' };
 	client sender = unknown;
 
-	while (data <= 'y')
+	while (data[0] <= 'y')
 	{
-		serialSendData(NXT, &data, 1, 10);
+		serialSendData(NXT, data, 1, 10);
 
 		do {
-			sender = serialReadData(&data, 1);
-			delay(10); //todo, can be removed?
+			sender = serialReadData(data, 1);
 		} while (sender != Arduino);
 		String masterString = "|Data=";
-		masterString.concat(data);
+		masterString.concat(data[0]);
 		masterString.concat("|");
 
-		data += 1;
+		data[0] += 1;
 	}
 }

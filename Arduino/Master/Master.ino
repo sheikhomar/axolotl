@@ -9,6 +9,7 @@
 
 //Enums
 typedef enum client {
+  none = 'n',
   unknown = 'u',
   RaspberryPi = 'r',
   NXT = 'n',
@@ -68,6 +69,7 @@ typedef struct {
 //Program variables
   #define BAUD 57600
   #define BAUD_DEBUG 9600
+  #define RS485_TIMEOUT_US 100
   #define SERIAL_MAX_DATA_SIZE 12
   #define SENSOR_BUFFER_SIZE 100
   #define PACKAGE_BUFFER_SIZE 10
