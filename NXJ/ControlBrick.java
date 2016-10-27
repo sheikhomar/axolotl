@@ -20,12 +20,12 @@ public class ControlBrick {
 		while(true){
 			//buttonFuncs();
 			readInput();
-			if(recBuff[0] == 110){ //Checking if NXJ should do something or not
+			if(recBuff[0] == 110){ //Checking if NXJ should do something or not -- 110 = 'n'
 				recString = determineRecString();
 				System.out.println("Running " + recString);
 				control(recString);
 			}
-			else if(recBuff[0] == 97 || recBuff[0] == 114 || recBuff[0] == 32){
+			else if(recBuff[0] == 97 || recBuff[0] == 114 || recBuff[0] == 32){ //97 = 'a', 114 = 'r', 32 = ' '
 				skipInput();
 			}
 		}
@@ -45,9 +45,9 @@ public class ControlBrick {
 	
 	private static String determineRecString(){
 		readInput(); //Reading and discarding length of message/input
-		if(recBuff[0] < DATASIZE + 1){ //OBS. See contract if confused
-			readInput(); //Function to be performed
-			switch(recBuff[0]){
+		if(recBuff[0] < DATASIZE + 1){ //OBS. See contract if confused -- length should be legal
+			readInput();
+			switch(recBuff[0]){ //Function to be performed
 				case 0: return "A";
 				case 1: return "B";
 				case 2: return "AB";
@@ -55,6 +55,7 @@ public class ControlBrick {
 				case 4: return "CStop";
 				case 5: return "Colour";
 				case 6: return "CSpeed";
+				case 11: return "ColourTest";
 				default: return "Error";
 			}
 		}
@@ -63,7 +64,7 @@ public class ControlBrick {
 		}
 	}
 	
-	private static void control(String input){
+	private static void control(String input){ //Running correct function
 		switch(input){
 			case "A":
 				backAndForthA();
@@ -86,12 +87,15 @@ public class ControlBrick {
 			case "CSpeed":
 				adjustSpeedC();
 				break;
+			case "ColourTest":
+				readAndSendBrickColour();
+				break;
 			default:
 				break;
 		}
 	}
 	
-	private static void readAndSendColour(){
+	private static void readAndSendColour(){ //Reading colour and sending it to Ardu no matter the result
 		ColorSensor sensor = new ColorSensor(SensorPort.S1);
 		int succesful = 0, colour = -1;
 		byte[] sendBuff = new byte[4];
@@ -101,10 +105,10 @@ public class ControlBrick {
 		
 		colour = sensor.getColorID();
 		sendBuff[3] = (byte)colour;
-		System.out.println("Sending " + ConvertColorEnum(colour));
 		while(succesful == 0){
-			succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
+			succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length); //hsWrite --> Returning number of bytes send
 		}
+		System.out.println("Sending " + ConvertColorEnum(colour));
 	}
 	
 	private static void backAndForthA(){
@@ -189,7 +193,7 @@ public class ControlBrick {
 		}
 	}
 	
-	private static void readInput(){
+	private static void readInput(){ //Reading input untill more than 0 bytes are read
 		int succesful = 0;
 		while(succesful == 0){
 			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
@@ -201,7 +205,7 @@ public class ControlBrick {
 		readInput();
 		inputToSkip = recBuff[0] + 1;
 		if(inputToSkip < DATASIZE + 1){ //OBS. See contract if confused
-			for(int i = 0; i < inputToSkip; i++){
+			for(int i = 0; i < inputToSkip; i++){ //Skipping the data send
 				readInput();
 			}
 		}
@@ -220,5 +224,23 @@ public class ControlBrick {
 		else if(Button.ENTER.isPressed()){
 			mc.backward();
 		}
+	}
+	
+	private static void readAndSendBrickColour(){ // For test purpose only, reads colour untill a valid brick colour is read -- can livelock system
+		ColorSensor sensor = new ColorSensor(SensorPort.S1);
+		int succesful = 0, colour = -1;
+		byte[] sendBuff = new byte[4];
+		sendBuff[0] = 'a';
+		sendBuff[1] = 1;
+		sendBuff[2] = 1;
+		
+		while (!(colour == 0 || colour == 1 || colour == 2 || colour == 3)) { //0 = Red, 1 = Green, 2 = Blue, 3 = Yellow
+			colour = sensor.getColorID();
+		}
+		sendBuff[3] = (byte)colour;
+		while(succesful == 0){
+			succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length); //Sending untill 0 < bytes are send
+		}
+		System.out.println("Sending " + ConvertColorEnum(colour));
 	}
 }
