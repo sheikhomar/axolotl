@@ -61,13 +61,13 @@ void handleSensorData(Package *package, SensorData buffer[], int bufferStartInde
 	sensor3 = findMode(buffer, bufferStartIndex, bufferCount, 3);
 
   unsigned long startTime = buffer[bufferStartIndex].time;
-  unsigned long endTime = buffer[(bufferStartIndex + bufferCount) % SENSOR_BUFFER_SIZE].time;
+  unsigned long endTime = buffer[(bufferStartIndex + bufferCount-1) % SENSOR_BUFFER_SIZE].time;
 
   package->middleTime = startTime - endTime;
 	package->height = heigthBetweenSensorAndBelt - sensor1;
 	package->width = lengthBetweenSensors - sensor2 - sensor3;
-	packageTime = (buffer[bufferCount].time - buffer[0].time);
-	package->length = packageTime * SPEED;
+	packageTime = endTime - startTime;
+	package->length = packageTime / 10 * SPEED ;
 }
 
 int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte sensor) {
