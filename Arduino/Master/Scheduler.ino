@@ -1,4 +1,3 @@
-#define COLOUR_NONE -1
 #define COLOUR_RED 0
 #define COLOUR_GREEN 1
 #define COLOUR_BLUE 2
@@ -6,8 +5,9 @@
 #define COLOUR_WHITE 6
 #define COLOUR_BLACK 7
 #define COLOUR_UNKNOWN 128
+#define COLOUR_NONE 255
 
-#define FROM_ULT_TO_COLOUR_SENSOR_MS 1515
+#define FROM_ULT_TO_COLOUR_SENSOR_MS 2098
 #define FROM_ULT_TO_ARM1_MS 2564
 #define FROM_ULT_TO_ARM2_MS 3497
 
@@ -19,12 +19,19 @@ void readColourInfo(Package *package) {
   // Request colour information from the NXT
   serialSendData(NXT, buf, 0, COMM_NXT_GET_COLOUR);
 
-  // Block until data is recieved from the NXT.
-  while (serialCheck() != Arduino);
-
-  serialReadData(buf, 1);
-  package->colour = buf[0];
+  package->colour = COLOUR_UNKNOWN;
 }
+
+bool isColourInfoReady(Package *package) {
+  // Check serial to see if we have received data from NXT
+  return false;
+}
+
+bool isPackingAdviceReady(Package *package) {
+  // Check serial to see if we have received data from Raspberry Pi
+  return false;
+}
+
 
 void sendPackageInfoToRaspberryPi(Package *package) {
   byte buf[] = { (byte)package->width, (byte)package->length, (byte)package->height, (byte)package->colour };
@@ -59,10 +66,10 @@ bool pushArm(Package *package) {
 bool finalisePackage(Package *package) {
   if (package->colour == COLOUR_NONE) {
     unsigned long currentTime = millis();
-  
     if (currentTime - package->middleTime >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
+      serialDebug("Time to read: " + String(currentTime - package->middleTime) + "\n");
       readColourInfo(package);
-      sendPackageInfoToRaspberryPi(package);
+      //sendPackageInfoToRaspberryPi(package);
       return true;
     }
   }
@@ -93,6 +100,10 @@ void runScheduler() {
     SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
     int sensorBufferStartIndex = 0;
     int sensorBufferCount = 0;
+
+    for (int i = 0; i < SENSOR_BUFFER_SIZE; i++) {
+      sensorBuffer[i].time = 0;
+    }
 
     int notDetectedCount = 0;
     int detectedCount = 0;
@@ -144,7 +155,7 @@ void runScheduler() {
                 handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
 
                 serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n");
-                
+
                 // Empty buffer for sensor data
                 sensorBufferCount = 0;
             }
@@ -153,12 +164,17 @@ void runScheduler() {
         if (packageCount > 0) {
           Package *p = &packages[packageStartIndex];
           if (finalisePackage(p)) {
-            if (readPackingAdvice(p)) {
-              if (pushArm(p)) {
-                packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
-                sensorBufferCount--;
-              }
-            }
+            //if (readPackingAdvice(p)) {
+            //  if (pushArm(p)) {
+            //    packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
+            //    packageCount--;
+            //  }
+            //}
+
+            // Remove package from the buffer
+            packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
+            packageCount--;
+            resetPackage(p);
           }
         }
         
