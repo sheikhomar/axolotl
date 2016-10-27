@@ -244,10 +244,7 @@ public class ArduComTest {
 		
 		while(count < countMax){
 			if(succesful != 0 && recBuff[0] == 'n'){
-				readInput();
-				System.out.println("R1 " + recBuff[0]);
-				readInput();
-				System.out.println("R2 " + recBuff[0]);
+				skipIrrelevantInput(false);
 				readInput();
 				System.out.println("R3 " + recBuff[0]);
 				finalBuff[count] = recBuff[0];
@@ -268,7 +265,24 @@ public class ArduComTest {
 		}
 		System.out.println("Done transmit");
 		Delay.msDelay(1000);
-		for(int i = 0; i < countMax; i++){
+		printingResult(countMax, finalBuff);
+	}
+	
+	private static void skipIrrelevantInput(boolean enableDebug){
+		readInput();
+		if(enableDebug)
+			System.out.println("R1 " + recBuff[0]);
+		readInput();
+		if(enableDebug)
+			System.out.println("R2 " + recBuff[0]);
+	}
+	
+	private static void readAndSaveLetter(boolean enableDebug){
+		
+	}
+	
+	private static void printingResult(int numbToPrint, int[] finalBuff){
+		for(int i = 0; i < numbToPrint; i++){
 			System.out.println(decideChar(finalBuff[i]));
 			Delay.msDelay(500);
 		}
