@@ -62,7 +62,7 @@ typedef struct {
 #define COMM_NXT_PUSH_BOTH_ARMS 2
 #define COMM_NXT_START_BELT 3
 #define COMM_NXT_STOP_BELT 4
-#define COMM_NXT_GET_COLOUR 11
+#define COMM_NXT_GET_COLOUR 5
 #define COMM_NXT_ADJUST_BELT_SPEED 6
 
 
@@ -130,5 +130,6 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-	serialArduinoNXTLoopTest();
+  runConveyorBeltAtSpeed(50);
+  runScheduler();
 }
