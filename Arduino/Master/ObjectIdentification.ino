@@ -58,8 +58,8 @@ void handleSensorData(Package *package, SensorData buffer[], int bufferStartInde
 
   unsigned long startTime = buffer[bufferStartIndex].time;
   unsigned long endTime = buffer[(bufferStartIndex + bufferCount-1) % SENSOR_BUFFER_SIZE].time;
-
-  package->middleTime = startTime - endTime;
+  
+  package->middleTime = (endTime - startTime) / 2;
 	package->height = heigthBetweenSensorAndBelt - sensor1;
 	package->width = lengthBetweenSensors - sensor2 - sensor3;
 	packageTime = endTime - startTime;
