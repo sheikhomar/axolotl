@@ -18,6 +18,7 @@ typedef enum client {
 } client;
 
 typedef struct {
+    unsigned int id;
     unsigned int length;
     unsigned int width;
     unsigned int height;

@@ -25,9 +25,14 @@ void requestColourFromNXT(Package *package) {
 
 bool isColourInfoReady(Package *package) {
   // Check serial to see if we have received data from NXT
-  if (serialCheck() == unknown) {
-    
+  byte buf[] = { 0 };
+  client clientInfo = serialReadData(buf, 1);
+  if (clientInfo == Arduino) {
+    package->colour = buf[0];
+    serialDebug("Colour from NXT: " + String(buf[0]) + "\n");
+    return true;
   }
+  
   return false;
 }
 
@@ -70,14 +75,16 @@ bool pushArm(Package *package) {
 void finalisePackage(Package *package) {
   if (package->colour == COLOUR_NONE) {
     unsigned long currentTime = millis();
-    if (currentTime - package->middleTime >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
-      serialDebug("Colour: " + String(currentTime - package->middleTime) + "\n");
+    unsigned long timeDiff = currentTime - package->middleTime;
+
+    if (timeDiff >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
       requestColourFromNXT(package);
     }
   }
 }
 
 void resetPackage(Package *package) {
+  package->id = 0;
   package->length = 0;
   package->width = 0;
   package->height = 0;
@@ -89,6 +96,7 @@ void resetPackage(Package *package) {
 void resetPackages(Package packages[]) {
   for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
     resetPackage(&packages[i]);
+    packages[i].id = i+1;
   }
 }
 
@@ -166,7 +174,8 @@ void runScheduler() {
           Package *p = &packages[packageStartIndex];
           finalisePackage(p);
 
-          if (false) {
+          if (isColourInfoReady(p)) {
+            pushArm(p);
             //if (readPackingAdvice(p)) {
             //  if (pushArm(p)) {
             //    packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
