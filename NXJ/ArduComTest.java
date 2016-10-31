@@ -207,9 +207,32 @@ public class ArduComTest {
 		}
 	}
 	
-	private static void arduComTest(){
+	private static void arduComTest(){ //Running a test with ardu where the alphabet is being transmittet one letter at a time
 		int succesful = 0, count = 0, countMax = 26;
-        int[] finalBuff = new int[countMax];
+		int[] finalBuff = new int[countMax];
+		boolean firstTime = true;
+		
+		while(count < countMax){ //Running one time for each letter of the alphabet
+			if(!firstTime){ //Checking if this is the first letter (different procedure)
+				if(succesful != 0 && recBuff[0] == 'n'){ //Checking if the input message is for the nxt
+					skipIrrelevantInput(false);
+					succesful = doComTest(succesful, count, finalBuff); //Doing the communication and with recieving and sending the correct letters
+					count = incCount(count, 2);
+				}
+				succesful = RS485.hsRead(recBuff, 0, recBuff.length);
+			}
+			else{
+				succesful = doComTest(succesful, count, finalBuff);
+				count = incCount(count, 2);
+				firstTime = false;
+			}
+		}
+		System.out.println("Done transmit");
+		performDelay(true);
+		printingResult(countMax, finalBuff); //Printing the send and recieved letters
+	}
+	
+	private static int doComTest(int succesful, int count, int[] finalBuff){ //Doing the communication and with recieving and sending the correct letters
 		byte[] sendBuff = new byte[4];
 		String recString = new String("");
 		sendBuff[0] = (byte)97;
@@ -217,58 +240,19 @@ public class ArduComTest {
 		sendBuff[2] = (byte)10;
 		sendBuff[3] = (byte)0;
 		
-		System.out.println("Processing 'a'");
-		while(true){
-			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
-			if(succesful != 0){
-				finalBuff[count] = recBuff[0];
-				System.out.println("R " + recBuff[0]);
-				succesful = 0;
-				sendBuff[3] = (byte)(recBuff[0] + 1);
-				while(succesful == 0){
-					System.out.println("Sending " + sendBuff[3]);
-					Delay.msDelay(500);
-					succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
-				}
-				System.out.println("Sent");
-				succesful = 0;
-				count++;
-				finalBuff[count] = sendBuff[3];
-				System.out.println("S " + sendBuff[3]);
-				count++;
-				break;
-			}
-		}
-		System.out.println("Moving on to 'c'");
-		Delay.msDelay(1000);
-		
-		while(count < countMax){
-			if(succesful != 0 && recBuff[0] == 'n'){
-				skipIrrelevantInput(false);
-				readInput();
-				System.out.println("R3 " + recBuff[0]);
-				finalBuff[count] = recBuff[0];
-				System.out.println("R " + recBuff[0]);
-				succesful = 0;
-				sendBuff[3] = (byte)(recBuff[0] + 1);
-				while(succesful == 0){
-					succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
-				}
-				succesful = 0;
-				count++;
-				finalBuff[count] = sendBuff[3];
-				System.out.println("S " + sendBuff[3]);
-				Delay.msDelay(1000);
-				count++;
-			}
-			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
-		}
-		System.out.println("Done transmit");
-		Delay.msDelay(1000);
-		printingResult(countMax, finalBuff);
-	}
+		readAndSaveLetter(false, finalBuff, count); //Boolean att for debug print
+		saveLetterToBeSend(sendBuff, count);
+		succesful = resetSuccesful();
+		succesful = sendLetter(false, sendBuff, succesful); //Boolean att for debug print
+		succesful = resetSuccesful();
+		count = incCount(count, 1);
+		saveSendLetter(false, finalBuff, sendBuff, count); //Boolean att for debug print
+		performDelay(true);
+		count = incCount(count, 1);
+		return succesful;
+	} 
 	
-	private static void skipIrrelevantInput(boolean enableDebug){
+	private static void skipIrrelevantInput(boolean enableDebug){ //Skipping size and func in comprotocol
 		readInput();
 		if(enableDebug)
 			System.out.println("R1 " + recBuff[0]);
@@ -277,8 +261,48 @@ public class ArduComTest {
 			System.out.println("R2 " + recBuff[0]);
 	}
 	
-	private static void readAndSaveLetter(boolean enableDebug){
-		
+	private static void readAndSaveLetter(boolean enableDebug, int[] finalBuff, int index){ //Reading and saving the letter recieved
+		readInput();
+		finalBuff[index] = recBuff[0];
+		if(enableDebug)
+			System.out.println("R3 " + recBuff[0]);
+	}
+	
+	private static void saveLetterToBeSend(byte[] sendBuff, int index){ //Returning new value of succesful
+		sendBuff[3] = (byte)(recBuff[0] + 1);
+	}
+	
+	private static int resetSuccesful(){ //Java....no explicit ref only objects and ref through that
+		return 0;
+	}
+	
+	private static int sendLetter(boolean enableDebug, byte[] sendBuff, int succesful){ //Sending a letter according to the protocol
+		if(enableDebug){
+			System.out.println("Sending " + sendBuff[3]);
+			Delay.msDelay(500);
+		}
+		while(succesful == 0){
+			succesful = RS485.hsWrite(sendBuff, 0, sendBuff.length);
+		}
+		if(enableDebug)
+			System.out.println("Sent");
+		return succesful;
+	}
+	
+	private static int incCount(int numb, int amount){ //Increase count by a specific amount
+		return numb + amount;
+	}
+	
+	private static void saveSendLetter(boolean enableDebug, int[] finalBuff, byte[] sendBuff, int index){ //Saving the letter send to the ardu
+		finalBuff[index] = sendBuff[3];
+		if(enableDebug)
+			System.out.println("S " + sendBuff[3]);
+	}
+	
+	private static void performDelay(boolean enableDelay){
+		if(enableDelay){
+			Delay.msDelay(1000);
+		}
 	}
 	
 	private static void printingResult(int numbToPrint, int[] finalBuff){
