@@ -3,7 +3,7 @@
 #define ult3_TagDist 3300 // TODO: This must be adjusted.
 
 #define ARRAY_SIZE 20
-#define SPEED 140
+#define SPEED_CONVEYOR 140
 
 
 //read all 3 sensor data - save data somewhere - return boolean to tell if an object was deteced
@@ -21,9 +21,9 @@ bool readSensors(SensorData *sensorData) {
 	delay(1);
 
   //serialDebug("Dist1: "+ String(dist1));
-  //serialDebug(" Dist2: "+ String(dist2));
-  //serialDebug(" Dist3: "+ String(dist3));
-  //serialDebug("\n");
+  serialDebug(" Dist2: "+ String(dist2));
+  serialDebug(" Dist3: "+ String(dist3));
+  serialDebug("\n");
 
   sensor1 = dist1 < ult1_TagDist;
   sensor2 = dist2 < ult2_TagDist;
@@ -48,13 +48,20 @@ bool readSensors(SensorData *sensorData) {
 
 //based on the collected data (so far) create the object
 void handleSensorData(Package *package, SensorData buffer[], int bufferStartIndex, int bufferCount) {
-	unsigned short sensor1, sensor2, sensor3;
-	unsigned short packageTime;
+	unsigned long sensor1, sensor2, sensor3;
+	unsigned long packageTime;
 
   // TODO: Find a better solution.
-	sensor1 = findMode(buffer, bufferStartIndex, bufferCount, 1);
-	sensor2 = findMode(buffer, bufferStartIndex, bufferCount, 2);
-	sensor3 = findMode(buffer, bufferStartIndex, bufferCount, 3);
+	sensor1 = findAverage(buffer, bufferStartIndex, bufferCount, 1);
+	sensor2 = findAverage(buffer, bufferStartIndex, bufferCount, 2);
+	sensor3 = findAverage(buffer, bufferStartIndex, bufferCount, 3);
+
+
+  serialDebug("Sensor1: "+ String(sensor1));
+  serialDebug(" Sensor2: "+ String(sensor2));
+  serialDebug(" Sensor3: "+ String(sensor3));
+  serialDebug("\n");
+ 
 
   unsigned long startTime = buffer[bufferStartIndex].time;
   unsigned long endTime = buffer[(bufferStartIndex + bufferCount-1) % SENSOR_BUFFER_SIZE].time;
@@ -63,8 +70,32 @@ void handleSensorData(Package *package, SensorData buffer[], int bufferStartInde
 	package->height = heigthBetweenSensorAndBelt - sensor1;
 	package->width = lengthBetweenSensors - sensor2 - sensor3;
 	packageTime = endTime - startTime;
-	package->length = packageTime / 10 * SPEED ;
+	package->length = packageTime / 10 * SPEED_CONVEYOR ;
 
+  // TODO: Fix this
+  if (package->length > 500 && package->length < 3000) {
+    package->length = 3200;
+  } else if (package->length > 3000 && package->length < 6400) {
+    package->length = 6400;
+  } else if (package->length > 6400) {
+    package->length = 12700;
+  }
+}
+
+unsigned long findAverage(SensorData buffer[], int startIndex, int bufferSize, byte whichSensor) {
+  unsigned long total = 0;
+  int bufferIndex = 0;
+  for (int i = startIndex; i < startIndex + bufferSize; i++) {
+    bufferIndex = i % SENSOR_BUFFER_SIZE;
+    if (whichSensor == 1)
+      total +=  buffer[bufferIndex].sensor1;
+    else if (whichSensor == 2)
+      total += buffer[bufferIndex].sensor2;
+    else if (whichSensor == 3)
+      total += buffer[bufferIndex].sensor3;
+  }
+
+  return total / bufferSize;
 }
 
 int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte sensor) {
