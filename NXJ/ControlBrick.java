@@ -8,6 +8,7 @@ public class ControlBrick {
 	private static NXTMotor mc = new NXTMotor(MotorPort.C);
 	private static byte[] recBuff = {0};
 	private static final int DATASIZE = 11;
+	private static Stopwatch stopwatch = new Stopwatch();
 
     public static void main(String[] args) throws InterruptedException {
 		System.out.println("A-mei-zing!");
@@ -18,8 +19,8 @@ public class ControlBrick {
 		RS485.hsEnable(57600, 0);
 		
 		while(true){
-			//buttonFuncs();
-			readInput();
+			buttonFuncs();
+			readInput(true);
 			if(recBuff[0] == 110){ //Checking if NXJ should do something or not -- 110 = 'n'
 				recString = determineRecString();
 				System.out.println("Running " + recString);
@@ -56,7 +57,7 @@ public class ControlBrick {
 				case 5: return "Colour";
 				case 6: return "CSpeed";
 				case 11: return "ColourTest";
-				default: return "Error";
+				default: return "unknown program";
 			}
 		}
 		else{
@@ -193,10 +194,34 @@ public class ControlBrick {
 		}
 	}
 	
-	private static void readInput(){ //Reading input untill more than 0 bytes are read
+	private static void readInput(){ //When calling readInput the default is no parameter which result in no timeout
+		readInput(false);
+	}
+	
+	private static void readInput(boolean timeLimitActive){ //When calling readInput(para) the default is no msg when timeouting
+		readInput(timeLimitActive, false);
+	}
+	
+	private static void readInput(boolean timeLimitActive, boolean enableMsg){ //Reading input untill more than 0 bytes are read
 		int succesful = 0;
 		while(succesful == 0){
 			succesful = RS485.hsRead(recBuff, 0, recBuff.length);
+			if(timeLimitActive && maxReadingTimeReached(enableMsg)){
+				break;
+			}
+		}
+	}
+	
+	private static boolean maxReadingTimeReached(boolean enableMsg){ //Timeout when reading inputs
+		final int MAX_READING_TIME = 2;
+		if(stopwatch.elapsed() > MAX_READING_TIME){
+			if(enableMsg){
+				System.out.println("Max reading time reached");
+			}
+			return true;
+		}
+		else{
+			return false;
 		}
 	}
 	
@@ -205,8 +230,9 @@ public class ControlBrick {
 		readInput();
 		inputToSkip = recBuff[0] + 1;
 		if(inputToSkip < DATASIZE + 1){ //OBS. See contract if confused
+			stopwatch.reset();
 			for(int i = 0; i < inputToSkip; i++){ //Skipping the data send
-				readInput();
+				readInput(true, true);
 			}
 		}
 	}
@@ -214,15 +240,19 @@ public class ControlBrick {
 	private static void buttonFuncs(){//Not working???
 		if(Button.ESCAPE.isPressed()){
 			mc.stop();
+			Delay.msDelay(500);
 		}
 		else if(Button.LEFT.isPressed()){
-			System.out.println("Godt arbejde! (Sarkasme)");
+			System.out.println("Godt arbejde! /S");
+			Delay.msDelay(500);
 		}
 		else if(Button.RIGHT.isPressed()){
-			System.out.println("Godt arbejde");
+			System.out.println("Godt arbejde!");
+			Delay.msDelay(500);
 		}
 		else if(Button.ENTER.isPressed()){
 			mc.backward();
+			Delay.msDelay(500);
 		}
 	}
 	
