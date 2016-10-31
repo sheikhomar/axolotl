@@ -160,10 +160,14 @@ void serialDebugLN(String message) {
 	serialDebug(message);
 }
 
+
+////////////////////////////// TEST CODE //////////////////////////////
+
+
 /***************************
 serialSendTest
 
-
+Broadcasts the alphabet out on the RS485 network
 ***************************/
 void serialSendTest()
 {
@@ -224,8 +228,7 @@ void serialArduinoNXTLoopTest() {
 serialArduinoPICommTest
 
 Combines the sending and receiving of data together with the PI.
-Sends five packages to the PI and blinks the builtin LED in acc with 
-which motor to push.
+Sends five packages to the PI and blinks the builtin LED in acc with which motor to push.
 ***************************/
 void serialArduinoPICommTest() {
 	byte packages[5][4] = { 
@@ -281,8 +284,8 @@ void serialNoiseMaker() {
 
 	RS485Serial.write('_');
 	RS485Serial.write('_');
-  Serial.write('_');
-  Serial.write('_');
+    Serial.write('_');
+    Serial.write('_');
 
 	for (i = 0; i < 26; i++)
 	{
