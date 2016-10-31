@@ -260,3 +260,38 @@ void serialArduinoPICommTestHelperFunction(byte data[]) {
 		received[0] -= 1;
 	}
 }
+
+/***************************
+serialNoiseMaker
+
+Writes the alphabet and then 26 sudo-random values out on the RS485 network
+***************************/
+void serialNoiseMaker() {
+	int i, numb;
+	srand(42);
+
+	serialDebugLN("Writing crap now");
+
+	digitalWrite(SERIAL_TRANSMIT_PIN, HIGH);
+	for (i = 0; i < 26; i++)
+	{
+		RS485Serial.write('a'+i);
+    Serial.write('a'+i);
+	}
+
+	RS485Serial.write('_');
+	RS485Serial.write('_');
+  Serial.write('_');
+  Serial.write('_');
+
+	for (i = 0; i < 26; i++)
+	{
+		numb = rand();
+		RS485Serial.write(numb);
+    Serial.write(numb);
+	}
+
+	digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
+	serialDebugLN("");
+	serialDebugLN("Done");
+}
