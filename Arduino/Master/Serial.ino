@@ -220,3 +220,44 @@ void serialArduinoNXTLoopTest() {
 		data[0] += 1;
 	}
 }
+
+/***************************
+serialArduinoPICommTest
+
+Combines the sending and receiving of data together with the PI.
+Sends five packages to the PI and blinks the builtin LED in acc with 
+which motor to push.
+***************************/
+void serialArduinoPICommTest() {
+	byte packages[5][4] = { 
+		{ 1,1,1,COLOUR_RED},
+		{ 2,2,2,COLOUR_BLUE},
+		{ 4,4,4,COLOUR_YELLOW},
+		{ 8,8,8,COLOUR_YELLOW},
+		{ 1,2,3,COLOUR_GREEN} 
+		};
+	byte i;
+
+	for (i = 0; i < 5; i++)
+	{
+		serialArduinoPICommTestHelperFunction(packages[i]);
+	}
+}
+
+void serialArduinoPICommTestHelperFunction(byte data[]) {
+	client sender = unknown;
+	byte received[] = { 0 };
+
+	serialSendData(RaspberryPi, data, 4, COMM_PI_ADVICEPACKAGE);
+
+	do {
+		sender = serialReadData(received, 1);
+	} while (sender != RaspberryPi);
+
+
+	while (received[0] > 0) {
+		LED(LED_BUILTIN, true);
+		delay(500);
+		received[0] -= 1;
+	}
+}

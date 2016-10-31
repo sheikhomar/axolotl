@@ -65,6 +65,8 @@ typedef struct {
 #define COMM_NXT_GET_COLOUR 5
 #define COMM_NXT_ADJUST_BELT_SPEED 6
 
+#define COMM_PI_ADVICEPACKAGE 'p'
+
 
 //Program variables
   #define BAUD 57600
@@ -130,6 +132,6 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-  runConveyorBeltAtSpeed(50);
-  runScheduler();
+	runConveyorBeltAtSpeed(50);
+	runScheduler();
 }
