@@ -5,7 +5,8 @@
 #define COLOUR_WHITE 6
 #define COLOUR_BLACK 7
 #define COLOUR_UNKNOWN 128
-#define COLOUR_NONE 255
+#define COLOUR_NONE 254
+#define COLOUR_REQUESTED 255
 
 #define FROM_ULT_TO_COLOUR_SENSOR_MS 2098
 #define FROM_ULT_TO_ARM1_MS 2564
@@ -13,17 +14,20 @@
 
 #define NOT_DETECTED_THRESHOLD 3
 
-void readColourInfo(Package *package) {
+void requestColourFromNXT(Package *package) {
   byte buf[] = { 0 };
 
   // Request colour information from the NXT
   serialSendData(NXT, buf, 0, COMM_NXT_GET_COLOUR);
 
-  package->colour = COLOUR_UNKNOWN;
+  package->colour = COLOUR_REQUESTED;
 }
 
 bool isColourInfoReady(Package *package) {
   // Check serial to see if we have received data from NXT
+  if (serialCheck() == unknown) {
+    
+  }
   return false;
 }
 
@@ -63,17 +67,14 @@ bool pushArm(Package *package) {
   return false;
 }
 
-bool finalisePackage(Package *package) {
+void finalisePackage(Package *package) {
   if (package->colour == COLOUR_NONE) {
     unsigned long currentTime = millis();
     if (currentTime - package->middleTime >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
-      serialDebug("Time to read: " + String(currentTime - package->middleTime) + "\n");
-      readColourInfo(package);
-      //sendPackageInfoToRaspberryPi(package);
-      return true;
+      serialDebug("Colour: " + String(currentTime - package->middleTime) + "\n");
+      requestColourFromNXT(package);
     }
   }
-  return false;
 }
 
 void resetPackage(Package *package) {
@@ -163,7 +164,9 @@ void runScheduler() {
 
         if (packageCount > 0) {
           Package *p = &packages[packageStartIndex];
-          if (finalisePackage(p)) {
+          finalisePackage(p);
+
+          if (false) {
             //if (readPackingAdvice(p)) {
             //  if (pushArm(p)) {
             //    packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
