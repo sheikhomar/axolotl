@@ -22,6 +22,7 @@
     <None Include="ObjectIdentification.ino" />
     <None Include="PositionTest.ino" />
     <None Include="Utilities.ino" />
+    <None Include="Scheduler.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Master.vsarduino.h">

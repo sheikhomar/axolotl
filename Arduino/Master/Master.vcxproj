@@ -84,6 +84,7 @@
     </None>
     <None Include="ObjectIdentification.ino" />
     <None Include="PositionTest.ino" />
+    <None Include="Scheduler.ino" />
     <None Include="Serial.ino" />
     <None Include="UltDist.ino" />
     <None Include="Utilities.ino" />
