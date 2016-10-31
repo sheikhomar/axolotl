@@ -49,7 +49,6 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 		Serial.write(receiver);
 		Serial.write(sizeOfData);
 		Serial.write(reciverFunction);
-		Serial.write("_");
 		for (i = 0; i < sizeOfData; i++) {
 			Serial.write(data[i]);
 		}
