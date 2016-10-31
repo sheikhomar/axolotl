@@ -155,7 +155,7 @@ void runScheduler() {
                 // Fill Package object using collected sensor data
                 handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
 
-                serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n");
+                serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n" + "\n");
 
                 // Empty buffer for sensor data
                 sensorBufferCount = 0;
