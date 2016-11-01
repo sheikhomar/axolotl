@@ -7,6 +7,17 @@
 
 #include "SerialController.h"
 
+
+/***************************
+serialSetup
+
+Initialize serial communication
+***************************/
+void serialSetup(int mainBaud, int debugBaud) {
+	RS485Serial.begin(mainBaud);
+	Serial.begin(debugBaud);
+}
+
 /***************************
 serialCheck
 

@@ -15,17 +15,9 @@
 #include "ObjectIdentification.h"
 #include "LEDController.h"
 
-//External libs
-#include <SoftwareSerial.h>
-
-//Objects
-SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
-
 void setup() {
-
 	//Initiate Serial Communication
-	Serial.begin(BAUD_DEBUG);
-	RS485Serial.begin(BAUD);
+	serialSetup(BAUD, BAUD_DEBUG);
 
 	//Initiate Pins
 	//LEDs

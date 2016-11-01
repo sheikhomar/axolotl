@@ -8,8 +8,14 @@
 #else
 	#include "WProgram.h"
 #endif
+//External libs
+#include <SoftwareSerial.h>
+
+//Objects
+SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
 
 //Functions
+void serialSetup(int mainBaud, int debugBaud);
 client serialCheck();
 void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverFunction);
 void serialSendData(client receiver, byte reciverFunction);
