@@ -18,10 +18,6 @@
 //External libs
 #include <SoftwareSerial.h>
 
-//Global variables
-unsigned short lengthBetweenSensors = 0;
-unsigned short heigthBetweenSensorAndBelt = 0;
-
 //Objects
 SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
 

@@ -17,6 +17,8 @@
 #define ARRAY_SIZE 20
 #define SPEED_CONVEYOR 140
 
+#define LENGTH_BETWEEN_SENSORS = 5000;
+#define HEIGTH_BETWEEN_SENSOR_AND_BELT = 8800;
 
 //Functions
 bool readSensors(SensorData *sensorData);

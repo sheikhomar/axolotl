@@ -40,8 +40,6 @@ bool readSensors(SensorData *sensorData) {
 		return true;
 	}
 	else {
-		heigthBetweenSensorAndBelt = 5000;
-		lengthBetweenSensors = 8800;
 		return false;
 	}
 }
@@ -69,8 +67,8 @@ void handleSensorData(Package *package, SensorData buffer[], int bufferStartInde
 	unsigned long endTime = buffer[(bufferStartIndex + bufferCount - 1) % SENSOR_BUFFER_SIZE].time;
 
 	package->middleTime = (endTime - startTime) / 2;
-	//package->height = heigthBetweenSensorAndBelt - sensor1;
-	//package->width = lengthBetweenSensors - sensor2 - sensor3;
+	//package->height = HEIGTH_BETWEEN_SENSOR_AND_BELT - sensor1;
+	//package->width = LENGTH_BETWEEN_SENSORS - sensor2 - sensor3;
 	package->height = 2000;
 	package->width = 3200;
 	packageTime = endTime - startTime;
