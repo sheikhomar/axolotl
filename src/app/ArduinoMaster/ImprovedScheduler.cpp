@@ -36,6 +36,7 @@ void runImprovedScheduler() {
 
 	SensorReading sensorBuffer1[SENSOR_BUFFER_SIZE];
 	int sensorBuffer1Count = 0;
+	bool sensor1IsDetecting = false;
 
 	SensorReading sensorBuffer2[SENSOR_BUFFER_SIZE];
 	int sensorBuffer2Count = 0;
@@ -60,6 +61,8 @@ void runImprovedScheduler() {
 
 		bool newPackageDetected1 = readSensor(sensorBuffer1, &sensorBuffer1Count, SENSOR_1);
 
+		if(sensor1IsDetecting)
+
 		if (newPackageDetected1) {
 			// We have detected a new package in the conveyor belt
 
@@ -69,8 +72,8 @@ void runImprovedScheduler() {
 
 			sensorBuffer1Count++;
 			notDetectedCount = 0;
+			sensor1IsDetecting = true;
 		}
-
 
 
 		else {
@@ -107,5 +110,5 @@ void runImprovedScheduler() {
 				sensorBufferCount = 0;
 			}*/
 		}
-	}//while
+	}
 }

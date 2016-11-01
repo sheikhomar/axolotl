@@ -19,36 +19,94 @@
 
 //read all 3 sensor data - save data somewhere - return boolean to tell if an object was deteced
 bool readSensors(SensorData *sensorData) {
-    bool sensor1, sensor2, sensor3;
-    unsigned short dist1, dist2, dist3;
+	bool sensor1, sensor2, sensor3;
+	unsigned short dist1, dist2, dist3;
 
-    dist2 = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
-    delay(1);
-    dist1 = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
-    delay(1);
-    dist3 = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
+	dist2 = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
+	delay(1);
+	dist1 = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
+	delay(1);
+	dist3 = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
 
-    //serialDebug("Dist1: "+ String(dist1));
-    //serialDebug(" Dist2: "+ String(dist2));
-    //serialDebug(" Dist3: "+ String(dist3));
-    //serialDebug("\n");
+	//serialDebug("Dist1: "+ String(dist1));
+	//serialDebug(" Dist2: "+ String(dist2));
+	//serialDebug(" Dist3: "+ String(dist3));
+	//serialDebug("\n");
 
-    sensor1 = dist1 < ult1_TagDist;
-    sensor2 = dist2 < ult2_TagDist;
-    sensor3 = dist3 < ult3_TagDist;
+	sensor1 = dist1 < ult1_TagDist;
+	sensor2 = dist2 < ult2_TagDist;
+	sensor3 = dist3 < ult3_TagDist;
 
-    if (sensor1) {
-        //serialDebug("Block detected!\n");
-        sensorData->sensor1 = dist1;
-        sensorData->sensor2 = dist2;
-        sensorData->sensor3 = dist3;
-        sensorData->time = millis();
+	if (sensor1) {
+		//serialDebug("Block detected!\n");
+		sensorData->sensor1 = dist1;
+		sensorData->sensor2 = dist2;
+		sensorData->sensor3 = dist3;
+		sensorData->time = millis();
 
-        return true;
-    }
-    else {
-        return false;
-    }
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor) {
+	bool sensor;
+	unsigned short dist;
+	unsigned short trueCount = 0;
+
+	if (whichSensor == SENSOR_1) {
+		dist = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
+		sensor = dist < ult1_TagDist;
+	}
+	else if (whichSensor == SENSOR_2) {
+		dist = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
+		sensor = dist < ult2_TagDist;
+	}
+	else if (whichSensor == SENSOR_3) {
+		dist = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
+		sensor = dist < ult3_TagDist;
+	}
+	else {
+		die("ERROR - No real sensor.");
+	}
+
+	if (*bufferCount == 0 && sensor) {
+		sensorBuffer[*bufferCount].sensorReading = dist;
+		sensorBuffer[*bufferCount].time = millis();
+		*bufferCount++;
+		return false;
+	} else if (*bufferCount == 1) {
+		sensorBuffer[*bufferCount].sensorReading = dist;
+		sensorBuffer[*bufferCount].time = millis();
+		*bufferCount++;
+		return false;
+	} else {
+		sensorBuffer[*bufferCount].sensorReading = dist;
+		sensorBuffer[*bufferCount].time = millis();
+		*bufferCount++;
+		
+		for (int i = *bufferCount-3; i < *bufferCount; i++) {
+			if (whichSensor == SENSOR_1) {
+				sensor = sensorBuffer[i].sensorReading < ult1_TagDist;
+			}
+			else if (whichSensor == SENSOR_2) {
+				sensor = sensorBuffer[i].sensorReading < ult2_TagDist;
+			}
+			else if (whichSensor == SENSOR_3) {
+				sensor = sensorBuffer[i].sensorReading < ult3_TagDist;
+			}
+			
+			if (sensor)
+				trueCount++;
+		}
+
+		if(trueCount > 0)
+			return true;
+		// else indicate that data is ready to be handled
+		return false;
+	}
 }
 
 
