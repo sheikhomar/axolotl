@@ -9,6 +9,7 @@ public class ControlBrick {
 	private static byte[] recBuff = {0};
 	private static final int DATASIZE = 11;
 	private static Stopwatch stopwatch = new Stopwatch();
+	private static boolean beltRunning = false;
 
     public static void main(String[] args) throws InterruptedException {
 		System.out.println("A-mei-zing!");
@@ -177,10 +178,12 @@ public class ControlBrick {
 	
 	private static void fullSpeedC(){
 		mc.backward();
+		beltRunning = true;
 	}
 	
 	private static void stopC(){
 		mc.stop();
+		beltRunning = false;
 	}
 	
 	private static void adjustSpeedC(){
@@ -237,9 +240,10 @@ public class ControlBrick {
 		}
 	}
 	
-	private static void buttonFuncs(){//Not working???
+	private static void buttonFuncs(){
 		if(Button.ESCAPE.isPressed()){
 			mc.stop();
+			beltRunning = false;
 			Delay.msDelay(500);
 		}
 		else if(Button.LEFT.isPressed()){
@@ -251,7 +255,14 @@ public class ControlBrick {
 			Delay.msDelay(500);
 		}
 		else if(Button.ENTER.isPressed()){
-			mc.backward();
+			if(beltRunning){
+				mc.forward();
+				beltRunning = false;
+			}
+			else{
+				mc.backward();
+				beltRunning = true;
+			}
 			Delay.msDelay(500);
 		}
 	}
