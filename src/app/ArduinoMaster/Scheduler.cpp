@@ -58,12 +58,12 @@ bool pushArm(Package *package) {
 		unsigned long currentTime = millis();
 
 		if (package->bin == 1 && currentTime - package->middleTime >= FROM_ULT_TO_ARM1_MS) {
-			byte buf[0];
+			byte buf[1];
 			serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM1);
 			return true;
 		}
 		else if (package->bin == 2 && currentTime - package->middleTime >= FROM_ULT_TO_ARM2_MS) {
-			byte buf[0];
+			byte buf[1];
 			serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM2);
 			return true;
 		}
