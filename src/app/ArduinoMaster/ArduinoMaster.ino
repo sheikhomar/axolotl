@@ -1,4 +1,9 @@
-// the setup function runs once when you press reset or power the board
+/*
+* Master Program
+*
+*/
+
+//Internal libs
 #include "Defines.h"
 #include "UltrasoundSensorTest.h"
 #include "SerialControllerTest.h"
@@ -9,6 +14,17 @@
 #include "Scheduler.h"
 #include "ObjectIdentification.h"
 #include "LEDController.h"
+
+//External libs
+#include <SoftwareSerial.h>
+
+//Global variables
+unsigned short lengthBetweenSensors = 0;
+unsigned short heigthBetweenSensorAndBelt = 0;
+
+//Objects
+SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
+
 void setup() {
 
 	//Initiate Serial Communication
@@ -46,12 +62,12 @@ void setup() {
 	serialDebugLN("Starting Arduino");
 }
 
-// the loop function runs over and over again until power down or reset
-void loop() {
-	
-	digitalWrite(LED_BUILTIN, HIGH);
-	delay(1000);
-	digitalWrite(LED_BUILTIN, LOW);
-	delay(1000);
+/***************************
+loop
 
+Main control loop of the Arduino.
+***************************/
+void loop() {
+	runConveyorBeltAtSpeed(50);
+	runScheduler();
 }

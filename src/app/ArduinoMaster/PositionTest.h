@@ -9,6 +9,12 @@
 	#include "WProgram.h"
 #endif
 
+//Functions
+void determineTimeBetweenSensors();
+void readColourSensor();
+bool readSensorsBest();
+String determineColour(byte input);
+
 
 #endif
 

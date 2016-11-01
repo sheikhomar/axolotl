@@ -9,6 +9,9 @@
 	#include "WProgram.h"
 #endif
 
+//Functions
+void LED(int LED, bool TurnOn);
+
 
 #endif
 

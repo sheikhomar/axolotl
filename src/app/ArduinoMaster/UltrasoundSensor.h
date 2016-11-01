@@ -9,6 +9,10 @@
 	#include "WProgram.h"
 #endif
 
+//Functions
+unsigned short GetUltDistance(int trigPin, int echoPin, bool wait);
+void TestUltSensors();
+
 
 #endif
 
