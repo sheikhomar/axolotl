@@ -69,6 +69,15 @@ typedef struct {
 
 #define COMM_PI_ADVICEPACKAGE 'p'
 
+#define COLOUR_RED 0
+#define COLOUR_GREEN 1
+#define COLOUR_BLUE 2
+#define COLOUR_YELLOW 3
+#define COLOUR_WHITE 6
+#define COLOUR_BLACK 7
+#define COLOUR_UNKNOWN 128
+#define COLOUR_NONE 254
+#define COLOUR_REQUESTED 255
 
 //Program variables
 #define BAUD 57600
