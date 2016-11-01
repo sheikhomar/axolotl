@@ -1,5 +1,5 @@
 #define ult1_TagDist 3800
-#define ult2_TagDist 4000
+#define ult2_TagDist 7000
 #define ult3_TagDist 3500 // TODO: This must be adjusted.
 
 #define ARRAY_SIZE 20
@@ -63,7 +63,7 @@ void handleSensorData(Package *package, SensorData buffer[], int bufferStartInde
   unsigned long startTime = buffer[bufferStartIndex].time;
   unsigned long endTime = buffer[(bufferStartIndex + bufferCount-1) % SENSOR_BUFFER_SIZE].time;
   
-  package->middleTime = (endTime - startTime) / 2;
+  package->middleTime = startTime + ((endTime - startTime) / 2);
 	//package->height = heigthBetweenSensorAndBelt - sensor1;
 	//package->width = lengthBetweenSensors - sensor2 - sensor3;
   package->height = 2000;
