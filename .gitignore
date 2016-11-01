@@ -200,3 +200,4 @@ __pycache__
 # VMicro
 src/app/ArduinoMaster/__vm/*.*
 src/app/ArduinoMaster/ArduinoMaster.vcxproj
+axolotl.VC.db
