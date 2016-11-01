@@ -38,6 +38,15 @@ bool isColourInfoReady(Package *package) {
 
 bool isPackingAdviceReady(Package *package) {
     // Check serial to see if we have received data from Raspberry Pi
+
+    byte buf[] = { 0 };
+    client clientInfo = serialReadData(buf, 1);
+    if (clientInfo == Arduino) {
+        package->bin = buf[0];
+        serialDebug("Bin from Pi: " + String(buf[0]) + "\n");
+
+        return true;
+    }
     return false;
 }
 
@@ -176,7 +185,14 @@ void runScheduler() {
         if (packageCount > 0) {
             Package *p = &packages[packageStartIndex];
             requestColourInformation(p);
-            isColourInfoReady(p);
+            if (isColourInfoReady(p)) {
+                sendPackageInfoToRaspberryPi(p);
+
+            }
+
+            if (isPackingAdviceReady(p)) {
+                
+            }
 
             if (pushArm(p)) {
                 // Remove package from the buffer
