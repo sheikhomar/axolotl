@@ -198,4 +198,4 @@ __pycache__
 
 
 # VMicro
-Arduino/Master/__vm/*.*
+src/app/ArduinoMaster/__vm/*.*

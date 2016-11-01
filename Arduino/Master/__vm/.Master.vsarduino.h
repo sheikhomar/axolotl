@@ -12,7 +12,6 @@
 #define _VSARDUINO_H_
 #define __AVR_ATmega328p__
 #define __AVR_ATmega328P__
-#define _VMDEBUG 1
 #define F_CPU 16000000L
 #define ARDUINO 106012
 #define ARDUINO_AVR_UNO
@@ -51,5 +50,12 @@ extern "C" void __cxa_pure_virtual() {;}
 #define F(string_literal) ((const PROGMEM char *)(string_literal))
 #undef PSTR
 #define PSTR(string_literal) ((const PROGMEM char *)(string_literal))")
-#include "ArduinoMaster.ino"
+#include "Master.ino"
+#include "LED.ino"
+#include "ObjectIdentification.ino"
+#include "PositionTest.ino"
+#include "Scheduler.ino"
+#include "Serial.ino"
+#include "UltDist.ino"
+#include "Utilities.ino"
 #endif
