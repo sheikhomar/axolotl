@@ -54,7 +54,7 @@ void readColourSensor() {
 		sender = serialReadData(dataRec, 1);
 	} while (sender != Arduino);
 	colour = dataRec[0];
-	serialDebug(determineColour(colour));
+	serialDebug("\n" + determineColour(colour));
 }
 
 bool readSensorsBest() { //Returning true when an object is detected by ult sensors
