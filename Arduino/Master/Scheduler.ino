@@ -8,9 +8,9 @@
 #define COLOUR_NONE 254
 #define COLOUR_REQUESTED 255
 
-#define FROM_ULT_TO_COLOUR_SENSOR_MS 2098
-#define FROM_ULT_TO_ARM1_MS 2564
-#define FROM_ULT_TO_ARM2_MS 3497
+#define FROM_ULT_TO_COLOUR_SENSOR_MS 462
+#define FROM_ULT_TO_ARM1_MS 1319
+#define FROM_ULT_TO_ARM2_MS 1847
 
 #define NOT_DETECTED_THRESHOLD 3
 
@@ -58,12 +58,13 @@ bool readPackingAdvice(Package *package) {
 bool pushArm(Package *package) {
   if (package->bin != -1) {
     unsigned long currentTime = millis();
+    unsigned long timeDiff = currentTime - package->middleTime;
     
-    if (package->bin == 1 && currentTime - package->middleTime >= FROM_ULT_TO_ARM1_MS) {
+    if (package->bin == 1 && timeDiff >= FROM_ULT_TO_ARM1_MS) {
       byte buf[0];
       serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM1);
       return true;
-    } else if (package->bin == 2 && currentTime - package->middleTime >= FROM_ULT_TO_ARM2_MS) {
+    } else if (package->bin == 2 && timeDiff >= FROM_ULT_TO_ARM2_MS) {
       byte buf[0];
       serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM2);
       return true;
@@ -72,12 +73,15 @@ bool pushArm(Package *package) {
   return false;
 }
 
-void finalisePackage(Package *package) {
+void requestColourInformation(Package *package) {
   if (package->colour == COLOUR_NONE) {
     unsigned long currentTime = millis();
     unsigned long timeDiff = currentTime - package->middleTime;
 
     if (timeDiff >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
+      serialDebug("Current Time: " + String(currentTime) + "\n");
+      serialDebug("Middle time: " + String(package->middleTime) + "\n");
+      serialDebug("Time diff: " + String(timeDiff) + "\n");
       requestColourFromNXT(package);
     }
   }
@@ -172,16 +176,10 @@ void runScheduler() {
 
         if (packageCount > 0) {
           Package *p = &packages[packageStartIndex];
-          finalisePackage(p);
+          requestColourInformation(p);
 
           if (isColourInfoReady(p)) {
             pushArm(p);
-            //if (readPackingAdvice(p)) {
-            //  if (pushArm(p)) {
-            //    packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
-            //    packageCount--;
-            //  }
-            //}
 
             // Remove package from the buffer
             packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
