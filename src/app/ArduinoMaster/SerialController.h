@@ -23,14 +23,6 @@ void serialDebug(String message);
 void serialDebugLN(String message);
 void serialWrite(byte data);
 
-void serialSendTest();
-void serialReceiveTest();
-void serialArduinoNXTLoopTest();
-void serialArduinoPICommTest();
-void serialArduinoPICommTestHelperFunction(byte data[]);
-void serialNoiseMaker();
-void serialSendAllCharsTest();
-
 
 
 

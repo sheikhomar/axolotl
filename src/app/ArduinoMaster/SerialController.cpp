@@ -21,7 +21,7 @@ serialSetup
 Initialize serial communication
 ***************************/
 void serialSetup(long mainBaud, long debugBaud) {
-	RS485Serial.begin(mainBaud); //FIX
+	RS485Serial.begin(mainBaud);
 	Serial.begin(debugBaud);
 }
 
@@ -33,6 +33,10 @@ If no data exists in buffer none is returned.
 ***************************/
 client serialCheck() {
 	byte read;
+
+	if (RS485Serial.available() < 1) {
+		return none;
+	}
 
 	read = RS485Serial.peek();
 
@@ -115,7 +119,7 @@ client serialReadData(byte data[], int data_length) {
 	command = RS485Serial.read();
 	{serialWrite(length); serialWrite(command); }//Additional debug messages
 
-												   //Kick if length is incorrect
+	//Kick if length is incorrect
 	if (length < 0 || length > RS485_DATA_LENGTH_MAX) {
 		return unknown;
 	}
@@ -140,7 +144,7 @@ client serialReadData(byte data[], int data_length) {
 	switch (command)
 	{
 	case   0: break;
-	case   5: break;  //NXT colour
+	case   5: break; //NXT colour
 	case  10: break; //Reserved for DEBUG
 	case 'p': break; //PI motor to push
 	default:
@@ -149,6 +153,7 @@ client serialReadData(byte data[], int data_length) {
 
 	return Arduino;
 }
+
 /***************************
 serialBuffTimeout
 
@@ -166,7 +171,6 @@ bool serialBuffTimeout(byte numberOfRequiredElements) {
 
 	return reachedTarget;
 }
-
 
 /***************************
 serialDebug
@@ -187,123 +191,23 @@ void serialDebugLN(String message) {
 	serialDebug(message);
 }
 
+/***************************
+serialWrite
+
+Writes a byte to the DEBUG serial
+***************************/
 void serialWrite(byte data) {
 #if RS485_SERIAL_PRINT_BINARY
 	Serial.write(data);
 #else
 	if (data < 33 || data > 126) {
-		Serial.write('|');
 		Serial.print(data);
+		Serial.write('|');
 	}
 	else {
 		Serial.write(data);
 	}
 #endif
-}
-
-
-////////////////////////////// TEST CODE //////////////////////////////
-
-
-/***************************
-serialSendTest
-
-Broadcasts the alphabet out on the RS485 network
-***************************/
-void serialSendTest()
-{
-	int i;
-	const int sizeOfData = 26;
-	byte myArr[sizeOfData];
-
-	for (i = 0; i<sizeOfData; i++) {
-		myArr[i] = 'a' + i;
-	}
-
-	serialSendData(NXT, myArr, sizeOfData, 0);
-}
-
-/***************************
-serialReceiveTest
-
-
-***************************/
-void serialReceiveTest() {
-	byte byteReceived[] = { 0 };
-
-	if (RS485Serial.available())
-	{
-		LED(LED1_PIN, true);
-		serialReadData(byteReceived, 1);
-		serialDebug(String(byteReceived[0]));
-		delay(10);
-		LED(LED1_PIN, false);
-	}
-}
-
-/***************************
-serialArduinoNXTLoopTest
-
-Combines the sending and receiving of data together with the NXT.
-A byte is incremented from 'a' to 'z', where both the Arduino and NXT increments the value by one.
-***************************/
-void serialArduinoNXTLoopTest() {
-	byte data[] = { 'a' };
-	client sender = unknown;
-
-	while (data[0] <= 'y')
-	{
-		serialSendData(NXT, data, 1, 10);
-
-		do {
-			sender = serialReadData(data, 1);
-		} while (sender != Arduino);
-		String masterString = "|Data=";
-		masterString.concat(data[0]);
-		masterString.concat("|");
-
-		data[0] += 1;
-	}
-}
-
-/***************************
-serialArduinoPICommTest
-
-Combines the sending and receiving of data together with the PI.
-Sends five packages to the PI and blinks the builtin LED in acc with which motor to push.
-***************************/
-void serialArduinoPICommTest() {
-	byte packages[5][4] = {
-		{ 1,1,1,COLOUR_RED },
-		{ 2,2,2,COLOUR_BLUE },
-		{ 4,4,4,COLOUR_YELLOW },
-		{ 8,8,8,COLOUR_YELLOW },
-		{ 1,2,3,COLOUR_GREEN }
-	};
-	byte i;
-
-	for (i = 0; i < 5; i++)
-	{
-		serialArduinoPICommTestHelperFunction(packages[i]);
-	}
-}
-
-void serialArduinoPICommTestHelperFunction(byte data[]) {
-	client sender = unknown;
-	byte received[] = { 0 };
-
-	serialSendData(RaspberryPi, data, 4, COMM_PI_ADVICEPACKAGE);
-
-	do {
-		sender = serialReadData(received, 1);
-	} while (sender != RaspberryPi);
-
-
-	while (received[0] > 0) {
-		LED(LED_BUILTIN, true);
-		delay(500);
-		received[0] -= 1;
-	}
 }
 
 /***************************
@@ -339,24 +243,4 @@ void serialNoiseMaker() {
 	digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
 	serialDebugLN("");
 	serialDebugLN("Done");
-}
-
-void serialSendAllCharsTest() {
-	byte data[] = { '_', 0, '_' };
-	int i;
-
-	for (i = 0; i < 256; i++)
-	{
-		data[1] = i;
-
-		if (RS485_SERIAL_PRINT_BINARY) {
-			serialSendData(DEBUG, data, 3, 10);
-			Serial.print(data[1]);
-		}
-		else {
-			serialSendData(DEBUG, data, 3, 10);
-			Serial.println("");
-		}
-		
-	}
 }
