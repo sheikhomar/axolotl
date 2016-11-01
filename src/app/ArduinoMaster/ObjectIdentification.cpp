@@ -103,9 +103,8 @@ bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor)
 		}
 
 		if(trueCount > 0)
-			return true;
-		// else indicate that data is ready to be handled
-		return false;
+			return false;
+		return true;
 	}
 }
 

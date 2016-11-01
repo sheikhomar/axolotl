@@ -57,11 +57,11 @@ void runImprovedScheduler() {
 	serialDebug("Before entering while loop\n");
 
 	while (true) {
-		// delay(15);
-
 		bool newPackageDetected1 = readSensor(sensorBuffer1, &sensorBuffer1Count, SENSOR_1);
 
-		if(sensor1IsDetecting)
+		if(sensor1IsDetecting && !newPackageDetected1){
+		
+		}
 
 		if (newPackageDetected1) {
 			// We have detected a new package in the conveyor belt
