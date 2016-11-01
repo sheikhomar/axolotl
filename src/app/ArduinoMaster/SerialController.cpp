@@ -20,8 +20,8 @@ serialSetup
 
 Initialize serial communication
 ***************************/
-void serialSetup(int mainBaud, int debugBaud) {
-	RS485Serial.begin(mainBaud);
+void serialSetup(long mainBaud, long debugBaud) {
+	RS485Serial.begin(mainBaud); //FIX
 	Serial.begin(debugBaud);
 }
 

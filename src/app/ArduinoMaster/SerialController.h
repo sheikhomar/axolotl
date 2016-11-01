@@ -13,7 +13,7 @@
 #include "Defines.h"
 
 //Functions
-void serialSetup(int mainBaud, int debugBaud);
+void serialSetup(long mainBaud, long debugBaud);
 client serialCheck();
 void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverFunction);
 void serialSendData(client receiver, byte reciverFunction);
