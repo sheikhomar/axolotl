@@ -73,11 +73,11 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 
 	//Additional debug messages
 	{
-		Serial.write(receiver);
-		Serial.write(sizeOfData);
-		Serial.write(reciverFunction);
+		serialWrite(receiver);
+		serialWrite(sizeOfData);
+		serialWrite(reciverFunction);
 		for (i = 0; i < sizeOfData; i++) {
-			Serial.write(data[i]);
+			serialWrite(data[i]);
 		}
 	}
 }
@@ -104,7 +104,7 @@ client serialReadData(byte data[], int data_length) {
 			return none;
 		}
 		id = RS485Serial.read();
-		{Serial.write(id); } //Additional debug messages
+		{serialWrite(id); } //Additional debug messages
 
 		incorrectSender = !(id == DEBUG || id == NXT || id == RaspberryPi || id == Arduino);
 	} while (incorrectSender);
@@ -113,7 +113,7 @@ client serialReadData(byte data[], int data_length) {
 	serialBuffTimeout(2);
 	length = RS485Serial.read();
 	command = RS485Serial.read();
-	{Serial.write(length); Serial.write(command); }//Additional debug messages
+	{serialWrite(length); serialWrite(command); }//Additional debug messages
 
 												   //Kick if length is incorrect
 	if (length < 0 || length > RS485_DATA_LENGTH_MAX) {
@@ -125,7 +125,7 @@ client serialReadData(byte data[], int data_length) {
 	if (id != Arduino) {
 		for (i = 0; i < length; i++)
 		{
-			Serial.write(RS485Serial.read()); //debug, should only read not print out.
+			serialWrite(RS485Serial.read()); //debug, should only read not print out.
 		}
 		return (client)id;
 	}
@@ -134,7 +134,7 @@ client serialReadData(byte data[], int data_length) {
 	for (i = 0; i < length; i++)
 	{
 		data[i] = RS485Serial.read();
-		Serial.write(data[i]);
+		serialWrite(data[i]);
 	}
 
 	switch (command)
@@ -185,6 +185,20 @@ void serialDebug(String message) {
 void serialDebugLN(String message) {
 	message.concat("\r\n");
 	serialDebug(message);
+}
+
+void serialWrite(byte data) {
+#if RS485_SERIAL_PRINT_BINARY
+	Serial.write(data);
+#else
+	if (data < 33 || data > 126) {
+		Serial.write('|');
+		Serial.print(data);
+	}
+	else {
+		Serial.write(data);
+	}
+#endif
 }
 
 
@@ -307,22 +321,42 @@ void serialNoiseMaker() {
 	for (i = 0; i < 26; i++)
 	{
 		RS485Serial.write('a' + i);
-		Serial.write('a' + i);
+		serialWrite('a' + i);
 	}
 
 	RS485Serial.write('_');
 	RS485Serial.write('_');
-	Serial.write('_');
-	Serial.write('_');
+	serialWrite('_');
+	serialWrite('_');
 
 	for (i = 0; i < 26; i++)
 	{
 		numb = rand();
 		RS485Serial.write(numb);
-		Serial.write(numb);
+		serialWrite(numb);
 	}
 
 	digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
 	serialDebugLN("");
 	serialDebugLN("Done");
+}
+
+void serialSendAllCharsTest() {
+	byte data[] = { '_', 0, '_' };
+	int i;
+
+	for (i = 0; i < 256; i++)
+	{
+		data[1] = i;
+
+		if (RS485_SERIAL_PRINT_BINARY) {
+			serialSendData(DEBUG, data, 3, 10);
+			Serial.print(data[1]);
+		}
+		else {
+			serialSendData(DEBUG, data, 3, 10);
+			Serial.println("");
+		}
+		
+	}
 }
