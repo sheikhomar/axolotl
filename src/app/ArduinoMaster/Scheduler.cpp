@@ -59,12 +59,12 @@ bool pushArm(Package *package) {
         unsigned long timeDiff = currentTime - package->middleTime;
 
         if (package->bin == 1 && timeDiff >= FROM_ULT_TO_ARM1_MS) {
-            byte buf[0];
+            byte buf[1];
             serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM1);
             return true;
         }
         else if (package->bin == 2 && timeDiff >= FROM_ULT_TO_ARM2_MS) {
-            byte buf[0];
+            byte buf[1];
             serialSendData(NXT, buf, 0, COMM_NXT_PUSH_ARM2);
             return true;
         }
@@ -78,9 +78,6 @@ void requestColourInformation(Package *package) {
         unsigned long timeDiff = currentTime - package->middleTime;
 
         if (timeDiff >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
-            serialDebug("Current Time: " + String(currentTime) + "\n");
-            serialDebug("Middle time: " + String(package->middleTime) + "\n");
-            serialDebug("Time diff: " + String(timeDiff) + "\n");
             requestColourFromNXT(package);
         }
     }

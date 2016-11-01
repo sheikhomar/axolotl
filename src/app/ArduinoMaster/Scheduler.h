@@ -22,7 +22,7 @@ bool isPackingAdviceReady(Package *package);
 void sendPackageInfoToRaspberryPi(Package *package);
 bool readPackingAdvice(Package *package);
 bool pushArm(Package *package);
-void finalisePackage(Package *package);
+void requestColourInformation(Package *package);
 void resetPackage(Package *package);
 void resetPackages(Package packages[]);
 void runScheduler();
