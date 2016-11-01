@@ -24,6 +24,7 @@ import java.io.IOError;
 import java.io.IOException;
 
 import beuchert.bluetoothtest.Interfaces.Callbacks;
+import beuchert.bluetoothtest.Models.Bin;
 import beuchert.bluetoothtest.Models.Package;
 import beuchert.bluetoothtest.R;
 import beuchert.bluetoothtest.Services.BluetoothService;
@@ -125,49 +126,49 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     // interface methods:
     @Override
     public void showBluetoothConnectionAlert() {
-        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
-        alertDiaglogBuilder.setTitle("Connection Error");
-        alertDiaglogBuilder.setMessage("There was a bluetooth connection error (IOException).");
-        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Connection Error");
+        alertDialogBuilder.setMessage("There was a bluetooth connection error (IOException).");
+        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
 
-        alertDiaglogBuilder.setCancelable(false);
-        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 
     @Override
     public void showBluetoothAdapterAlert() {
-        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
-        alertDiaglogBuilder.setTitle("No Bluetooth adapter");
-        alertDiaglogBuilder.setMessage("Your device does not have a working bluetooth adapter.");
-        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("No Bluetooth adapter");
+        alertDialogBuilder.setMessage("Your device does not have a working bluetooth adapter.");
+        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 System.exit(0);
             }
         });
-        alertDiaglogBuilder.setCancelable(false);
-        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 
     @Override
     public void showBluetoothNotEnabledAlert() {
-        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
-        alertDiaglogBuilder.setTitle("Bluetooth not turned on.");
-        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Bluetooth not turned on.");
+        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
         });
-        alertDiaglogBuilder.setCancelable(false);
-        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 
@@ -177,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         PackageContent.append("\n" + Package);
     }
 
-    int currentBin = 0;
     boolean firstTime = true;
 
     @Override
@@ -185,17 +185,17 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         String[] PackSplit = Package.split(" ");
 
         if(PackSplit[0].equals("B:")){
-            currentBin++;
             Log.d(MainActivity.class.getName(), "Bin Recieved");
             PackSplit[2] = PackSplit[2].replaceAll("\n", "");
             int length = Integer.parseInt(PackSplit[1]);
             int width = Integer.parseInt(PackSplit[2]);
             binLayers = Integer.parseInt(PackSplit[3]);
+            drawingView.addBin(new Bin(binLayers));
+
             if(firstTime) {
                 drawingView.setSize(width, length);
                 firstTime = false;
             }
-
         }
         else if(PackSplit[0].equals("P:")){
             Log.d(MainActivity.class.getName(), "Package Recieved");
@@ -206,7 +206,8 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             int width = Integer.parseInt(PackSplit[4]);
             int color = Integer.parseInt(PackSplit[5]);
             int layer = Integer.parseInt(PackSplit[6]);
-            drawingView.addPackage(new Package(x, y, length, width, color, layer, currentBin));
+            int binID = Integer.parseInt(PackSplit[7]);
+            drawingView.addPackage(new Package(x, y, length, width, color, layer, binID));
         }
         else {
             showInvalidPackageError();
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
 
     public void createDrawingView(int length, int width){
         if(drawingViewCreated == false){
-            drawingViewCreated = true;
+            //drawingViewCreated = true;
             RelativeLayout DrawLayout = (RelativeLayout) findViewById(R.id.rectCanvas);
             drawingView = new DrawingView(this,length,width);
             DrawLayout.addView(drawingView);
@@ -272,18 +273,18 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     }
 
     public void showInvalidPackageError(){
-        AlertDialog.Builder alertDiaglogBuilder = new AlertDialog.Builder(this);
-        alertDiaglogBuilder.setTitle("Package error");
-        alertDiaglogBuilder.setMessage("The application don't know how to handle the message which was recieved.");
-        alertDiaglogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Package error");
+        alertDialogBuilder.setMessage("The application don't know how to handle the message which was recieved.");
+        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
 
-        alertDiaglogBuilder.setCancelable(false);
-        AlertDialog alertDialog = alertDiaglogBuilder.create();
+        alertDialogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 

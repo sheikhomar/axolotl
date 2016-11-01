@@ -6,8 +6,10 @@ import java.util.List;
 
 public class Bin {
     public List<Layer> layers;
+    public int amountOfLayers;
 
-    public Bin(){
+    public Bin(int numberOfLayers){
+        amountOfLayers = numberOfLayers;
         layers = new ArrayList<Layer>();
     }
 

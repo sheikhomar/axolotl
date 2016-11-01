@@ -60,28 +60,23 @@ public class DrawingView extends View {
         canvas.drawBitmap(frame, null, bounds , null);
     }
 
+    public void addBin(Bin bin){
+        bins.add(bin);
+        int index = bins.indexOf(bin);
+
+        for(int i = 0; i < bin.amountOfLayers; i++){
+            bin.addLayerToBin(new Layer());
+            mainActivity.addElementToSpinner("Bin: " + (index+1) + " Layer: " + (i+1));
+        }
+    }
+
     public void addPackage(Package pack){
         Bin bin = null;
         Layer layer = null;
 
-        if(bins.size() < pack.bin) {
-            while (bins.size() < pack.bin) {
-                bins.add(new Bin());
-            }
-            bin = bins.get(pack.bin-1);
-        }
-        else
-            bin = bins.get(pack.bin-1);
+        bin = bins.get(pack.bin-1);
 
-        if (bin.layers.size() < pack.layer){
-            while(bin.layers.size() < pack.layer) {
-                bin.layers.add(new Layer());
-                mainActivity.addElementToSpinner("Bin: " + pack.bin + " Layer: " + pack.layer);
-            }
-            layer = bin.layers.get(pack.layer-1);
-        }
-        else
-            layer = bin.layers.get(pack.layer-1);
+        layer = bin.layers.get(pack.layer-1);
 
         layer.addPackageToLayer(pack);
 
