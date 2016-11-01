@@ -8,6 +8,12 @@
 
 #include "SerialController.h"
 
+//External libs
+#include <SoftwareSerial.h>
+
+//Objects
+SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
+
 
 /***************************
 serialSetup

@@ -3,6 +3,9 @@
 *
 */
 
+//External libs
+#include <SoftwareSerial.h>
+
 //Internal libs
 #include "Defines.h"
 #include "UltrasoundSensorTest.h"

@@ -8,11 +8,9 @@
 #else
 	#include "WProgram.h"
 #endif
-//External libs
-#include <SoftwareSerial.h>
 
-//Objects
-SoftwareSerial RS485Serial(RS485_RX, RS485_TX);
+//Internal libs
+#include "Defines.h"
 
 //Functions
 void serialSetup(int mainBaud, int debugBaud);
