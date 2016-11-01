@@ -191,7 +191,8 @@ Broadcasts the alphabet out on the RS485 network
 ***************************/
 void serialSendTest()
 {
-	int i, sizeOfData = 26;
+	int i;
+	const int sizeOfData = 26;
 	byte myArr[sizeOfData];
 
 	for (i = 0; i<sizeOfData; i++) {
