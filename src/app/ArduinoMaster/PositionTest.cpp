@@ -7,6 +7,7 @@
 #include "SerialController.h"
 #include "LEDController.h"
 #include "UltrasoundSensor.h"
+
 #include "PositionTest.h"
 
 void determineTimeBetweenSensors() {
@@ -42,7 +43,7 @@ void determineTimeBetweenSensors() {
 
 void readColourSensor() {
 	bool ready = false;
-	byte dataS[0];
+	byte dataS[1];
 	byte dataRec[1];
 	byte colour = -1;
 	client sender = unknown;
