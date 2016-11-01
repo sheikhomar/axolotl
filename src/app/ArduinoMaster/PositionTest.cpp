@@ -7,6 +7,7 @@
 #include "SerialController.h"
 #include "LEDController.h"
 #include "UltrasoundSensor.h"
+#include "ObjectIdentification.h"
 
 #include "PositionTest.h"
 
