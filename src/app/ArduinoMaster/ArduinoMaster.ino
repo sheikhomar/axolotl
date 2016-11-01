@@ -4,6 +4,7 @@
 */
 
 //External libs
+#include "ImprovedScheduler.h"
 #include <SoftwareSerial.h>
 
 //Internal libs

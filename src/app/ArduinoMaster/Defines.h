@@ -35,6 +35,11 @@ typedef struct {
 	unsigned long time;
 } SensorData;
 
+typedef struct {
+	unsigned short sensorReading;
+	unsigned long time;
+} SensorReading;
+
 //Pins 
 //LEDs
 #define LED1_PIN 8
@@ -88,6 +93,9 @@ typedef struct {
 #define PACKAGE_BUFFER_SIZE 10
 #define RS485_DATA_LENGTH_MAX 11
 
+#define SENSOR_1 1
+#define SENSOR_2 2
+#define SENSOR_3 3
 
 #endif
 

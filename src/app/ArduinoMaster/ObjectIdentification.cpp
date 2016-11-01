@@ -44,6 +44,50 @@ bool readSensors(SensorData *sensorData) {
 	}
 }
 
+bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor) {
+	bool sensor;
+	unsigned short dist;
+
+	if (whichSensor == 1) {
+		dist = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
+		sensor = dist < ult1_TagDist;
+	}
+	else if (whichSensor == 2) {
+		dist = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
+		sensor = dist < ult2_TagDist;
+	}
+	else if (whichSensor == 3) {
+		dist = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
+		sensor = dist < ult3_TagDist;
+	}
+	else {
+		die("ERROR - No real sensor.");
+	}
+
+	if (*bufferCount <= 3) {
+		sensorBuffer[*bufferCount].sensorReading = dist;
+		sensorBuffer[*bufferCount].time = millis();
+		*bufferCount++;
+		return false;
+	}
+	else {
+		for (int i = 0; i < *bufferCount; i++) {
+			if (whichSensor == 1) {
+
+			}
+			else if (whichSensor == 2) {
+
+			}
+			else if (whichSensor == 3) {
+
+			}
+			//if (sensorBuffer[i].sensorReading <)
+		}
+
+		return true;
+	}
+}
+
 
 
 //based on the collected data (so far) create the object
@@ -146,3 +190,4 @@ int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte se
 
 	return mostCommonValue;
 }
+
