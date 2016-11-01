@@ -9,9 +9,9 @@
 	#include "WProgram.h"
 #endif
 //Defines
-#define FROM_ULT_TO_COLOUR_SENSOR_MS 2098
-#define FROM_ULT_TO_ARM1_MS 2564
-#define FROM_ULT_TO_ARM2_MS 3497
+#define FROM_ULT_TO_COLOUR_SENSOR_MS 462
+#define FROM_ULT_TO_ARM1_MS 1319
+#define FROM_ULT_TO_ARM2_MS 1847
 
 #define NOT_DETECTED_THRESHOLD 3
 
