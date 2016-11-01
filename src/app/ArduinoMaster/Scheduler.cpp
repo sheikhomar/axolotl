@@ -27,7 +27,9 @@ bool isColourInfoReady(Package *package) {
     client clientInfo = serialReadData(buf, 1);
     if (clientInfo == Arduino) {
         package->colour = buf[0];
+        package->bin = 2; // TODO: Fix this.
         serialDebug("Colour from NXT: " + String(buf[0]) + "\n");
+
         return true;
     }
 
@@ -174,10 +176,9 @@ void runScheduler() {
         if (packageCount > 0) {
             Package *p = &packages[packageStartIndex];
             requestColourInformation(p);
+            isColourInfoReady(p);
 
-            if (isColourInfoReady(p)) {
-                pushArm(p);
-
+            if (pushArm(p)) {
                 // Remove package from the buffer
                 packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
                 packageCount--;

@@ -11,7 +11,7 @@
 
 //Defines
 #define ult1_TagDist 3800
-#define ult2_TagDist 4000
+#define ult2_TagDist 7000
 #define ult3_TagDist 3500 // TODO: This must be adjusted.
 
 #define ARRAY_SIZE 20

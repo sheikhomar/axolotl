@@ -5,13 +5,13 @@
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
-#else
+#else 
 	#include "WProgram.h"
 #endif
 //Defines
-#define FROM_ULT_TO_COLOUR_SENSOR_MS 462
-#define FROM_ULT_TO_ARM1_MS 1319
-#define FROM_ULT_TO_ARM2_MS 1847
+#define FROM_ULT_TO_COLOUR_SENSOR_MS 440
+#define FROM_ULT_TO_ARM1_MS 1258
+#define FROM_ULT_TO_ARM2_MS 1762
 
 #define NOT_DETECTED_THRESHOLD 3
 
