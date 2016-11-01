@@ -3,6 +3,7 @@
 // 
 
 #include "Defines.h"
+#include "SerialController.h"
 
 #include "Utilities.h"
 
