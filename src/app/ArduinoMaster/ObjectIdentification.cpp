@@ -8,6 +8,7 @@
 #include "UltrasoundSensor.h"
 
 #include "ObjectIdentification.h"
+
 #define ult1_TagDist 3800
 #define ult2_TagDist 7000
 #define ult3_TagDist 3500 // TODO: This must be adjusted.
@@ -108,6 +109,56 @@ bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor)
 }
 
 
+void handleSensorReadings(Package *package, SensorReading sensorBuffer1[], short sensorBuffer1Count,
+	SensorReading sensorBuffer2[], short sensorBuffer2Count,
+	SensorReading sensorBuffer3[], short sensorBuffer3Count){
+
+	//Finding package length
+	short lengthBasedOnSensor1 = findLength(sensorBuffer1, sensorBuffer1Count);
+	short lengthBasedOnSensor2 = findLength(sensorBuffer2, sensorBuffer2Count);
+	short lengthBasedOnSensor3 = findLength(sensorBuffer3, sensorBuffer3Count);
+	package->length = (lengthBasedOnSensor1 + lengthBasedOnSensor2 + lengthBasedOnSensor3 ) / 3;
+
+	//Normalizing sensor data
+	short sensor1Length = normalizeSensorData(sensorBuffer1, sensorBuffer1Count);
+	short sensor2Length = normalizeSensorData(sensorBuffer2, sensorBuffer2Count);
+	short sensor3Length = normalizeSensorData(sensorBuffer3, sensorBuffer3Count);
+
+	//Finding width and height
+	package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - sensor1Length;
+	package->width = LENGTH_BETWEEN_SENSORS - sensor2Length - sensor3Length;
+
+	//Finding middle time
+	short sensor1MiddleTime = findMiddleTime(sensorBuffer1, sensorBuffer1Count);
+	short sensor2MiddleTime = findMiddleTime(sensorBuffer2, sensorBuffer2Count);
+	short sensor3MiddleTime = findMiddleTime(sensorBuffer3, sensorBuffer3Count);
+	package->middleTime = (sensor1MiddleTime + sensor2MiddleTime + sensor3MiddleTime) / 3;
+}
+
+short normalizeSensorData(SensorReading buffer[], short bufferCount) {
+	long total; 
+
+	for (int i = 0; i < bufferCount; i++) {
+		total += buffer[i].sensorReading;
+	}
+
+	return (total / bufferCount);
+}
+
+short findMiddleTime(SensorReading buffer[], short bufferCount) {
+	unsigned long startTime = buffer[0].time;
+	unsigned long endTime = buffer[bufferCount - 1].time;
+
+	return (startTime + ((endTime - startTime) / 2));
+}
+
+short findLength(SensorReading buffer[], short bufferCount) {
+	unsigned long startTime = buffer[0].time;
+	unsigned long endTime = buffer[bufferCount - 1].time;
+	unsigned long packageTime = endTime - startTime;
+
+	return (packageTime / 10 * SPEED_CONVEYOR);
+}
 
 //based on the collected data (so far) create the object
 void handleSensorData(Package *package, SensorData buffer[], int bufferStartIndex, int bufferCount) {

@@ -21,6 +21,8 @@
 void resetImprovedPackage(Package *package);
 void resetImprovedPackages(Package packages[]);
 void runImprovedScheduler();
+void checkBufferCounts(short BuffCount1, short BuffCount2, short BuffCount3);
+
 
 #endif
 

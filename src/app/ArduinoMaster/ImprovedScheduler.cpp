@@ -36,7 +36,6 @@ void runImprovedScheduler() {
 
 	SensorReading sensorBuffer1[SENSOR_BUFFER_SIZE];
 	int sensorBuffer1Count = 0;
-	bool sensor1IsDetecting = false;
 
 	SensorReading sensorBuffer2[SENSOR_BUFFER_SIZE];
 	int sensorBuffer2Count = 0;
@@ -50,65 +49,54 @@ void runImprovedScheduler() {
 		sensorBuffer3[i].time = 0;
 	}
 
-	int notDetectedCount = 0;
-
 	serialDebug("Resetting packages.\n");
 	resetImprovedPackages(packages);
 	serialDebug("Before entering while loop\n");
 
 	while (true) {
-		bool newPackageDetected1 = readSensor(sensorBuffer1, &sensorBuffer1Count, SENSOR_1);
-
-		if(sensor1IsDetecting && !newPackageDetected1){
-		
-		}
-
-		if (newPackageDetected1) {
-			// We have detected a new package in the conveyor belt
-
-			if (sensorBuffer1Count == SENSOR_BUFFER_SIZE) {
-				die("Panic! Buffer for sensor 1 data is full.");
-			}
-
-			sensorBuffer1Count++;
-			notDetectedCount = 0;
-			sensor1IsDetecting = true;
-		}
+		bool readyForHandling1 = readSensor(sensorBuffer1, &sensorBuffer1Count, SENSOR_1);
+		bool readyForHandling2 = readSensor(sensorBuffer2, &sensorBuffer2Count, SENSOR_2);
+		bool readyForHandling3 = readSensor(sensorBuffer3, &sensorBuffer3Count, SENSOR_3);
 
 
-		else {
-			/*notDetectedCount++;
+		if (readyForHandling1 && readyForHandling2 && readyForHandling3) {
+			// At this stage, we have collected distance information for a single package.
+			// The function 'handleSensorData' builds an instance of Package based 
+			// on the data in the sensorData.
 
-			if (sensorBuffer1Count > 0 && notDetectedCount1 > NOT_DETECTED_THRESHOLD) {
-				// At this stage, we have collected distance information for a single package.
-				// The function 'handleSensorData' builds an instance of Package based 
-				// on the data in the sensorData.
+			String temp = String(sensorBuffer1Count);
+			serialDebug("Sensor size: " + temp + "\n");
 
-				String temp = String(sensorBuffer1Count);
-				serialDebug("Sensor size: " + temp + "\n");
+			checkBufferCounts(sensorBuffer1Count, sensorBuffer2Count, sensorBuffer3Count);
 
-				if (packageCount == PACKAGE_BUFFER_SIZE) {
-					die("Panic! Buffer for packages is full.");
-				}
+			// Find current package
+			Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
 
-				// Find current package
-				Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
+			// Prepare next package
+			packageCount++;
+			serialDebug("Package count: " + String(packageCount) + "\n");
 
-				//serialDebug("Working with package: " + String((packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE) + " .\n");
+			// Fill Package object using collected sensor data
+			handleSensorReadings(*p, sensorBuffer1, sensorBuffer1Count, sensorBuffer2, sensorBuffer2Count, sensorBuffer3, sensorBuffer3Count);
 
-				// Prepare next package
-				packageCount++;
+			serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n" + "\n");
 
-				serialDebug("Package count: " + String(packageCount) + "\n");
-
-				// Fill Package object using collected sensor data
-				handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
-
-				serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n" + "\n");
-
-				// Empty buffer for sensor data
-				sensorBufferCount = 0;
-			}*/
+			// Empty buffer for sensor data
+			sensorBuffer1Count = 0;
+			sensorBuffer2Count = 0;
+			sensorBuffer3Count = 0;
 		}
 	}
 }
+
+void checkBufferCounts(short BuffCount1, short BuffCount2, short BuffCount3) {
+		if (BuffCount1 == SENSOR_BUFFER_SIZE) {
+			die("Panic! Buffer for sensor 1 data is full.");
+		}
+		if (BuffCount2 == SENSOR_BUFFER_SIZE) {
+			die("Panic! Buffer for sensor 1 data is full.");
+		}
+		if (BuffCount3 == SENSOR_BUFFER_SIZE) {
+			die("Panic! Buffer for sensor 1 data is full.");
+		}
+	}
