@@ -4,6 +4,6 @@
 
 #include "LEDController.h"
 
-void LED(int LED, bool TurnOn) {
+void led(int LED, bool TurnOn) {
 	digitalWrite(LED, TurnOn);
 }

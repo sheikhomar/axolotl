@@ -36,11 +36,11 @@ void serialReceiveTest() {
 
 	if (serialCheck())
 	{
-		LED(LED1_PIN, true);
+		led(LED1_PIN, true);
 		serialReadData(byteReceived, 1);
 		serialDebug(String(byteReceived[0]));
 		delay(10);
-		LED(LED1_PIN, false);
+		led(LED1_PIN, false);
 	}
 }
 
@@ -103,7 +103,7 @@ void serialArduinoPICommTestHelperFunction(byte data[]) {
 
 
 	while (received[0] > 0) {
-		LED(LED_BUILTIN, true);
+		led(LED_BUILTIN, true);
 		delay(500);
 		received[0] -= 1;
 	}

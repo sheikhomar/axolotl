@@ -10,7 +10,7 @@
 #endif
 
 //Functions
-void LED(int LED, bool TurnOn);
+void led(int LED, bool TurnOn);
 
 
 #endif
