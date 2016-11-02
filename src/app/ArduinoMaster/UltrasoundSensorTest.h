@@ -8,7 +8,8 @@
 #else
 	#include "WProgram.h"
 #endif
-
+//Functions
+void TestUltSensors();
 
 #endif
 

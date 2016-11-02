@@ -8,9 +8,6 @@
 
 //Internal libs
 #include "Defines.h"
-#include "UltrasoundSensorTest.h"
-#include "SerialControllerTest.h"
-#include "PositionTest.h"
 #include "Utilities.h"
 #include "UltrasoundSensor.h"
 #include "SerialController.h"
