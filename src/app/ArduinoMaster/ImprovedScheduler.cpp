@@ -94,9 +94,9 @@ void checkBufferCounts(short BuffCount1, short BuffCount2, short BuffCount3) {
 			die("Panic! Buffer for sensor 1 data is full.");
 		}
 		if (BuffCount2 == SENSOR_BUFFER_SIZE) {
-			die("Panic! Buffer for sensor 1 data is full.");
+			die("Panic! Buffer for sensor 2 data is full.");
 		}
 		if (BuffCount3 == SENSOR_BUFFER_SIZE) {
-			die("Panic! Buffer for sensor 1 data is full.");
+			die("Panic! Buffer for sensor 3 data is full.");
 		}
 	}
