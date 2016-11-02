@@ -1,20 +1,10 @@
 // 
 // 
-// 
+// Manual link for the sensor: http://www.micropik.com/PDF/HCSR04.pdf
 
 #include "Defines.h"
-#include "Utilities.h"
-#include "SerialController.h"
-#include "LEDController.h"
 
 #include "UltrasoundSensor.h"
-
-/*
-* Test doc of Ult sensor
-*
-* Manual link: http://www.micropik.com/PDF/HCSR04.pdf
-*/
-
 
 /***************************
 GetDistance
