@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     Spinner spinner;
     private boolean drawingViewCreated = false;
     private int binLayers;
+    boolean firstTime = true;
 
 
     //Activity methods
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     }
 
 
-
+    // this int is used to test with onConnectClick without connecting with PI
     private int i = 0;
     // onClick methods:
     public void onConnectClick(View view) {
@@ -110,11 +111,6 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         blueService.disconnect();
     }
 
-    public void sendOnClick(View view){
-        EditText message = (EditText) findViewById(R.id.communicationMessage);
-        blueService.sendMessage(message.getText().toString());
-    }
-
     public void rightArrowOnClick(View view){
         drawingView.shiftRight();
     }
@@ -122,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     public void leftArrowOnClick(View view){
         drawingView.shiftLeft();
     }
+
 
     // interface methods:
     @Override
@@ -171,14 +168,6 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-
-    @Override
-    public void showPackageContent(String Package) {
-        TextView PackageContent = (TextView) findViewById(R.id.PackageContent);
-        PackageContent.append("\n" + Package);
-    }
-
-    boolean firstTime = true;
 
     @Override
     public void handlePackage(String Package) {

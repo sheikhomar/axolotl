@@ -10,93 +10,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="beuchert.bluetoothtest.Activities.MainActivity">
 
-    <TextView
-        android:text="Package content:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
-        android:id="@+id/textView"
-        android:layout_below="@+id/DisconnectButton"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="Connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ConnectButton"
-        android:onClick="onConnectClick"
-        android:layout_marginEnd="14dp"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/PackageContent" />
-
-    <Button
-        android:text="Disconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/DisconnectButton"
-        android:onClick="DisconnectOnClick"
-        android:layout_marginStart="17dp"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/PackageContent" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_below="@+id/PackageContent"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp"
-        android:id="@+id/communicationMessage"
-        android:hint="Insert text" />
-
-    <Button
-        android:text="SEND"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/communicationMessage"
-        android:layout_toEndOf="@+id/textView"
-        android:id="@+id/sendButton"
-        android:layout_alignTop="@+id/communicationMessage"
-        android:onClick="sendOnClick" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/PackageContent"
-        android:maxLines="5"
-        android:minLines="1"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rectCanvas"
         android:layout_height="match_parent"
-        android:layout_below="@+id/spinner"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/spinner">
 
     </RelativeLayout>
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="200.0sp"
-        android:layout_height="50dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"
-        android:layout_below="@+id/communicationMessage"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="&lt;"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/leftArrowButton"
-        android:textSize="25sp"
-        android:onClick="leftArrowOnClick"
-        android:layout_below="@+id/communicationMessage"
-        android:layout_toStartOf="@+id/spinner" />
 
     <Button
         android:text="&gt;"
@@ -107,8 +28,48 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:padding="0dp"
-        android:layout_below="@+id/sendButton"
-        android:layout_toEndOf="@+id/spinner"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/spinner"
+        android:layout_toEndOf="@+id/spinner" />
+
+    <Button
+        android:text="&lt;"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/leftArrowButton"
+        android:textSize="25sp"
+        android:onClick="leftArrowOnClick"
+        android:layout_below="@+id/ConnectButton"
+        android:layout_toStartOf="@+id/spinner"
+        android:layout_marginTop="58dp" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="200.0sp"
+        android:layout_height="50dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_alignTop="@+id/leftArrowButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ConnectButton"
+        android:onClick="onConnectClick"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/leftArrowButton"
+        android:layout_marginStart="17dp" />
+
+    <Button
+        android:text="Disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DisconnectButton"
+        android:onClick="DisconnectOnClick"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/rightArrowButton"
+        android:layout_marginEnd="20dp" />
 
 </RelativeLayout>
