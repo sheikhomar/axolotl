@@ -42,10 +42,9 @@ typedef struct {
 
 //Pins 
 //LEDs
-#define LED1_PIN 8
-#define LED2_PIN 9
-#define LED3_PIN 10
-#define LEDB_PIN LED_BUILTIN
+#define LED_RED 8
+#define LED_YELLOW 9
+#define LED_GREEN 10
 
 //Ult Sensors
 #define ULT1_TRIG_PIN 2

@@ -36,11 +36,11 @@ void serialReceiveTest() {
 
 	if (serialCheck())
 	{
-		led(LED1_PIN, true);
+		led(LED_RED, true);
 		serialReadData(byteReceived, 1);
 		serialDebug(String(byteReceived[0]));
 		delay(10);
-		led(LED1_PIN, false);
+		led(LED_RED, false);
 	}
 }
 
