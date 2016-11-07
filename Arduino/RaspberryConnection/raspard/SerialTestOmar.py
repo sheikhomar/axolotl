@@ -5,7 +5,7 @@ from lib import *
 
 def format_serial_package(input_array):
     if len(input_array) == 7:
-        return Package(input_array[4], input_array[3], input_array[6])
+        return Package(int.from_bytes(input_array[4], byteorder='little'), int.from_bytes(input_array[3], byteorder='little'), int.from_bytes(input_array[6], byteorder='little'))
     else:
         raise InvalidArgError('Input to format_serial_package was not array of length 7')
 
@@ -27,6 +27,7 @@ def serial_read(ser, data):
 				print('YES')
 				break
 			else:
+				print('waiting: ' + str(ser.inWaiting()) + '      just read: ' + str(data[0]))
 				data.clear()
 		else:
 			print('Not a full message in waiting')
@@ -60,23 +61,43 @@ def serial_read(ser, data):
 					return serial_read(ser, data)
 	else:
 		raise ArithmeticError('First byte does not indicate proper message')
+		
+def serial_write_push(ser, bin_id):
+	ser.write(b'a')
+	ser.write((1).to_bytes(1, byteorder='little'))
+	ser.write(b'p')
+	ser.write(((bin_id % 2) + 1).to_bytes(1, byteorder='little'))
 	
 
-ser = serial.Serial('/dev/ttyACM0',9600)
+ser = serial.Serial('/dev/ttyUSB0',57600)
 data = []
 bin1 = Bin(width=5, length=10, max_layers=3)
 pa = PackingAdvisor(bin1)
 
 while True:
-	cyka = serial_read(ser, data)
-	if cyka[1]:
-		print('Package received')
-		p1 = format_serial_package(cyka[0])
-		pa.handle(p1)
-		ser.write(b'a')
-		ser.write((1).to_bytes(1, byteorder='little'))
-		ser.write(b'p')
-		ser.write(((pa.find_bin_containing_package(p1).bin_id % 2) + 1).to_bytes(1, byteorder='little'))
-	data.clear()
-	time.sleep(1)
-		
+	#cyka = serial_read(ser, data)
+	#if cyka[1]:
+	#	print('Package received')
+	#	p1 = format_serial_package(cyka[0])
+	#	print(str(cyka[0][3]))
+	#	print(str(cyka[0][4]))
+	#	print(str(cyka[0][5]))
+	#	print(str(cyka[0][6]))
+	#	print(p1.colour)
+	#	print(p1.length)
+	#	print(p1.width)
+	#	pa.handle(p1)
+	#	print(((pa.find_bin_containing_package(p1).bin_id % 2) + 1).to_bytes(1, byteorder='little'))
+	#	serial_write_push(ser, pa.find_bin_containing_package(p1).bin_id)
+	#data.clear()
+	#time.sleep(1)
+	
+	serial_write_push(ser, 1)
+	time.sleep(2)
+	
+	#print('Starting write')
+	#ser.write(b'a')
+	#ser.write((1).to_bytes(1, byteorder='little'))
+	#ser.write(b'p')
+	#ser.write((2).to_bytes(1, byteorder='little'))
+	#print('Finished write')
