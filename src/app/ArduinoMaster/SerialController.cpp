@@ -33,7 +33,7 @@ Returns the first client waiting to be read on the Rs485 buffer.
 If no data exists in buffer none is returned.
 ***************************/
 client serialCheck() {
-	byte read;
+	int read;
 
 	if (RS485Serial.available() < 1) {
 		return none;
@@ -97,7 +97,7 @@ serialReadData
 Reads a RS485 message from the network and saves it in the given data array.
 ***************************/
 client serialReadData(byte data[], int data_length) {
-	byte length, command;
+	int length, command;
 	int id, i;
 	bool incorrectSender = false;
 
