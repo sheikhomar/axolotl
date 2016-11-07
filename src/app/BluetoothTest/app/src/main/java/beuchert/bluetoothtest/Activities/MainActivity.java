@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private boolean drawingViewCreated = false;
     private int binLayers;
     boolean firstTime = true;
+    private double drawingViewScale = 0;
 
 
     //Activity methods
@@ -182,17 +183,18 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             drawingView.addBin(new Bin(binLayers));
 
             if(firstTime) {
-                drawingView.setSize(width, length);
+                drawingViewScale = (double)drawingView.getWidth() / (double)Math.max(width, length);
+                drawingView.setSize((int)(width * drawingViewScale), (int)(length * drawingViewScale));
                 firstTime = false;
             }
         }
         else if(PackSplit[0].equals("P:")){
             Log.d(MainActivity.class.getName(), "Package Recieved");
             PackSplit[6] = PackSplit[6].replaceAll("\n", "");
-            int x = Integer.parseInt(PackSplit[1]);
-            int y = Integer.parseInt(PackSplit[2]);
-            int length = Integer.parseInt(PackSplit[3]);
-            int width = Integer.parseInt(PackSplit[4]);
+            int x = (int)(Integer.parseInt(PackSplit[1]) * drawingViewScale);
+            int y = (int)(Integer.parseInt(PackSplit[2]) * drawingViewScale);
+            int length = (int)(Integer.parseInt(PackSplit[3]) * drawingViewScale);
+            int width = (int)(Integer.parseInt(PackSplit[4]) * drawingViewScale);
             int color = Integer.parseInt(PackSplit[5]);
             int layer = Integer.parseInt(PackSplit[6]);
             int binID = Integer.parseInt(PackSplit[7]);

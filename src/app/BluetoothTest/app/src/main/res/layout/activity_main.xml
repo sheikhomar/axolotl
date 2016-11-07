@@ -10,14 +10,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="beuchert.bluetoothtest.Activities.MainActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:id="@+id/rectCanvas"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/spinner">
-
-    </RelativeLayout>
+    <Button
+        android:text="&lt;"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/leftArrowButton"
+        android:textSize="25sp"
+        android:onClick="leftArrowOnClick"
+        android:layout_below="@+id/spinner"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:text="&gt;"
@@ -29,28 +30,41 @@
         android:layout_marginRight="0dp"
         android:padding="0dp"
         android:layout_height="50dp"
-        android:layout_alignTop="@+id/spinner"
-        android:layout_toEndOf="@+id/spinner" />
+        android:layout_below="@+id/spinner"
+        android:layout_alignEnd="@+id/spinner" />
 
-    <Button
-        android:text="&lt;"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/leftArrowButton"
-        android:textSize="25sp"
-        android:onClick="leftArrowOnClick"
-        android:layout_below="@+id/ConnectButton"
-        android:layout_toStartOf="@+id/spinner"
-        android:layout_marginTop="58dp" />
+    <TextView
+        android:text="Dimensions:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewDim"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_below="@+id/rectCanvas"
+        android:layout_alignEnd="@+id/rightArrowButton2"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp" />
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="200.0sp"
-        android:layout_height="50dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"
-        android:layout_alignTop="@+id/leftArrowButton"
-        android:layout_centerHorizontal="true" />
+    <TextView
+        android:text="Colour:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:id="@+id/textViewCol"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_below="@+id/textViewDim"
+        android:layout_alignStart="@+id/textViewDim"
+        android:textSize="20dp"  />
+
+    <TextView
+        android:text="Fragile:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:id="@+id/textViewFra"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_below="@+id/textViewCol"
+        android:layout_alignStart="@+id/textViewCol"
+        android:textSize="20dp"  />
 
     <Button
         android:text="Connect"
@@ -59,8 +73,7 @@
         android:id="@+id/ConnectButton"
         android:onClick="onConnectClick"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/leftArrowButton"
-        android:layout_marginStart="17dp" />
+        android:layout_alignEnd="@+id/spinner" />
 
     <Button
         android:text="Disconnect"
@@ -69,7 +82,111 @@
         android:id="@+id/DisconnectButton"
         android:onClick="DisconnectOnClick"
         android:layout_alignParentTop="true"
-        android:layout_alignEnd="@+id/rightArrowButton"
-        android:layout_marginEnd="20dp" />
+        android:layout_alignStart="@+id/rectCanvas" />
+
+    <TextView
+        android:text="TempText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewDimVal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_alignBaseline="@+id/textViewDim"
+        android:layout_alignBottom="@+id/textViewDim"
+        android:layout_alignStart="@+id/DisconnectButton"
+        android:textSize="20dp"  />
+
+    <TextView
+        android:text="TempText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewColVal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_alignBaseline="@+id/textViewCol"
+        android:layout_alignBottom="@+id/textViewCol"
+        android:layout_alignStart="@+id/DisconnectButton"
+        android:textSize="20dp"  />
+
+    <TextView
+        android:text="TempText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewFraVal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_alignBaseline="@+id/textViewFra"
+        android:layout_alignBottom="@+id/textViewFra"
+        android:layout_alignStart="@+id/DisconnectButton"
+        android:textSize="20dp"  />
+
+    <Button
+        android:text="&lt;"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/leftArrowButton2"
+        android:textSize="25sp"
+        android:onClick="leftArrowOnClick"
+        android:layout_below="@+id/spinner2"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="&gt;"
+        android:layout_width="50dp"
+        android:id="@+id/rightArrowButton2"
+        android:textSize="25sp"
+        android:onClick="rightArrowOnClick"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:padding="0dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/spinner2"
+        android:layout_alignEnd="@+id/spinner2" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="200.0sp"
+        android:layout_height="50dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_marginTop="65dp"
+        android:layout_below="@+id/ConnectButton"
+        android:layout_alignParentStart="true" />
+
+    <RelativeLayout
+        android:id="@+id/rectCanvas"
+        android:layout_height="351dp"
+        android:layout_width="351dp"
+        android:layout_alignTop="@+id/spinner"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp">
+
+    </RelativeLayout>
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="200.0sp"
+        android:layout_height="50dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/textViewSpin2"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Bins and layers:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewSpin1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_above="@+id/rectCanvas"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Packages:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewSpin2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:layout_below="@+id/rightArrowButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="25dp"/>
+
 
 </RelativeLayout>
