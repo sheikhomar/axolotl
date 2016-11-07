@@ -46,7 +46,7 @@ client serialCheck() {
 	case unknown:
 	case RaspberryPi:
 	case NXT:
-	case DEBUG:
+	case Debug_Client:
 	case Arduino:
 		return (client)read;
 
@@ -76,15 +76,14 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 	}
 	digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
 
-	//Additional debug messages
-	{
+	#if DEBUG
 		serialWrite(receiver);
 		serialWrite(sizeOfData);
 		serialWrite(reciverFunction);
 		for (i = 0; i < sizeOfData; i++) {
 			serialWrite(data[i]);
 		}
-	}
+	#endif
 }
 
 void serialSendData(client receiver, byte reciverFunction) {
@@ -97,8 +96,8 @@ serialReadData
 Reads a RS485 message from the network and saves it in the given data array.
 ***************************/
 client serialReadData(byte data[], int data_length) {
-	int length, command;
-	int id, i;
+	int id, length, command;
+	int i;
 	bool incorrectSender = false;
 
 
@@ -109,16 +108,23 @@ client serialReadData(byte data[], int data_length) {
 			return none;
 		}
 		id = RS485Serial.read();
-		{serialWrite(id); } //Additional debug messages
 
-		incorrectSender = !(id == DEBUG || id == NXT || id == RaspberryPi || id == Arduino);
+		#if (DEBUG)
+		  serialWrite(id);
+		#endif
+
+		incorrectSender = !(id == Debug_Client || id == NXT || id == RaspberryPi || id == Arduino);
 	} while (incorrectSender);
 
 	//Read length and command
 	serialBuffTimeout(2);
 	length = RS485Serial.read();
 	command = RS485Serial.read();
-	{serialWrite(length); serialWrite(command); }//Additional debug messages
+
+	#if DEBUG
+		serialWrite(length); 
+		serialWrite(command);
+	#endif
 
 	//Kick if length is incorrect
 	if (length < 0 || length > RS485_DATA_LENGTH_MAX) {
@@ -130,7 +136,11 @@ client serialReadData(byte data[], int data_length) {
 	if (id != Arduino) {
 		for (i = 0; i < length; i++)
 		{
-			serialWrite(RS485Serial.read()); //debug, should only read not print out.
+			#if DEBUG
+				serialWrite(RS485Serial.read());
+			#else
+				RS485Serial.read()
+			#endif
 		}
 		return (client)id;
 	}
@@ -139,7 +149,9 @@ client serialReadData(byte data[], int data_length) {
 	for (i = 0; i < length; i++)
 	{
 		data[i] = RS485Serial.read();
-		serialWrite(data[i]);
+		#if DEBUG
+			serialWrite(data[i]);
+		#endif
 	}
 
 	switch (command)
@@ -179,12 +191,9 @@ serialDebug
 Broadcasts a RS485 message with a special DEBUG tag.
 ***************************/
 void serialDebug(String message) {
-	Serial.print(message);
-	/*
-	int msgLen = message.length() + 1;
-	byte data[msgLen];
-	message.getBytes(data, msgLen);
-	serialSendData(DEBUG, data, msgLen, '_');*/
+	#if DEBUG
+		Serial.print(message);
+	#endif
 }
 
 void serialDebugLN(String message) {
@@ -197,7 +206,7 @@ serialWrite
 
 Writes a byte to the DEBUG serial
 ***************************/
-void serialWrite(byte data) {
+void serialWrite(int data) {
 #if RS485_SERIAL_PRINT_BINARY
 	Serial.write(data);
 #else

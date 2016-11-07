@@ -33,12 +33,15 @@ serialReceiveTest
 ***************************/
 void serialReceiveTest() {
 	byte byteReceived[] = { 0 };
+	client sender = none;
 
 	if (serialCheck())
 	{
 		led(LED_RED, true);
-		serialReadData(byteReceived, 1);
-		serialDebug(String(byteReceived[0]));
+		sender = serialReadData(byteReceived, 1);
+		if (sender != none) {
+			serialDebug(String(byteReceived[0]));
+		}
 		delay(10);
 		led(LED_RED, false);
 	}
@@ -124,11 +127,11 @@ void serialSendAllCharsTest() {
 		data[1] = i;
 
 		if (RS485_SERIAL_PRINT_BINARY) {
-			serialSendData(DEBUG, data, 3, 10);
+			serialSendData(Debug_Client, data, 3, 10);
 			Serial.print(data[1]);
 		}
 		else {
-			serialSendData(DEBUG, data, 3, 10);
+			serialSendData(Debug_Client, data, 3, 10);
 			Serial.println("");
 		}
 

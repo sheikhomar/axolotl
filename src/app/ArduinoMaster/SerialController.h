@@ -21,7 +21,7 @@ client serialReadData(byte data[], int data_length);
 bool serialBuffTimeout(byte numberOfRequiredElements);
 void serialDebug(String message);
 void serialDebugLN(String message);
-void serialWrite(byte data);
+void serialWrite(int data);
 
 
 

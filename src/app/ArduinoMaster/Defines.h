@@ -14,7 +14,7 @@ typedef enum client {
 	unknown = 'u',
 	RaspberryPi = 'r',
 	NXT = 'n',
-	DEBUG = ' ',
+	Debug_Client = ' ',
 	Arduino = 'a'
 } client;
 
@@ -92,6 +92,7 @@ typedef struct {
 #define PACKAGE_BUFFER_SIZE 10
 #define RS485_DATA_LENGTH_MAX 11
 #define RS485_SERIAL_PRINT_BINARY 0
+#define DEBUG 1
 
 #define SENSOR_1 1
 #define SENSOR_2 2
