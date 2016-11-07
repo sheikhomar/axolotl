@@ -134,8 +134,8 @@ client = make_client(s)
 bin1 = Bin(width=5, length=10, max_layers=3)
 pa = PackingAdvisor(bin1)
 
-client.send(bluetooth_format_bin(pa.bins[0])
-client.send(bluetooth_format_bin(pa.bins_foreign[0])
+client.send(bluetooth_format_bin(pa.bins[0]))
+client.send(bluetooth_format_bin(pa.bins_foreign[0]))
 
 data = []
 
