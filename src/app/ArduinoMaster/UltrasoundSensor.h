@@ -10,8 +10,8 @@
 #endif
 
 //Functions
+void ultSetup(long ultA0, long ultA1, long ultB0, long ultB1, long ultC0, long ultC1);
 unsigned short GetUltDistance(int trigPin, int echoPin, bool wait);
-void TestUltSensors();
 
 
 #endif

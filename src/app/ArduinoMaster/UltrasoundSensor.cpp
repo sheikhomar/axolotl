@@ -7,6 +7,25 @@
 #include "UltrasoundSensor.h"
 
 /***************************
+serialSetup
+
+Initialize led pins
+***************************/
+void ultSetup(long ultA0, long ultA1, long ultB0, long ultB1, long ultC0, long ultC1) {
+	pinMode(ultA0, OUTPUT);
+	pinMode(ultA1, INPUT);
+	pinMode(ultB0, OUTPUT);
+	pinMode(ultB1, INPUT);
+	pinMode(ultC0, OUTPUT);
+	pinMode(ultC1, INPUT);
+
+	digitalWrite(ultA0, LOW);
+	digitalWrite(ultB0, LOW);
+	digitalWrite(ultC0, LOW);
+}
+
+
+/***************************
 GetDistance
 
 Get the distance from a specified ultraSoundSensor via its triggerPin and echoPin.
