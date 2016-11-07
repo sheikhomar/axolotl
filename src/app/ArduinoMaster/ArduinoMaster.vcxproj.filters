@@ -51,8 +51,8 @@
     <ClCompile Include="UltrasoundSensorTest.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="LEDControllerTest.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="Defines.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,9 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImprovedScheduler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LEDControllerTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

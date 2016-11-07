@@ -29,7 +29,9 @@ void handleSensorReadings(Package pack, SensorReading sensorBuffer1[], short sen
 	SensorReading sensorBuffer3[], short sensorBuffer3Count);
 unsigned long findAverage(SensorData buffer[], int startIndex, int bufferSize, byte whichSensor);
 int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte sensor);
-
+short findLength(SensorReading buffer[], short bufferCount);
+short normalizeSensorData(SensorReading buffer[], short bufferCount);
+short findMiddleTime(SensorReading buffer[], short bufferCount);
 
 
 #endif

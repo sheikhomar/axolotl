@@ -10,6 +10,10 @@
 #include "Defines.h"
 #include "Scheduler.h"
 #include "ImprovedScheduler.h"
+#include "LEDController.h"
+#include "SerialController.h"
+#include "UltrasoundSensor.h"
+
 #include "LEDControllerTest.h"
 #include "PositionTest.h"
 #include "SerialControllerTest.h"
@@ -31,6 +35,5 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-	runConveyorBeltAtSpeed(50);
 	runScheduler();
 }
