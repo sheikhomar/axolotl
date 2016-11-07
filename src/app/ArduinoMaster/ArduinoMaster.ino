@@ -8,14 +8,12 @@
 
 //Internal libs
 #include "Defines.h"
-#include "Utilities.h"
-#include "UltrasoundSensor.h"
-#include "SerialController.h"
 #include "Scheduler.h"
 #include "ImprovedScheduler.h"
-#include "ObjectIdentification.h"
-#include "LEDController.h"
 #include "LEDControllerTest.h"
+#include "PositionTest.h"
+#include "SerialControllerTest.h"
+#include "UltrasoundSensorTest.h"
 
 void setup() {
 	//Initiate Serial Communication
