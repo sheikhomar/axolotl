@@ -21,6 +21,9 @@ Initialize serial communication
 void serialSetup(long mainBaud, long debugBaud) {
 	RS485Serial.begin(mainBaud);
 	Serial.begin(debugBaud);
+
+	pinMode(SERIAL_TRANSMIT_PIN, OUTPUT);
+	digitalWrite(SERIAL_TRANSMIT_PIN, LOW);
 }
 
 /***************************
