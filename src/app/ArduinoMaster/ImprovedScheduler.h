@@ -14,6 +14,7 @@
 #define FROM_ULT_TO_COLOUR_SENSOR_MS 2098
 #define FROM_ULT_TO_ARM1_MS 2564
 #define FROM_ULT_TO_ARM2_MS 3497
+#define IMPROVED_BUFFER_SIZE 50
 
 #define NOT_DETECTED_THRESHOLD 3
 
@@ -22,6 +23,7 @@ void resetImprovedPackage(Package *package);
 void resetImprovedPackages(Package packages[]);
 void runImprovedScheduler();
 void checkBufferCounts(short BuffCount1, short BuffCount2, short BuffCount3);
+void cleanBuffer(SensorReading sensorBuffer[], int *bufferCount, short sensor);
 
 #endif
 
