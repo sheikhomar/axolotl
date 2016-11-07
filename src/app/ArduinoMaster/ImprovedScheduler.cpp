@@ -77,7 +77,7 @@ void runImprovedScheduler() {
 			serialDebug("Package count: " + String(packageCount) + "\n");
 
 			// Fill Package object using collected sensor data
-			handleSensorReadings(*p, sensorBuffer1, sensorBuffer1Count, sensorBuffer2, sensorBuffer2Count, sensorBuffer3, sensorBuffer3Count);
+			handleSensorReadings(p, sensorBuffer1, sensorBuffer1Count, sensorBuffer2, sensorBuffer2Count, sensorBuffer3, sensorBuffer3Count);
 
 			serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n" + "\n");
 

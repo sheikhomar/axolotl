@@ -35,5 +35,6 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-	runScheduler();
+	//runScheduler();
+	runImprovedScheduler();
 }
