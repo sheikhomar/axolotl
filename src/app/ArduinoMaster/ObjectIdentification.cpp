@@ -9,10 +9,6 @@
 
 #include "ObjectIdentification.h"
 
-#define ult1_TagDist 3800
-#define ult2_TagDist 7000
-#define ult3_TagDist 3500 // TODO: This must be adjusted.
-
 #define ARRAY_SIZE 20
 #define SPEED_CONVEYOR 140
 
@@ -52,7 +48,7 @@ bool readSensors(SensorData *sensorData) {
 }
 
 bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor) {
-	bool sensor;
+	bool sensor = false;
 	unsigned short dist;
 	unsigned short trueCount = 0;
 
@@ -72,21 +68,28 @@ bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor)
 		die("ERROR - No real sensor.");
 	}
 
+
+	//serialDebug("Sensor" + String(whichSensor) + ": " + String(dist) + "   ");
+	//if (whichSensor == SENSOR_2)
+	//	serialDebug(String(dist) + "\n");
+
 	if (*bufferCount == 0 && sensor) {
 		sensorBuffer[*bufferCount].sensorReading = dist;
 		sensorBuffer[*bufferCount].time = millis();
-		*bufferCount++;
+		*bufferCount = *bufferCount + 1;
+		return false;
+	} else if (*bufferCount == 0){
 		return false;
 	} else if (*bufferCount == 1) {
 		sensorBuffer[*bufferCount].sensorReading = dist;
 		sensorBuffer[*bufferCount].time = millis();
-		*bufferCount++;
+		*bufferCount = *bufferCount + 1;
 		return false;
 	} else {
 		sensorBuffer[*bufferCount].sensorReading = dist;
 		sensorBuffer[*bufferCount].time = millis();
-		*bufferCount++;
-		
+		*bufferCount = *bufferCount + 1;
+
 		for (int i = *bufferCount-3; i < *bufferCount; i++) {
 			if (whichSensor == SENSOR_1) {
 				sensor = sensorBuffer[i].sensorReading < ult1_TagDist;
@@ -98,66 +101,87 @@ bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor)
 				sensor = sensorBuffer[i].sensorReading < ult3_TagDist;
 			}
 			
-			if (sensor)
+			if (sensor) {
 				trueCount++;
+			}
 		}
 
-		if(trueCount > 0)
+		if (trueCount > 0) {
 			return false;
+		}
+		//should clean data here and update sensor buffer.
 		return true;
 	}
 }
 
 
-void handleSensorReadings(Package *package, SensorReading sensorBuffer1[], short sensorBuffer1Count,
-	SensorReading sensorBuffer2[], short sensorBuffer2Count,
-	SensorReading sensorBuffer3[], short sensorBuffer3Count){
+void handleSensorReadings(Package *package, SensorReading sensorBuffer1[], int sensorBuffer1Count,
+	SensorReading sensorBuffer2[], int sensorBuffer2Count,
+	SensorReading sensorBuffer3[], int sensorBuffer3Count){
 
 	//Finding package length
-	short lengthBasedOnSensor1 = findLength(sensorBuffer1, sensorBuffer1Count);
-	short lengthBasedOnSensor2 = findLength(sensorBuffer2, sensorBuffer2Count);
-	short lengthBasedOnSensor3 = findLength(sensorBuffer3, sensorBuffer3Count);
+	unsigned long lengthBasedOnSensor1 = findLength(sensorBuffer1, sensorBuffer1Count);
+	unsigned long lengthBasedOnSensor2 = findLength(sensorBuffer2, sensorBuffer2Count);
+	unsigned long lengthBasedOnSensor3 = findLength(sensorBuffer3, sensorBuffer3Count);
 	package->length = (lengthBasedOnSensor1 + lengthBasedOnSensor2 + lengthBasedOnSensor3 ) / 3;
 
 	//Normalizing sensor data
-	short sensor1Length = normalizeSensorData(sensorBuffer1, sensorBuffer1Count);
-	short sensor2Length = normalizeSensorData(sensorBuffer2, sensorBuffer2Count);
-	short sensor3Length = normalizeSensorData(sensorBuffer3, sensorBuffer3Count);
+	unsigned long sensor1Length = normalizeSensorData(sensorBuffer1, sensorBuffer1Count);
+	unsigned long sensor2Length = normalizeSensorData(sensorBuffer2, sensorBuffer2Count);
+	unsigned long sensor3Length = normalizeSensorData(sensorBuffer3, sensorBuffer3Count);
 
 	//Finding width and height
 	package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - sensor1Length;
 	package->width = LENGTH_BETWEEN_SENSORS - sensor2Length - sensor3Length;
 
+	serialDebug("Length: " + String(lengthBasedOnSensor1));
+	serialDebug(" + " + String(lengthBasedOnSensor2) + " + ");
+	serialDebug(String(lengthBasedOnSensor3) + " / 3 = ");
+	serialDebug(String(package->length) + "\n");
+
+	serialDebug("Width: " + String(LENGTH_BETWEEN_SENSORS) + " - ");
+	serialDebug(String(sensor2Length) + " - ");
+	serialDebug(String(sensor3Length) + " = ");
+	serialDebug(String(package->width) + "\n");
+
+	serialDebug("Height: " + String(HEIGHT_BETWEEN_SENSOR_AND_BELT));
+	serialDebug(" - " + String(sensor1Length));
+	serialDebug(" = " + String(package->height) + "\n");
+
+
 	//Finding middle time
-	short sensor1MiddleTime = findMiddleTime(sensorBuffer1, sensorBuffer1Count);
-	short sensor2MiddleTime = findMiddleTime(sensorBuffer2, sensorBuffer2Count);
-	short sensor3MiddleTime = findMiddleTime(sensorBuffer3, sensorBuffer3Count);
+	unsigned long sensor1MiddleTime = findMiddleTime(sensorBuffer1, sensorBuffer1Count);
+	unsigned long sensor2MiddleTime = findMiddleTime(sensorBuffer2, sensorBuffer2Count);
+	unsigned long sensor3MiddleTime = findMiddleTime(sensorBuffer3, sensorBuffer3Count);
 	package->middleTime = (sensor1MiddleTime + sensor2MiddleTime + sensor3MiddleTime) / 3;
 }
 
-short normalizeSensorData(SensorReading buffer[], short bufferCount) {
-	long total; 
+unsigned long normalizeSensorData(SensorReading buffer[], int bufferCount) {
+	unsigned long total; 
 
 	for (int i = 0; i < bufferCount; i++) {
 		total += buffer[i].sensorReading;
 	}
+	unsigned long result = total / bufferCount;
 
-	return (total / bufferCount);
+	return result;
 }
 
-short findMiddleTime(SensorReading buffer[], short bufferCount) {
+unsigned long findMiddleTime(SensorReading buffer[], int bufferCount) {
 	unsigned long startTime = buffer[0].time;
 	unsigned long endTime = buffer[bufferCount - 1].time;
+	unsigned long result = startTime + ((endTime - startTime) / 2);
 
-	return (startTime + ((endTime - startTime) / 2));
+	return result;
 }
 
-short findLength(SensorReading buffer[], short bufferCount) {
+unsigned long findLength(SensorReading buffer[], int bufferCount) {
 	unsigned long startTime = buffer[0].time;
 	unsigned long endTime = buffer[bufferCount - 1].time;
 	unsigned long packageTime = endTime - startTime;
 
-	return (packageTime / 10 * SPEED_CONVEYOR);
+	unsigned long result = packageTime / 10 * SPEED_CONVEYOR;
+	return result;
 }
 
 //based on the collected data (so far) create the object
