@@ -6,11 +6,14 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -241,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
 
     public void createDrawingView(int length, int width){
         if(drawingViewCreated == false){
-            //drawingViewCreated = true;
             RelativeLayout DrawLayout = (RelativeLayout) findViewById(R.id.rectCanvas);
             drawingView = new DrawingView(this,length,width);
             DrawLayout.addView(drawingView);
@@ -250,8 +252,6 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             IOError e = new IOError(new Throwable("You cannot recreate DrawingView"));
             throw e;
         }
-
-
     }
 
     public void addElementToSpinner(String newString){
@@ -279,4 +279,10 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         alertDialog.show();
     }
 
+    private float convertPixelToDp(float px){
+        //Resources resources = context.getResources();
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
+    }
 }

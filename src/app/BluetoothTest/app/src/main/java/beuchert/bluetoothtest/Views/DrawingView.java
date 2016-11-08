@@ -13,8 +13,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import beuchert.bluetoothtest.Activities.MainActivity;
@@ -104,7 +107,6 @@ public class DrawingView extends View {
 
         Layer layer = bin.layers.get(selectedLayer-1);
         List<Package> packList = layer.Packages;
-
         for (Package pack:packList) {
             Rect rBorder = new Rect(pack.x, pack.y, pack.x+pack.length, pack.y+pack.width);
             frameDrawer.drawRect(rBorder,borderPaint);
@@ -176,5 +178,49 @@ public class DrawingView extends View {
             selectBinAndLayer(selectedBin, selectedLayer);
             mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        highlightPackage((int)event.getX(), (int)event.getY());
+        return super.onTouchEvent(event);
+    }
+
+    // Highlighting a package if it is pressed
+    public void highlightPackage(int x, int y){
+        Layer layer = bins.get(selectedBin - 1).layers.get(selectedLayer - 1);
+        for(int i = 0; i < layer.Packages.size(); i++){
+            if(correctPackage(layer.Packages.get(i), x, y)){
+                selectBinAndLayer(selectedBin, selectedLayer);
+                highlight(layer.Packages.get(i), Color.MAGENTA);
+            }
+        }
+    }
+
+    // Checking if a package is pressed and returning true if pressed
+    private boolean correctPackage(Package packToCheck, int x, int y){
+        if(packToCheck.x < x && x < packToCheck.x + packToCheck.length){
+            if(packToCheck.y < y && y < packToCheck.y + packToCheck.width){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Highlighting the specific package with the specific colour
+    private void highlight(Package pack, int colour){
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setColor(colour);
+
+        Rect rBorder = new Rect(pack.x, pack.y, pack.x+pack.length, pack.y+pack.width);
+        frameDrawer.drawRect(rBorder, paint);
+
+        Rect rFill = new Rect(pack.x+1, pack.y+1, pack.x+pack.length, pack.y+pack.width);
+        frameDrawer.drawRect(rFill, paint);
+
+        frameDrawer.drawBitmap(frame, null, bounds , null);
+
+        invalidate();
     }
 }
