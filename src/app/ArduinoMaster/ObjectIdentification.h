@@ -15,6 +15,7 @@
 #define ult3_TagDist 3600					// TODO: Calibrate this
 
 #define ARRAY_SIZE 20
+#define NOT_DETECTED_THRESHOLD 5
 #define SPEED_CONVEYOR 140					// TODO: Calibrate this
 
 #define LENGTH_BETWEEN_SENSORS 11950			// TODO: Calibrate this
@@ -22,14 +23,21 @@
 
 //Functions
 bool readSensors(SensorData *sensorData);
-bool readSensor(SensorReading *reading, int sensor);
 void handleSensorData(Package *package, SensorData buffer[], int bufferStartIndex, int bufferCount);
+
+bool readSensor(SensorReading *reading, int sensor);
+short makeReading(int whichSensor);
+bool checkReading(int whichSensor, int dist);
+void addReading(SensorReading *reading, unsigned short dist);
+void checkAndIncrement(SensorReading *reading, bool bVal);
+
 void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReading *sensor2, SensorReading *sensor3);
 unsigned long findAverage(SensorData buffer[], int startIndex, int bufferSize, byte whichSensor);
 int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte sensor);
 unsigned long findLength(SensorReading *sensor);
 unsigned long normalizeSensorData(SensorReading *sensor);
 unsigned long findMiddleTime(SensorReading *sensor);
+void printPackageSize(Package *package);
 
 
 #endif
