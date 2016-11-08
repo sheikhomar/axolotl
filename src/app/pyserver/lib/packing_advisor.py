@@ -28,14 +28,10 @@ class PackingAdvisor:
         
         bin = self.find_bin(package)
         
-        if bin.current_layer.previous_layer is not None: #Perform test to see if package could be placed in layer below current
-            if (bin.current_layer.previous_layer.calc_fill_level() + ((package.length * package.width) / (bin.width * bin.length))) <= 1:
-                if self.update_x_y_lower_layer(bin, bin.current_layer.previous_layer, package): #True is returned if it fits and x,y is set
-                    print('Package fits in layer below')
-                    bin.current_layer.previous_layer.pack(package, self.x, self.y)
-                    return False
+        if self.try_pack_lower_layer(bin=bin, package_to_pack=package):
+            return False #Package was packed in lower layer (and thus no new bin was opened)
 
-        while(True):
+        while(True): #While loop iterates for each layer in bin
             self.update_x_y(bin.current_layer, package) #Sets globals x, y and package_fits
 
             if self.package_fits: #Package fits at proposed x,y
@@ -143,6 +139,16 @@ class PackingAdvisor:
                 self.x = self.x + 2 #start new column
                 self.propose_x_y(layer, package_to_pack)
                 return
+    
+    def try_pack_lower_layer(self, bin, package_to_pack): #Attempts to pack in layer below current - returns true if Succesfull
+        if bin.current_layer.previous_layer is not None:
+            if (bin.current_layer.previous_layer.calc_fill_level() + ((package_to_pack.length * package_to_pack.width) / (bin.width * bin.length))) <= 1:
+                if self.update_x_y_lower_layer(bin, bin.current_layer.previous_layer, package_to_pack): #True is returned if it fits and x,y is set
+                    print('Package fits in layer below')
+                    bin.current_layer.previous_layer.pack(package_to_pack, self.x, self.y)
+                    return True
+
+        return False
 
     def update_x_y_lower_layer(self, bin, lower_layer, package_to_pack): #Includes an airspace check unlike update_x_y
         self.x = 0
