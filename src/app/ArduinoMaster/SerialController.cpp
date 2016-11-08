@@ -211,6 +211,7 @@ void serialWrite(int data) {
 	Serial.write(data);
 #else
 	if (data < 33 || data > 126) {
+		Serial.write('|');
 		Serial.print(data);
 		Serial.write('|');
 	}
