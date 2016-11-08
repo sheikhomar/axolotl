@@ -30,8 +30,8 @@ void resetImprovedPackages(Package packages[]) {
 
 void resetSensorReading(SensorReading *reading) {
 	reading->startTime = 0;
-	reading->acceptEndTime = 0;
-	reading->unacceptedEndTime = 0;
+	reading->endTime = 0;
+	reading->falseCount = 0;
 	reading->bufferCount = 0;
 }
 
@@ -54,6 +54,7 @@ void runImprovedScheduler() {
 	serialDebug("Scheduler ready!\nYou can now put blocks on the belt.\n\n");
 
 	while (true) {
+		//Reading sensors
 		delay(5);
 		bool readyForHandling2 = readSensor(&sensor2, SENSOR_2);
 		delay(5);
@@ -61,10 +62,10 @@ void runImprovedScheduler() {
 		delay(5);
 		bool readyForHandling3 = readSensor(&sensor3, SENSOR_3);
 
+		// checking buffer bound
 		checkBufferCount(sensor1.bufferCount);
 		checkBufferCount(sensor2.bufferCount);
 		checkBufferCount(sensor3.bufferCount);
-
 		
 		if (readyForHandling1 && readyForHandling2 && readyForHandling3) {
 			// At this stage, we have collected distance information for a single package.
@@ -75,6 +76,7 @@ void runImprovedScheduler() {
 			//serialDebugLN("Sensor 2 - Count: " + String(sensor2.bufferCount));
 			//serialDebugLN("Sensor 3 - Count: " + String(sensor3.bufferCount));
 
+			//cleaning buffer from obvious mistakes
 			cleanBuffer(&sensor1, SENSOR_1);
 			cleanBuffer(&sensor2, SENSOR_2);
 			cleanBuffer(&sensor3, SENSOR_3);
@@ -83,23 +85,21 @@ void runImprovedScheduler() {
 			//serialDebugLN("Sensor 2 (Clean) - Count: " + String(sensor2.bufferCount));
 			//serialDebugLN("Sensor 3 (Clean) - Count: " + String(sensor3.bufferCount));
 
-			// Find current package
+			//Find current package
 			Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
 
-			// Prepare next package
+			//Prepare next package
 			packageCount++;
 
-			// Fill Package object using collected sensor data
+			//Fill Package object using collected sensor data
 			handleSensorReadings(p, &sensor1, &sensor2, &sensor3);
 
-			//serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n");
-
-			// Empty buffer for sensor data
+			//resetting sensorReadings
 			resetSensorReading(&sensor1);
 			resetSensorReading(&sensor2);
 			resetSensorReading(&sensor3);
 
-			serialDebug("\n\n\n");
+			serialDebug("\n\n");
 		}
 	}
 }
