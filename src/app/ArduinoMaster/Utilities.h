@@ -12,5 +12,6 @@
 //Functions
 void die(String abortMessage);
 void runConveyorBeltAtSpeed(byte speed);
+void monitorRS485();
 #endif
 
