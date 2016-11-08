@@ -3,6 +3,7 @@ import unittest
 from lib import Bin
 from lib import Package
 from lib import PackingAdvisor
+from lib import InvalidArgError
 
 class PackingAdvisorHandleTests(unittest.TestCase):
     def test_handle(self):
@@ -122,3 +123,16 @@ class PackingAdvisorHandleTests(unittest.TestCase):
         #Lastly the bin_id's are checked
         self.assertEqual(pa.find_bin_containing_package(p8).bin_id, 1)
         self.assertEqual(pa.find_bin_containing_package(p15).bin_id, 2)
+
+    def test_handle_package_larger_than_layer(self):
+        bin1 = Bin(width=5, length=10, max_layers=1)
+
+        p1 = Package(width=6, length=2)
+        p2 = Package(width=2, length=11)
+
+        pa = PackingAdvisor(bin1)
+
+        with self.assertRaises(InvalidArgError):
+            pa.handle(p1)
+        with self.assertRaises(InvalidArgError):
+            pa.handle(p2)

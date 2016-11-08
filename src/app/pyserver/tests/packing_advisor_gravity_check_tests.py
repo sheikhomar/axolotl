@@ -20,13 +20,13 @@ class PackingAdvisorGravityCheckTest(unittest.TestCase):
         pa.bins[0].new_layer()
         pa.x = 0
         pa.y = 0
-        self.assertFalse(pa.check_gravity(pa.bins[0].current_layer, p3) > 0.75)
+        self.assertFalse(pa.calc_gravity(pa.bins[0].current_layer, p3) > 0.75)
         pa.handle(p3)
 
         pa.bins[0].new_layer()
         pa.x = 2
         pa.y = 0
-        self.assertTrue(pa.check_gravity(pa.bins[0].current_layer, p4) > 0.75)
+        self.assertTrue(pa.calc_gravity(pa.bins[0].current_layer, p4) > 0.75)
         
 
 
