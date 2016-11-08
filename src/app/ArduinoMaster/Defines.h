@@ -10,22 +10,21 @@
 #endif
 
 //Pins 
-//LEDs
-#define LED_RED 8
-#define LED_YELLOW 9
-#define LED_GREEN 10
-
-//Ult Sensors
-#define ULT1_TRIG_PIN 2
-#define ULT1_ECHO_PIN 3
-#define ULT2_TRIG_PIN 4
-#define ULT2_ECHO_PIN 5
-#define ULT3_TRIG_PIN 6
-#define ULT3_ECHO_PIN 7
-//Rs485
-#define RS485_TX 10
-#define RS485_RX 11
-#define SERIAL_TRANSMIT_PIN 13
+	//Ult Sensors
+	#define ULT1_TRIG_PIN 2
+	#define ULT1_ECHO_PIN 3
+	#define ULT2_TRIG_PIN 4
+	#define ULT2_ECHO_PIN 5
+	#define ULT3_TRIG_PIN 6
+	#define ULT3_ECHO_PIN 7
+	//LEDs
+	#define LED_GREEN 8
+	#define LED_YELLOW 9
+	#define LED_RED 10
+	//Rs485
+	#define RS485_RX 11
+	#define RS485_TX 12
+	#define SERIAL_TRANSMIT_PIN 13
 
 //Constants
 #define ULT_MM_PER_US 0.170145 //based on speed of sound * 0.5
