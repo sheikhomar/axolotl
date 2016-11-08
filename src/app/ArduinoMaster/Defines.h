@@ -8,37 +8,6 @@
 #else
 	#include "WProgram.h"
 #endif
-//Enums
-typedef enum client {
-	none = 'n',
-	unknown = 'u',
-	RaspberryPi = 'r',
-	NXT = 'n',
-	Debug_Client = ' ',
-	Arduino = 'a'
-} client;
-
-typedef struct {
-	unsigned int id;
-	unsigned int length;
-	unsigned int width;
-	unsigned int height;
-	byte colour;
-	unsigned long middleTime;
-	byte bin;
-} Package;
-
-typedef struct {
-	unsigned short sensor1;
-	unsigned short sensor2;
-	unsigned short sensor3;
-	unsigned long time;
-} SensorData;
-
-typedef struct {
-	unsigned short sensorReading;
-	unsigned long time;
-} SensorReading;
 
 //Pins 
 //LEDs
@@ -97,6 +66,41 @@ typedef struct {
 #define SENSOR_1 1
 #define SENSOR_2 2
 #define SENSOR_3 3
+
+//Enums
+typedef enum client {
+	none = 'n',
+	unknown = 'u',
+	RaspberryPi = 'r',
+	NXT = 'n',
+	Debug_Client = ' ',
+	Arduino = 'a'
+} client;
+
+typedef struct {
+	unsigned int id;
+	unsigned int length;
+	unsigned int width;
+	unsigned int height;
+	byte colour;
+	unsigned long middleTime;
+	byte bin;
+} Package;
+
+typedef struct {
+	unsigned short sensor1;
+	unsigned short sensor2;
+	unsigned short sensor3;
+	unsigned long time;
+} SensorData;
+
+typedef struct {
+	unsigned short sensorReadingBuffer[SENSOR_BUFFER_SIZE];
+	unsigned short bufferCount;
+	unsigned long startTime;
+	unsigned long acceptEndTime;
+	unsigned long unacceptedEndTime;
+} SensorReading;
 
 #endif
 
