@@ -6,8 +6,12 @@ bin1 = Bin(width=5, length=10, max_layers=3)
 bluetooth_scale = 1
 
 def bluetooth_format_package(package, p_advisor):
+    fragile = 0
+
+    if package.is_fragile:
+        fragile = 1
     if package.position is not None:
-        return 'P: {x} {y} {length} {width} {colour} {layer} {bin_id}\n'.format(x=package.position.x*bluetooth_scale, y=package.position.y*bluetooth_scale, length=package.length*bluetooth_scale, width=package.width*bluetooth_scale, colour=package.colour, layer=package.position.layer.find_layer_number(), bin_id=p_advisor.find_bin_containing_package(package).bin_id)
+        return 'P: {x} {y} {length} {width} {height} {colour} {fragile} {layer} {bin_id}\n'.format(x=package.position.x*bluetooth_scale, y=package.position.y*bluetooth_scale, length=package.length*bluetooth_scale, width=package.width*bluetooth_scale, height=package.height*bluetooth_scale, colour=package.colour, fragile=fragile, layer=package.position.layer.find_layer_number(), bin_id=p_advisor.find_bin_containing_package(package).bin_id)
     else:
         return 'P: error - position not set'
 
