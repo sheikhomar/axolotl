@@ -21,9 +21,10 @@
 //Functions
 void resetImprovedPackage(Package *package);
 void resetImprovedPackages(Package packages[]);
+void resetSensorReading(SensorReading *reading);
 void runImprovedScheduler();
-void checkBufferCounts(short BuffCount1, short BuffCount2, short BuffCount3);
-void cleanBuffer(SensorReading sensorBuffer[], int *bufferCount, short sensor);
+void checkBufferCount(short buffCount);
+void cleanBuffer(SensorReading *reading, short sensor);
 
 #endif
 

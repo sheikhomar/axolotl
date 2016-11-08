@@ -28,131 +28,104 @@ void resetImprovedPackages(Package packages[]) {
 	}
 }
 
+void resetSensorReading(SensorReading *reading) {
+	reading->startTime = 0;
+	reading->acceptEndTime = 0;
+	reading->unacceptedEndTime = 0;
+	reading->bufferCount = 0;
+}
+
 void runImprovedScheduler() {
-	serialDebug("Schedule started.\n");
+	serialDebug("Scheduler getting ready.\n");
 	Package packages[PACKAGE_BUFFER_SIZE];
 	int packageStartIndex = 0;
 	int packageCount = 0;
 
-	SensorReading sensorBuffer1[IMPROVED_BUFFER_SIZE];
-	int sensorBuffer1Count = 0;
+	SensorReading sensor1;
+	resetSensorReading(&sensor1);
 
-	SensorReading sensorBuffer2[IMPROVED_BUFFER_SIZE];
-	int sensorBuffer2Count = 0;
+	SensorReading sensor2;
+	resetSensorReading(&sensor2);
 
-	SensorReading sensorBuffer3[IMPROVED_BUFFER_SIZE];
-	int sensorBuffer3Count = 0;
+	SensorReading sensor3;
+	resetSensorReading(&sensor3);
 
-	for (int i = 0; i < IMPROVED_BUFFER_SIZE; i++) {
-		sensorBuffer1[i].time = 0;
-		sensorBuffer2[i].time = 0;
-		sensorBuffer3[i].time = 0;
-	}
-
-	serialDebug("Resetting packages.\n");
 	resetImprovedPackages(packages);
-	serialDebug("Before entering while loop\n\n");
+	serialDebug("Scheduler ready!\nYou can now put blocks on the belt.\n\n");
 
 	while (true) {
 		delay(5);
-		bool readyForHandling2 = readSensor(sensorBuffer2, &sensorBuffer2Count, SENSOR_2);
+		bool readyForHandling2 = readSensor(&sensor2, SENSOR_2);
 		delay(5);
-		bool readyForHandling1 = readSensor(sensorBuffer1, &sensorBuffer1Count, SENSOR_1);
+		bool readyForHandling1 = readSensor(&sensor1, SENSOR_1);
 		delay(5);
-		bool readyForHandling3 = readSensor(sensorBuffer3, &sensorBuffer3Count, SENSOR_3);
+		bool readyForHandling3 = readSensor(&sensor3, SENSOR_3);
 
-		//serialDebug("S1: " + String(sensorBuffer1[sensorBuffer1Count].sensorReading) + " Count: " + String(sensorBuffer1Count) +"\n");
-			//+ " S2: " + String(sensorBuffer2[sensorBuffer2Count].sensorReading) + " S3: " + String(sensorBuffer3[sensorBuffer3Count].sensorReading) + "\n");
+		checkBufferCount(sensor1.bufferCount);
+		checkBufferCount(sensor2.bufferCount);
+		checkBufferCount(sensor3.bufferCount);
 
-		checkBufferCounts(sensorBuffer1Count, sensorBuffer2Count, sensorBuffer3Count);
 		
 		if (readyForHandling1 && readyForHandling2 && readyForHandling3) {
 			// At this stage, we have collected distance information for a single package.
 			// The function 'handleSensorData' builds an instance of Package based 
 			// on the data in the sensorData.
 
-			serialDebugLN("Sensor 1 - Count: " + String(sensorBuffer1Count));
-			serialDebugLN("Sensor 2 - Count: " + String(sensorBuffer2Count));
-			serialDebugLN("Sensor 3 - Count: " + String(sensorBuffer3Count));
+			//serialDebugLN("Sensor 1 - Count: " + String(sensor1.bufferCount));
+			//serialDebugLN("Sensor 2 - Count: " + String(sensor2.bufferCount));
+			//serialDebugLN("Sensor 3 - Count: " + String(sensor3.bufferCount));
 
+			cleanBuffer(&sensor1, SENSOR_1);
+			cleanBuffer(&sensor2, SENSOR_2);
+			cleanBuffer(&sensor3, SENSOR_3);
 
-			cleanBuffer(sensorBuffer1, &sensorBuffer1Count, SENSOR_1);
-			cleanBuffer(sensorBuffer2, &sensorBuffer2Count, SENSOR_2);
-			cleanBuffer(sensorBuffer3, &sensorBuffer3Count, SENSOR_3);
-
-			serialDebugLN("Sensor 1 (Clean) - Count: " + String(sensorBuffer1Count));
-			/*for (int i = 0; i < sensorBuffer1Count; i++) {
-				serialDebugLN("" + String(sensorBuffer1[i].sensorReading));
-			}*/
-			serialDebugLN("Sensor 2 (Clean) - Count: " + String(sensorBuffer2Count));
-			//for (int i = 0; i < sensorBuffer2Count; i++) {
-			//	serialDebugLN("" + String(sensorBuffer2[i].sensorReading));
-			//}
-			serialDebugLN("Sensor 3 (Clean) - Count: " + String(sensorBuffer3Count));
-			/*for (int i = 0; i < sensorBuffer3Count; i++) {
-				serialDebugLN("" + String(sensorBuffer3[i].sensorReading));
-			}*/
+			//serialDebugLN("Sensor 1 (Clean) - Count: " + String(sensor1.bufferCount));
+			//serialDebugLN("Sensor 2 (Clean) - Count: " + String(sensor2.bufferCount));
+			//serialDebugLN("Sensor 3 (Clean) - Count: " + String(sensor3.bufferCount));
 
 			// Find current package
 			Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
 
 			// Prepare next package
 			packageCount++;
-			//serialDebug("Package count: " + String(packageCount) + "\n");
 
 			// Fill Package object using collected sensor data
-			handleSensorReadings(p, sensorBuffer1, sensorBuffer1Count, sensorBuffer2, sensorBuffer2Count, sensorBuffer3, sensorBuffer3Count);
+			handleSensorReadings(p, &sensor1, &sensor2, &sensor3);
 
 			//serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n");
 
 			// Empty buffer for sensor data
-			sensorBuffer1Count = 0;
-			sensorBuffer2Count = 0;
-			sensorBuffer3Count = 0;
+			resetSensorReading(&sensor1);
+			resetSensorReading(&sensor2);
+			resetSensorReading(&sensor3);
+
 			serialDebug("\n\n\n");
 		}
 	}
 }
 
-void checkBufferCounts(short BuffCount1, short BuffCount2, short BuffCount3) {
-		if (BuffCount1 == IMPROVED_BUFFER_SIZE) {
-			die("Panic! Buffer for sensor 1 data is full.");
+void checkBufferCount(short buffCount) {
+	if (buffCount == SENSOR_BUFFER_SIZE) 
+		die("Panic! Buffer for sensor 1 data is full.");
+}
+
+void cleanBuffer(SensorReading *reading, short sensor) {
+	unsigned short tagDist;
+	if (sensor == SENSOR_1)
+		tagDist = ult1_TagDist;
+	else if (sensor == SENSOR_2)
+		tagDist = ult2_TagDist;
+	else if (sensor == SENSOR_3)
+		tagDist = ult3_TagDist;
+	
+	for (int i = 0; i < reading->bufferCount; i++) {
+		if (reading->sensorReadingBuffer[i] > tagDist) {
+			reading->bufferCount = reading->bufferCount - 1;
+			for (int j = i; j < reading->bufferCount; j++) {
+				reading->sensorReadingBuffer[j] = reading->sensorReadingBuffer[j + 1];
+			}
+			i--;
 		}
-		if (BuffCount2 == IMPROVED_BUFFER_SIZE) {
-			die("Panic! Buffer for sensor 2 data is full.");
-		}
-		if (BuffCount3 == IMPROVED_BUFFER_SIZE) {
-			die("Panic! Buffer for sensor 3 data is full.");
 	}
 }
 
-void cleanBuffer(SensorReading sensorBuffer[], int *bufferCount, short sensor) {
-	for (int i = 0; i < *bufferCount; i++) {
-		if (sensor == SENSOR_1) {
-			if (sensorBuffer[i].sensorReading > ult1_TagDist) {
-				*bufferCount = *bufferCount - 1;
-				for (int j = i; j < *bufferCount; j++) {
-					sensorBuffer[j] = sensorBuffer[j + 1];
-				}
-				i--;
-			}
-
-		} else if (sensor == SENSOR_2) {
-			if (sensorBuffer[i].sensorReading > ult2_TagDist) {
-				*bufferCount = *bufferCount - 1;
-				for (int j = i; j < *bufferCount; j++) {
-					sensorBuffer[j] = sensorBuffer[j + 1];
-				}
-				i--;
-			}
-		} else if (sensor == SENSOR_3) {
-			if (sensorBuffer[i].sensorReading > ult3_TagDist) {
-				*bufferCount = *bufferCount - 1;
-				for (int j = i; j < *bufferCount; j++) {
-					sensorBuffer[j] = sensorBuffer[j + 1];
-				}
-				i--;
-			}
-		}
-	}
-}
