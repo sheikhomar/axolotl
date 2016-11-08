@@ -6,20 +6,30 @@ import android.graphics.Paint;
 public class Package {
     public int width;
     public int length;
+    public int height;
     private int color;
+    public boolean fragile;
     public int x;
     public int y;
     public Paint paint;
     public int layer;
     public int bin;
 
-    public Package(int startX, int startY, int packLength, int packWidth, int paintColor, int layerNumber, int binNumber){
+    public Package(int startX, int startY, int packLength, int packWidth, int packHeight, int paintColor, int packFragile, int layerNumber, int binNumber){
         x = startX;
         y = startY;
         length = packLength;
         width = packWidth;
+        height = packHeight;
         layer = layerNumber;
         bin = binNumber;
+
+        if(packFragile == 0){
+            fragile = false;
+        }
+        else{
+            fragile = true;
+        }
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);

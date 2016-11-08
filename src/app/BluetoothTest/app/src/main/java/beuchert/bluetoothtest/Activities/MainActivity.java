@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private Intent blueIntent;
     private DrawingView drawingView;
     private ArrayAdapter<String> spinnerAdapter;
-    Spinner spinner;
+    private ArrayAdapter<String> spinnerAdapter2;
+    Spinner spinner, spinner2;
     private boolean drawingViewCreated = false;
     private int binLayers;
     boolean firstTime = true;
@@ -59,6 +60,12 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
         spinner.setOnItemSelectedListener(this);
+
+        spinner2 = (Spinner) findViewById(R.id.spinner2);
+        spinnerAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        spinnerAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(spinnerAdapter2);
+        spinner2.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -198,10 +205,12 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             int y = (int)(Integer.parseInt(PackSplit[2]) * drawingViewScale);
             int length = (int)(Integer.parseInt(PackSplit[3]) * drawingViewScale);
             int width = (int)(Integer.parseInt(PackSplit[4]) * drawingViewScale);
-            int color = Integer.parseInt(PackSplit[5]);
-            int layer = Integer.parseInt(PackSplit[6]);
-            int binID = Integer.parseInt(PackSplit[7]);
-            drawingView.addPackage(new Package(x, y, length, width, color, layer, binID));
+            int height = Integer.parseInt(PackSplit[5]);
+            int color = Integer.parseInt(PackSplit[6]);
+            int fragile = Integer.parseInt(PackSplit[7]);
+            int layer = Integer.parseInt(PackSplit[8]);
+            int binID = Integer.parseInt(PackSplit[9]);
+            drawingView.addPackage(new Package(x, y, length, width, height, color, fragile, layer, binID));
         }
         else {
             showInvalidPackageError();
@@ -210,11 +219,21 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        String s = parent.getItemAtPosition(pos).toString();
-        String[] split = s.split(" ");
-        int sAsInt1 = Integer.parseInt(split[1]);
-        int sAsInt2 = Integer.parseInt(split[3]);
-        drawingView.selectBinAndLayer(sAsInt1, sAsInt2);
+        Spinner spinner = (Spinner)parent;
+        if(spinner.getId() == R.id.spinner) {
+            String s = parent.getItemAtPosition(pos).toString();
+            String[] split = s.split(" ");
+            int sAsInt1 = Integer.parseInt(split[1]);
+            int sAsInt2 = Integer.parseInt(split[3]);
+            drawingView.selectBinAndLayer(sAsInt1, sAsInt2);
+        }
+        else if(spinner.getId() == R.id.spinner2){
+            String s = parent.getItemAtPosition(pos).toString();
+            String[] split = s.split(" ");
+            int packID = Integer.parseInt(split[1]);
+            Log.d("Spinner2", "Pack " + Integer.toString(packID));
+            drawingView.selectPackage(packID);
+        }
     }
 
     @Override
@@ -254,13 +273,38 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         }
     }
 
-    public void addElementToSpinner(String newString){
-        spinnerAdapter.add(newString);
-        spinnerAdapter.notifyDataSetChanged();
+    public void addElementToSpinner(int spinnerID, String newString){
+        if(spinnerID == 1) {
+            spinnerAdapter.add(newString);
+            spinnerAdapter.notifyDataSetChanged();
+        }
+        else if(spinnerID == 2){
+            spinnerAdapter2.add(newString);
+            spinnerAdapter2.notifyDataSetChanged();
+        }
     }
 
     public void setSelectedElementInSpinner(int bin, int layer){
-        spinner.setSelection((bin-1)*binLayers + layer - 1);
+        spinner.setSelection((bin - 1) * binLayers + layer - 1);
+        setSelectedElementInSpinner(1);
+    }
+
+    public void setSelectedElementInSpinner(int pack){
+        spinner2.setSelection(pack-1);
+    }
+
+    public int readCurrentPackage(){
+        return (int)spinner2.getSelectedItemId();
+    }
+
+    public void clearSpinner(int spinnerID){
+        if(spinnerID == 1){
+
+        }
+        else if(spinnerID == 2){
+            spinnerAdapter2.clear();
+            spinnerAdapter2.notifyDataSetChanged();
+        }
     }
 
     public void showInvalidPackageError(){
@@ -277,12 +321,5 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         alertDialogBuilder.setCancelable(false);
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }
-
-    private float convertPixelToDp(float px){
-        //Resources resources = context.getResources();
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return dp;
     }
 }

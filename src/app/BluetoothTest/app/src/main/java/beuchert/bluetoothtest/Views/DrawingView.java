@@ -69,7 +69,7 @@ public class DrawingView extends View {
 
         for(int i = 0; i < bin.amountOfLayers; i++){
             bin.addLayerToBin(new Layer());
-            mainActivity.addElementToSpinner("Bin: " + (index+1) + " Layer: " + (i+1));
+            mainActivity.addElementToSpinner(1, "Bin: " + (index+1) + " Layer: " + (i+1));
         }
     }
 
@@ -78,11 +78,9 @@ public class DrawingView extends View {
         Layer layer = null;
 
         bin = bins.get(pack.bin-1);
-
         layer = bin.layers.get(pack.layer-1);
 
         layer.addPackageToLayer(pack);
-
         selectBinAndLayer(pack.bin, pack.layer);
     }
 
@@ -116,7 +114,7 @@ public class DrawingView extends View {
         }
 
         frameDrawer.drawBitmap(frame, null, bounds , null);
-
+        //readAndHighlightPackage();
         invalidate();
     }
 
@@ -125,7 +123,28 @@ public class DrawingView extends View {
         selectedBin = bin;
         selectedLayer = layer;
         mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
+        setSpinner2();
         redrawSelectedBinAndLayer();
+        readAndHighlightPackage();
+    }
+
+    private void setSpinner2(){
+        mainActivity.clearSpinner(2);
+        List<Package> packList = bins.get(selectedBin - 1).layers.get(selectedLayer - 1).Packages;
+        for(int i = 1; i <= packList.size(); i++){
+            mainActivity.addElementToSpinner(2, "Pack: " + Integer.toString(i));
+        }
+    }
+
+    private void readAndHighlightPackage(){
+        selectPackage(mainActivity.readCurrentPackage());
+    }
+
+    public void selectPackage(int packID){
+        if(packID > 0) {
+            List<Package> packList = bins.get(selectedBin - 1).layers.get(selectedLayer - 1).Packages;
+            highlightPackage(packList.get(packID - 1).x, packList.get(packID - 1).y);
+        }
     }
 
     public void setSize(int length, int width){
@@ -159,6 +178,7 @@ public class DrawingView extends View {
 
             selectBinAndLayer(selectedBin, selectedLayer);
             mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
+            readAndHighlightPackage();
         }
     }
 
@@ -177,32 +197,35 @@ public class DrawingView extends View {
 
             selectBinAndLayer(selectedBin, selectedLayer);
             mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
+            readAndHighlightPackage();
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        highlightPackage((int)event.getX(), (int)event.getY());
+        int pack = highlightPackage((int)event.getX(), (int)event.getY());
+        mainActivity.setSelectedElementInSpinner(pack);
         return super.onTouchEvent(event);
     }
 
     // Highlighting a package if it is pressed
-    public void highlightPackage(int x, int y){
+    private int highlightPackage(int x, int y){
         Layer layer = bins.get(selectedBin - 1).layers.get(selectedLayer - 1);
         for(int i = 0; i < layer.Packages.size(); i++){
             if(correctPackage(layer.Packages.get(i), x, y)){
-                selectBinAndLayer(selectedBin, selectedLayer);
+                redrawSelectedBinAndLayer();
                 highlight(layer.Packages.get(i), Color.MAGENTA);
+                return i + 1;
             }
         }
+        return 1;
     }
 
     // Checking if a package is pressed and returning true if pressed
     private boolean correctPackage(Package packToCheck, int x, int y){
-        if(packToCheck.x < x && x < packToCheck.x + packToCheck.length){
-            if(packToCheck.y < y && y < packToCheck.y + packToCheck.width){
-                return true;
-            }
+        if(packToCheck.x <= x && x < packToCheck.x + packToCheck.length && packToCheck.y <= y && y < packToCheck.y + packToCheck.width){
+            Log.d("Spinner2", "Pass: " + Integer.toString(packToCheck.x) + ", " + Integer.toString(packToCheck.y));
+            return true;
         }
         return false;
     }
