@@ -1,12 +1,12 @@
 class Package:
-    def __init__(self, width, length, colour = 0):
+    def __init__(self, width, length, height = 1,colour = 0):
         self.width = width
         self.length = length
-        #self.height = height
-        #self.is_fragile = is_fragile
+        self.height = height
         #self.destination = destination
         self.position = None
         self.colour = colour
+        self.is_fragile = (self.colour == 3 or self.colour == 1)
 
     def position_is_taken(self, x, y):
         #Assumes position is initialized and test proposed position of new package

@@ -3,13 +3,14 @@ from lib import InvalidArgError
 
 class PackingAdvisor:
     def __init__(self, bin):
+        #Initialise internal bin-lists
         bin.bin_id = 1
         self.bins = [bin]
         bin2 = Bin(bin.width, bin.length, bin.max_layers)
         bin2.bin_id = 2
         self.bins_foreign = [bin2]
 
-        # Internal variables
+        # Internal global variables. Strict rules for which methods may assign to these
         self.x = 0
         self.y = 0
         self.package_fits = False
@@ -141,6 +142,7 @@ class PackingAdvisor:
 
         return False
 
+    #Checks if x,y coordinates are available for package in current layer. Tested x,y were proposed in layer below.
     def check_airspace(self, bin, package_to_pack):
         for x_air in range(self.x, self.x+package_to_pack.length):
             for y_air in range(self.y, self.y+package_to_pack.width):
@@ -149,6 +151,7 @@ class PackingAdvisor:
 
         return True
 
+    #Simple switch method to set meta-data necessary for handling
     def set_meta_data(self, package):
         if package.colour == 0:
             self.foreign = False
@@ -165,6 +168,7 @@ class PackingAdvisor:
         else:
             raise InvalidArgError('Package had an undefined colour')
 
+    #Method called outside to retrieve Bin object if given Package
     def find_bin_containing_package(self, p):
         for bin in self.bins:
             for layer in bin.layers:
