@@ -47,7 +47,7 @@ bool readSensors(SensorData *sensorData) {
 	}
 }
 
-bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor) {
+bool readSensor(SensorReading *reading, int whichSensor) {
 	bool sensor = false;
 	unsigned short dist;
 	unsigned short trueCount = 0;
@@ -69,36 +69,30 @@ bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor)
 	}
 
 
-	//serialDebug("Sensor" + String(whichSensor) + ": " + String(dist) + "   ");
-	//if (whichSensor == SENSOR_2)
-	//	serialDebug(String(dist) + "\n");
-
-	if (*bufferCount == 0 && sensor) {
-		sensorBuffer[*bufferCount].sensorReading = dist;
-		sensorBuffer[*bufferCount].time = millis();
-		*bufferCount = *bufferCount + 1;
+	if (reading->bufferCount == 0 && sensor) {
+		reading->sensorReadingBuffer[reading->bufferCount] = dist;
+		reading->startTime = millis();
+		reading->bufferCount = reading->bufferCount + 1;
 		return false;
-	} else if (*bufferCount == 0){
+	} else if (reading->bufferCount == 0){
 		return false;
-	} else if (*bufferCount == 1) {
-		sensorBuffer[*bufferCount].sensorReading = dist;
-		sensorBuffer[*bufferCount].time = millis();
-		*bufferCount = *bufferCount + 1;
+	} else if (reading->bufferCount == 1) {
+		reading->sensorReadingBuffer[reading->bufferCount] = dist;
+		reading->bufferCount = reading->bufferCount + 1;
 		return false;
 	} else {
-		sensorBuffer[*bufferCount].sensorReading = dist;
-		sensorBuffer[*bufferCount].time = millis();
-		*bufferCount = *bufferCount + 1;
+		reading->sensorReadingBuffer[reading->bufferCount] = dist;
+		reading->bufferCount = reading->bufferCount + 1;
 
-		for (int i = *bufferCount-3; i < *bufferCount; i++) {
+		for (int i = reading->bufferCount -3; i < reading->bufferCount; i++) {
 			if (whichSensor == SENSOR_1) {
-				sensor = sensorBuffer[i].sensorReading < ult1_TagDist;
+				sensor = reading->sensorReadingBuffer[i] < ult1_TagDist;
 			}
 			else if (whichSensor == SENSOR_2) {
-				sensor = sensorBuffer[i].sensorReading < ult2_TagDist;
+				sensor = reading->sensorReadingBuffer[i] < ult2_TagDist;
 			}
 			else if (whichSensor == SENSOR_3) {
-				sensor = sensorBuffer[i].sensorReading < ult3_TagDist;
+				sensor = reading->sensorReadingBuffer[i] < ult3_TagDist;
 			}
 			
 			if (sensor) {
@@ -107,28 +101,26 @@ bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int whichSensor)
 		}
 
 		if (trueCount > 0) {
+			reading->unacceptedEndTime = millis();
 			return false;
 		}
-		//should clean data here and update sensor buffer.
+		reading->acceptEndTime = millis();
 		return true;
 	}
 }
 
 
-void handleSensorReadings(Package *package, SensorReading sensorBuffer1[], int sensorBuffer1Count,
-	SensorReading sensorBuffer2[], int sensorBuffer2Count,
-	SensorReading sensorBuffer3[], int sensorBuffer3Count){
-
+void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReading *sensor2, SensorReading *sensor3){
 	//Finding package length
-	unsigned long lengthBasedOnSensor1 = findLength(sensorBuffer1, sensorBuffer1Count);
-	unsigned long lengthBasedOnSensor2 = findLength(sensorBuffer2, sensorBuffer2Count);
-	unsigned long lengthBasedOnSensor3 = findLength(sensorBuffer3, sensorBuffer3Count);
+	unsigned long lengthBasedOnSensor1 = findLength(sensor1);
+	unsigned long lengthBasedOnSensor2 = findLength(sensor2);
+	unsigned long lengthBasedOnSensor3 = findLength(sensor3);
 	package->length = (lengthBasedOnSensor1 + lengthBasedOnSensor2 + lengthBasedOnSensor3 ) / 3;
 
 	//Normalizing sensor data
-	unsigned long sensor1Length = normalizeSensorData(sensorBuffer1, sensorBuffer1Count);
-	unsigned long sensor2Length = normalizeSensorData(sensorBuffer2, sensorBuffer2Count);
-	unsigned long sensor3Length = normalizeSensorData(sensorBuffer3, sensorBuffer3Count);
+	unsigned long sensor1Length = normalizeSensorData(sensor1);
+	unsigned long sensor2Length = normalizeSensorData(sensor2);
+	unsigned long sensor3Length = normalizeSensorData(sensor3);
 
 	//Finding width and height
 	package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - sensor1Length;
@@ -150,37 +142,33 @@ void handleSensorReadings(Package *package, SensorReading sensorBuffer1[], int s
 
 
 	//Finding middle time
-	unsigned long sensor1MiddleTime = findMiddleTime(sensorBuffer1, sensorBuffer1Count);
-	unsigned long sensor2MiddleTime = findMiddleTime(sensorBuffer2, sensorBuffer2Count);
-	unsigned long sensor3MiddleTime = findMiddleTime(sensorBuffer3, sensorBuffer3Count);
+	unsigned long sensor1MiddleTime = findMiddleTime(sensor1);
+	unsigned long sensor2MiddleTime = findMiddleTime(sensor2);
+	unsigned long sensor3MiddleTime = findMiddleTime(sensor3);
 	package->middleTime = (sensor1MiddleTime + sensor2MiddleTime + sensor3MiddleTime) / 3;
 }
 
-unsigned long normalizeSensorData(SensorReading buffer[], int bufferCount) {
+unsigned long normalizeSensorData(SensorReading *sensor) {
 	unsigned long total; 
 
-	for (int i = 0; i < bufferCount; i++) {
-		total += buffer[i].sensorReading;
+	for (int i = 0; i < sensor->bufferCount; i++) {
+		total += sensor->sensorReadingBuffer[i];
 	}
-	unsigned long result = total / bufferCount;
+	unsigned long result = total / sensor->bufferCount;
 
 	return result;
 }
 
-unsigned long findMiddleTime(SensorReading buffer[], int bufferCount) {
-	unsigned long startTime = buffer[0].time;
-	unsigned long endTime = buffer[bufferCount - 1].time;
-	unsigned long result = startTime + ((endTime - startTime) / 2);
+unsigned long findMiddleTime(SensorReading *sensor) {
+	unsigned long result = sensor->startTime + ((sensor->acceptEndTime - sensor->startTime) / 2);
 
 	return result;
 }
 
-unsigned long findLength(SensorReading buffer[], int bufferCount) {
-	unsigned long startTime = buffer[0].time;
-	unsigned long endTime = buffer[bufferCount - 1].time;
-	unsigned long packageTime = endTime - startTime;
-
+unsigned long findLength(SensorReading *sensor) {
+	unsigned long packageTime = sensor->acceptEndTime - sensor->startTime;
 	unsigned long result = packageTime / 10 * SPEED_CONVEYOR;
+
 	return result;
 }
 

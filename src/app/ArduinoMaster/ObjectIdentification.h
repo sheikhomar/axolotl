@@ -22,16 +22,14 @@
 
 //Functions
 bool readSensors(SensorData *sensorData);
-bool readSensor(SensorReading sensorBuffer[], int *bufferCount, int sensor);
+bool readSensor(SensorReading *reading, int sensor);
 void handleSensorData(Package *package, SensorData buffer[], int bufferStartIndex, int bufferCount);
-void handleSensorReadings(Package *package, SensorReading sensorBuffer1[], int sensorBuffer1Count,
-	SensorReading sensorBuffer2[], int sensorBuffer2Count,
-	SensorReading sensorBuffer3[], int sensorBuffer3Count);
+void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReading *sensor2, SensorReading *sensor3);
 unsigned long findAverage(SensorData buffer[], int startIndex, int bufferSize, byte whichSensor);
 int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte sensor);
-unsigned long findLength(SensorReading buffer[], int bufferCount);
-unsigned long normalizeSensorData(SensorReading buffer[], int bufferCount);
-unsigned long findMiddleTime(SensorReading buffer[], int bufferCount);
+unsigned long findLength(SensorReading *sensor);
+unsigned long normalizeSensorData(SensorReading *sensor);
+unsigned long findMiddleTime(SensorReading *sensor);
 
 
 #endif
