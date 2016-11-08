@@ -85,10 +85,20 @@ void resetPackages(Package packages[]) {
 
 void removePackage(Package *package, int *count, int *index) {
     // Remove package from the buffer
-    serialDebugLN("Removing package: " + String(package->id));
+    serialDebug("Removing package: ");
+    serialDebugLN(String(package->id));
     *index = (*index + 1) % PACKAGE_BUFFER_SIZE;
     *count--;
     resetPackage(package);
+}
+
+void removeFirstPackage(Package packages[], int *count) {
+    serialDebug("Removing PID: ");
+    serialDebugLN(String(packages[0].id));
+    for (int i = 0; i < (*count); i++) {
+        packages[i] = packages[i + 1];
+    }
+    (*count)--;
 }
 
 void runScheduler() {
@@ -96,7 +106,7 @@ void runScheduler() {
     Package packages[PACKAGE_BUFFER_SIZE];
     int packageStartIndex = 0;
     int packageCount = 0;
-    int packageId = 0;
+    unsigned int nextPackageId = 1;
 
     SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
     int sensorBufferStartIndex = 0;
@@ -136,30 +146,35 @@ void runScheduler() {
                 // The function 'handleSensorData' builds an instance of Package based 
                 // on the data in the sensorData.
 
-                String temp = String(sensorBufferCount);
-                serialDebug("Sensor size: " + temp + "\n");
+                serialDebug("Sensor size: ");
+                serialDebugLN(String(sensorBufferCount));
 
                 if (packageCount == PACKAGE_BUFFER_SIZE) {
                     die("Panic! Buffer for packages is full.");
                 }
 
-                serialDebug("PackageIndex: " + String(packageStartIndex));
-
-                // Find current package
-                Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
-                p->id = ++packageId;
-
-                serialDebugLN(" PackageIndex2: " + String((packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE));
+                // Find next package in the array
+                Package p = packages[packageCount];
+                resetPackage(&p);
+                p.id = nextPackageId;
+                nextPackageId = nextPackageId + 1;
 
                 // Prepare next package
                 packageCount++;
 
-                serialDebug("Package count: " + String(packageCount) + "\n");
+                serialDebug("Package count: ");
+                serialDebugLN(String(packageCount));
                 
                 // Fill Package object using collected sensor data
-                handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
+                handleSensorData(&p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
 
-                serialDebug("Package: " + String(p->width) + " x " + String(p->height) + " x " + String(p->length) + "\n" + "\n");
+                String debugMsg = "Package";
+                debugMsg.concat(p.width);
+                debugMsg.concat(" x ");
+                debugMsg.concat(p.height);
+                debugMsg.concat(" x ");
+                debugMsg.concat(p.length);
+                serialDebugLN(debugMsg);
 
                 // Empty buffer for sensor data
                 sensorBufferCount = 0;
@@ -167,40 +182,48 @@ void runScheduler() {
         }
 
         if (packageCount > 0) {
-            Package *p = &packages[packageStartIndex];
+            Package *p = &packages[0];
 
-            if (p->id > 0) {
-                requestColourInformation(p);
+            serialDebugLN("\nProcessing PID: ");
+            serialDebugLN(String(p->id));
+            requestColourInformation(p);
 
-                // Check if we have received data
-                byte buf[] = { 0 };
-                int command = -1;
-                client clientInfo = serialReadData(buf, 1, &command);
+            // Check if we have received data
+            byte buf[] = { 0 };
+            int command = -1;
+            client clientInfo = serialReadData(buf, 1, &command);
 
-                if (clientInfo == Arduino) {
+            if (clientInfo == Arduino) {
                     
-                    if (command == 1) {
-                        // We have recieved data from NXT
-                        p->colour = buf[0];
+                if (command == 1) {
+                    // We have recieved data from NXT
+                    p->colour = buf[0];
+                    serialDebug("\nReceived Color: ");
+                    serialDebugLN(String(p->colour));
 
-                        if (p->colour != COLOUR_BLACK && p->colour != COLOUR_UNKNOWN) {
-                            sendPackageInfoToRaspberryPi(p);
-                        }
-                        else {
-                            removePackage(p, &packageCount, &packageStartIndex);
-                        }
+                    if (p->colour != COLOUR_BLACK && p->colour != COLOUR_UNKNOWN) {
+                        sendPackageInfoToRaspberryPi(p);
                     }
-                    else if (command == 'p') {
-                        // We have recieved data from Raspberry Pi
-                        p->bin = buf[0];
+                    else {
+                        removeFirstPackage(packages, &packageCount);
                     }
                 }
-
-                if (pushArm(p)) {
-                    // Remove package from the buffer
-                    removePackage(p, &packageCount, &packageStartIndex);
+                else if (command == 'p') {
+                    // We have recieved data from Raspberry Pi
+                    p->bin = buf[0];
+                    serialDebug("\nReceived Bin: ");
+                    serialDebugLN(String(p->bin));
                 }
             }
+
+            //if (pushArm(p)) {
+                // Remove package from the buffer
+                serialDebug("Package count1: " + String(packageCount) + "\n");
+                removeFirstPackage(packages, &packageCount);
+                serialDebug("Package count1: " + String(packageCount) + "\n");
+                delay(1000);
+            //}
+            
         }
 
     }//while

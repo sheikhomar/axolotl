@@ -18,6 +18,7 @@
 #include "PositionTest.h"
 #include "SerialControllerTest.h"
 #include "UltrasoundSensorTest.h"
+#include "Utilities.h"
 
 void setup() {
 	//Initiate Serial Communication
@@ -35,6 +36,6 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-	//runScheduler();
-	runImprovedScheduler();
+    runConveyorBeltAtSpeed(50);
+	runScheduler();
 }
