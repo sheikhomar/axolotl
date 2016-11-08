@@ -95,18 +95,22 @@ serialReadData
 
 Reads a RS485 message from the network and saves it in the given data array.
 ***************************/
-client serialReadData(byte data[], int data_length) {
-	int id, length, command;
+client serialReadData(byte data[], int data_length, int *command) {
+	int id, length;
 	int i;
 	bool incorrectSender = false;
 
+    if (RS485Serial.available() < 1) {
+        return none;
+    }
 
 	//Noise handle
 	do
 	{
-		if (RS485Serial.available() < 1) {
-			return none;
-		}
+        if (RS485Serial.available() < 1) {
+            return unknown;
+        }
+
 		id = RS485Serial.read();
 
 		#if (DEBUG)
@@ -119,13 +123,14 @@ client serialReadData(byte data[], int data_length) {
 	//Read length and command
 	serialBuffTimeout(2);
 	length = RS485Serial.read();
-	command = RS485Serial.read();
+	*command = RS485Serial.read();
+
 
 	#if DEBUG
 		serialWrite(length); 
-		serialWrite(command);
+		serialWrite(*command);
 	#endif
-
+    
 	//Kick if length is incorrect
 	if (length < 0 || length > RS485_DATA_LENGTH_MAX) {
 		return unknown;
@@ -154,17 +159,12 @@ client serialReadData(byte data[], int data_length) {
 		#endif
 	}
 
-	switch (command)
-	{
-	case   0: break;
-	case   5: break; //NXT colour
-	case  10: break; //Reserved for DEBUG
-	case 'p': break; //PI motor to push
-	default:
-		break;
-	}
+    return (client)id;
+}
 
-	return Arduino;
+client serialReadData(byte data[], int data_length) {
+    int command;
+    return serialReadData(data, data_length, &command);
 }
 
 /***************************

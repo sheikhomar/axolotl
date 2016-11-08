@@ -18,6 +18,7 @@ client serialCheck();
 void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverFunction);
 void serialSendData(client receiver, byte reciverFunction);
 client serialReadData(byte data[], int data_length);
+client serialReadData(byte data[], int data_length, int *command);
 bool serialBuffTimeout(byte numberOfRequiredElements);
 void serialDebug(String message);
 void serialDebugLN(String message);
