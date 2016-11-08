@@ -71,21 +71,24 @@ void runImprovedScheduler() {
 			// The function 'handleSensorData' builds an instance of Package based 
 			// on the data in the sensorData.
 
+			serialDebugLN("Sensor 1 - Count: " + String(sensorBuffer1Count));
 			serialDebugLN("Sensor 2 - Count: " + String(sensorBuffer2Count));
+			serialDebugLN("Sensor 3 - Count: " + String(sensorBuffer3Count));
+
 
 			cleanBuffer(sensorBuffer1, &sensorBuffer1Count, SENSOR_1);
 			cleanBuffer(sensorBuffer2, &sensorBuffer2Count, SENSOR_2);
 			cleanBuffer(sensorBuffer3, &sensorBuffer3Count, SENSOR_3);
 
-			serialDebugLN("Sensor 1 - Count: " + String(sensorBuffer1Count));
+			serialDebugLN("Sensor 1 (Clean) - Count: " + String(sensorBuffer1Count));
 			/*for (int i = 0; i < sensorBuffer1Count; i++) {
 				serialDebugLN("" + String(sensorBuffer1[i].sensorReading));
 			}*/
-			serialDebugLN("Sensor 2 - Count: " + String(sensorBuffer2Count));
-			/*for (int i = 0; i < sensorBuffer2Count; i++) {
-				serialDebugLN("" + String(sensorBuffer2[i].sensorReading));
-			}*/
-			serialDebugLN("Sensor 3 - Count: " + String(sensorBuffer3Count));
+			serialDebugLN("Sensor 2 (Clean) - Count: " + String(sensorBuffer2Count));
+			//for (int i = 0; i < sensorBuffer2Count; i++) {
+			//	serialDebugLN("" + String(sensorBuffer2[i].sensorReading));
+			//}
+			serialDebugLN("Sensor 3 (Clean) - Count: " + String(sensorBuffer3Count));
 			/*for (int i = 0; i < sensorBuffer3Count; i++) {
 				serialDebugLN("" + String(sensorBuffer3[i].sensorReading));
 			}*/

@@ -11,13 +11,13 @@
 
 //Defines
 #define ult1_TagDist 3800
-#define ult2_TagDist 6500
+#define ult2_TagDist 5800
 #define ult3_TagDist 3600 // TODO: This must be adjusted.
 
 #define ARRAY_SIZE 20
 #define SPEED_CONVEYOR 140
 
-#define LENGTH_BETWEEN_SENSORS 8800
+#define LENGTH_BETWEEN_SENSORS 11950
 #define HEIGHT_BETWEEN_SENSOR_AND_BELT 5200
 
 //Functions
