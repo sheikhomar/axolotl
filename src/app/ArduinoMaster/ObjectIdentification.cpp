@@ -126,9 +126,9 @@ void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReadin
 	package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - sensor1Length;
 	package->width = LENGTH_BETWEEN_SENSORS - sensor2Length - sensor3Length;
 
-	serialDebug("Length: " + String(lengthBasedOnSensor1));
+	serialDebug("Length: (" + String(lengthBasedOnSensor1));
 	serialDebug(" + " + String(lengthBasedOnSensor2) + " + ");
-	serialDebug(String(lengthBasedOnSensor3) + " / 3 = ");
+	serialDebug(String(lengthBasedOnSensor3) + ") / 3 = ");
 	serialDebug(String(package->length) + "\n");
 
 	serialDebug("Width: " + String(LENGTH_BETWEEN_SENSORS) + " - ");

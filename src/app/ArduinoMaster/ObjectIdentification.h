@@ -10,15 +10,15 @@
 #endif
 
 //Defines
-#define ult1_TagDist 3800
-#define ult2_TagDist 5800
-#define ult3_TagDist 3600 // TODO: This must be adjusted.
+#define ult1_TagDist 3800					// TODO: Calibrate this
+#define ult2_TagDist 5800					// TODO: Calibrate this
+#define ult3_TagDist 3600					// TODO: Calibrate this
 
 #define ARRAY_SIZE 20
-#define SPEED_CONVEYOR 140
+#define SPEED_CONVEYOR 140					// TODO: Calibrate this
 
-#define LENGTH_BETWEEN_SENSORS 11950
-#define HEIGHT_BETWEEN_SENSOR_AND_BELT 5200
+#define LENGTH_BETWEEN_SENSORS 11950			// TODO: Calibrate this
+#define HEIGHT_BETWEEN_SENSOR_AND_BELT 5200 // TODO: Calibrate this
 
 //Functions
 bool readSensors(SensorData *sensorData);
