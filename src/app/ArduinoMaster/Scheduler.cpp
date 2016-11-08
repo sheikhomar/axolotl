@@ -10,57 +10,21 @@
 
 #include "Scheduler.h"
 
-
-void requestColourFromNXT(Package *package) {
-    byte buf[] = { 0 };
-
-    // Request colour information from the NXT
-    serialSendData(NXT, buf, 0, COMM_NXT_GET_COLOUR);
-
-    package->colour = COLOUR_REQUESTED;
-}
-
-bool isColourInfoReady(Package *package) {
-    // Check serial to see if we have received data from NXT
-    byte buf[] = { 0 };
-    client clientInfo = serialReadData(buf, 1);
-    if (clientInfo == Arduino) {
-        package->colour = buf[0];
-        package->bin = 2; // TODO: Fix this.
-        serialDebug("Colour from NXT: " + String(buf[0]) + "\n");
-
-        return true;
-    }
-
-    return false;
-}
-
-bool isPackingAdviceReady(Package *package) {
-    // Check serial to see if we have received data from Raspberry Pi
-
-    byte buf[] = { 0 };
-    client clientInfo = serialReadData(buf, 1);
-    if (clientInfo == Arduino) {
-        package->bin = buf[0];
-        serialDebug("Bin from Pi: " + String(buf[0]) + "\n");
-
-        return true;
-    }
-    return false;
-}
-
-
 void sendPackageInfoToRaspberryPi(Package *package) {
-    byte buf[] = { (byte)package->width, (byte)package->length, (byte)package->height, (byte)package->colour };
-    serialSendData(RaspberryPi, buf, 4, 1);
-}
+    byte buf[] = { 0, 0, 0, 0 };
 
-bool readPackingAdvice(Package *package) {
-    byte buf[1];
-    serialReadData(buf, 1);
-    // TODO: Ensure that the received data is correct before we continue.
-    package->bin = buf[0];
-    return true;
+    //buf[0] = (byte)package->width  / 1600;
+    //buf[1] = (byte)package->length / 1600;
+    //buf[2] = (byte)package->height / 1600;
+    //buf[3] = package->colour;
+
+    buf[0] = 2;
+    buf[1] = 4;
+    buf[2] = 2;
+    buf[3] = package->colour;
+
+    serialSendData(RaspberryPi, buf, 4, 'p');
+    serialDebug("\n");
 }
 
 bool pushArm(Package *package) {
@@ -88,9 +52,19 @@ void requestColourInformation(Package *package) {
         unsigned long timeDiff = currentTime - package->middleTime;
 
         if (timeDiff >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
+            serialDebugLN("\n Color for P ID: " + String(package->id));
             requestColourFromNXT(package);
         }
     }
+}
+
+void requestColourFromNXT(Package *package) {
+    byte buf[] = { 0 };
+
+    // Request colour information from the NXT
+    serialSendData(NXT, buf, 0, COMM_NXT_GET_COLOUR);
+
+    package->colour = COLOUR_REQUESTED;
 }
 
 void resetPackage(Package *package) {
@@ -106,8 +80,15 @@ void resetPackage(Package *package) {
 void resetPackages(Package packages[]) {
     for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
         resetPackage(&packages[i]);
-        packages[i].id = i + 1;
     }
+}
+
+void removePackage(Package *package, int *count, int *index) {
+    // Remove package from the buffer
+    serialDebugLN("Removing package: " + String(package->id));
+    *index = (*index + 1) % PACKAGE_BUFFER_SIZE;
+    *count--;
+    resetPackage(package);
 }
 
 void runScheduler() {
@@ -115,6 +96,7 @@ void runScheduler() {
     Package packages[PACKAGE_BUFFER_SIZE];
     int packageStartIndex = 0;
     int packageCount = 0;
+    int packageId = 0;
 
     SensorData sensorBuffer[SENSOR_BUFFER_SIZE];
     int sensorBufferStartIndex = 0;
@@ -161,16 +143,19 @@ void runScheduler() {
                     die("Panic! Buffer for packages is full.");
                 }
 
+                serialDebug("PackageIndex: " + String(packageStartIndex));
+
                 // Find current package
                 Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
+                p->id = ++packageId;
 
-                //serialDebug("Working with package: " + String((packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE) + " .\n");
+                serialDebugLN(" PackageIndex2: " + String((packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE));
 
                 // Prepare next package
                 packageCount++;
 
                 serialDebug("Package count: " + String(packageCount) + "\n");
-
+                
                 // Fill Package object using collected sensor data
                 handleSensorData(p, sensorBuffer, sensorBufferStartIndex, sensorBufferCount);
 
@@ -183,21 +168,38 @@ void runScheduler() {
 
         if (packageCount > 0) {
             Package *p = &packages[packageStartIndex];
-            requestColourInformation(p);
-            if (isColourInfoReady(p)) {
-                sendPackageInfoToRaspberryPi(p);
 
-            }
+            if (p->id > 0) {
+                requestColourInformation(p);
 
-            if (isPackingAdviceReady(p)) {
-                
-            }
+                // Check if we have received data
+                byte buf[] = { 0 };
+                int command = -1;
+                client clientInfo = serialReadData(buf, 1, &command);
 
-            if (pushArm(p)) {
-                // Remove package from the buffer
-                packageStartIndex = (packageStartIndex + 1) % PACKAGE_BUFFER_SIZE;
-                packageCount--;
-                resetPackage(p);
+                if (clientInfo == Arduino) {
+                    
+                    if (command == 1) {
+                        // We have recieved data from NXT
+                        p->colour = buf[0];
+
+                        if (p->colour != COLOUR_BLACK && p->colour != COLOUR_UNKNOWN) {
+                            sendPackageInfoToRaspberryPi(p);
+                        }
+                        else {
+                            removePackage(p, &packageCount, &packageStartIndex);
+                        }
+                    }
+                    else if (command == 'p') {
+                        // We have recieved data from Raspberry Pi
+                        p->bin = buf[0];
+                    }
+                }
+
+                if (pushArm(p)) {
+                    // Remove package from the buffer
+                    removePackage(p, &packageCount, &packageStartIndex);
+                }
             }
         }
 
