@@ -68,22 +68,10 @@ void runImprovedScheduler() {
 		checkBufferCount(sensor3.bufferCount);
 		
 		if (readyForHandling1 && readyForHandling2 && readyForHandling3) {
-			// At this stage, we have collected distance information for a single package.
-			// The function 'handleSensorData' builds an instance of Package based 
-			// on the data in the sensorData.
-
-			//serialDebugLN("Sensor 1 - Count: " + String(sensor1.bufferCount));
-			//serialDebugLN("Sensor 2 - Count: " + String(sensor2.bufferCount));
-			//serialDebugLN("Sensor 3 - Count: " + String(sensor3.bufferCount));
-
 			//cleaning buffer from obvious mistakes
 			cleanBuffer(&sensor1, SENSOR_1);
 			cleanBuffer(&sensor2, SENSOR_2);
 			cleanBuffer(&sensor3, SENSOR_3);
-
-			//serialDebugLN("Sensor 1 (Clean) - Count: " + String(sensor1.bufferCount));
-			//serialDebugLN("Sensor 2 (Clean) - Count: " + String(sensor2.bufferCount));
-			//serialDebugLN("Sensor 3 (Clean) - Count: " + String(sensor3.bufferCount));
 
 			//Find current package
 			Package *p = &packages[(packageStartIndex + packageCount) % PACKAGE_BUFFER_SIZE];
