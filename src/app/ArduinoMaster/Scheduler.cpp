@@ -170,7 +170,7 @@ void receiveData(PackageCollection *packages) {
 //   End If
 // End Loop
 void sendData(PackageCollection *packages) {
-    for (int i = 0; i < packages->count; i++) {
+    for (unsigned int i = 0; i < packages->count; i++) {
         Package package = packages->items[i];
         if (package.colour == COLOUR_NOT_REQUESTED) {
             // Colour has not been requested
@@ -255,10 +255,11 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
     // Create new package
     Package *package = &(packages->items[packages->count]);
     packages->count = packages->count + 1;
-    package->id = __nextPackageId;
+    resetPackage(package);
+    (*package).id = __nextPackageId;
     __nextPackageId = __nextPackageId + 1;
 
-    resetPackage(package);
+    
 
     serialDebug("New package ID: ");
     serialDebugLN(String(package->id));
