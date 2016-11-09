@@ -41,6 +41,12 @@
 
 #define COMM_PI_ADVICEPACKAGE 'p'
 
+#define COMM_ARDUINO_COLOUR_INFO 1
+
+
+#define BIN_NOT_REQUESTED 254
+#define BIN_REQUESTED 255
+
 #define COLOUR_RED 0
 #define COLOUR_GREEN 1
 #define COLOUR_BLUE 2
@@ -48,7 +54,7 @@
 #define COLOUR_WHITE 6
 #define COLOUR_BLACK 7
 #define COLOUR_UNKNOWN 128
-#define COLOUR_NONE 254
+#define COLOUR_NOT_REQUESTED 254
 #define COLOUR_REQUESTED 255
 
 //Program variables
@@ -87,18 +93,26 @@ typedef struct {
 } Package;
 
 typedef struct {
-	unsigned short sensor1;
-	unsigned short sensor2;
-	unsigned short sensor3;
-	unsigned long time;
+    unsigned int count;
+    Package items[PACKAGE_BUFFER_SIZE];
+} PackageCollection;
+
+
+
+
+typedef struct {
+	unsigned short sensor1 = 0;
+	unsigned short sensor2 = 0;
+	unsigned short sensor3 = 0;
+	unsigned long time = 0;
 } SensorData;
 
 typedef struct {
 	unsigned short sensorReadingBuffer[SENSOR_BUFFER_SIZE];
-	unsigned short bufferCount;
-	unsigned long startTime;
-	unsigned long endTime;
-	byte falseCount;
+	unsigned short bufferCount = 0;
+	unsigned long startTime = 0;
+	unsigned long endTime = 0;
+	byte falseCount = 0;
 } SensorReading;
 
 #endif

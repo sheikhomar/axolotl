@@ -16,7 +16,7 @@ void resetImprovedPackage(Package *package) {
 	package->length = 0;
 	package->width = 0;
 	package->height = 0;
-	package->colour = COLOUR_NONE;
+	package->colour = COLOUR_NOT_REQUESTED;
 	package->middleTime = 0;
 	package->bin = -1;
 }
