@@ -43,8 +43,7 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 void pushArm(PackageCollection *packages) {
     for (int i = 0; i < packages->count; i++) {
         Package *package = &(packages->items[i]);
-        serialDebug("pushArm PID: ");
-        serialDebugLN(String(package->id));
+
         if (package->bin != BIN_NOT_REQUESTED && package->bin != BIN_REQUESTED) {
             unsigned long currentTime = millis();
             unsigned long timeDiff = currentTime - package->middleTime;
@@ -59,8 +58,8 @@ void pushArm(PackageCollection *packages) {
                 removePackage(packages, i);
                 i--;
             } else if (package->bin != 1 && package->bin != 2) {
-                serialDebug("Wrong bin PID: ");
-                serialDebugLN(String(package->id));
+                serialDebug("Wrong bin for PID: ");
+                //serialDebugLN(String(package->id));
                 removePackage(packages, i);
                 i--;
             }
@@ -135,12 +134,14 @@ void receiveData(PackageCollection *packages) {
     }
 
     Package *package = &(packages->items[0]);
-
+     
     if (command == COMM_ARDUINO_COLOUR_INFO) {
         // We have recieved data from NXT
         package->colour = buf[0];
-        serialDebug("\nReceived Colour: ");
-        serialDebugLN(String(package->colour));
+        serialDebug("\nReceived Colour: [");
+        serialDebug(String(package->colour));
+        serialDebug("] for PID: ");
+        serialDebugLN(String(package->id));
 
         if (package->colour == COLOUR_BLACK || package->colour == COLOUR_UNKNOWN) {
             // If we get these colours then, we just remove the package
@@ -153,8 +154,17 @@ void receiveData(PackageCollection *packages) {
     else if (command == COMM_PI_ADVICEPACKAGE) {
         // We have recieved data from Raspberry Pi
         package->bin = buf[0];
-        serialDebug("\nReceived Bin: ");
-        serialDebugLN(String(package->bin));
+        serialDebug("\nReceived bin: [");
+        serialDebug(String(package->bin));
+        serialDebug("] for PID: ");
+        serialDebug(String(package->id));
+    }
+    else {
+        serialDebug("\nWrong command: ");
+        serialDebugLN(String(command));
+        
+        // Wrong command. Remove package.
+        removePackage(packages, 0);
     }
 }
 
@@ -278,7 +288,7 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
 
 void runScheduler() {
     // Setup
-    serialDebug("Schedule started.\n");
+    serialDebug("Scheduler started.\n");
     PackageCollection packages;
     SensorReading sensor1, sensor2, sensor3;
     
@@ -298,6 +308,6 @@ void runScheduler() {
 
         pushArm(&packages);
 
-        serialDebug(".");
+        //serialDebug(".");
     }
 }

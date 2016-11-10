@@ -24,7 +24,6 @@ void pushArm(PackageCollection *packages);
 void requestColourInformation(Package *package);
 void resetPackage(Package *package);
 void removePackage(PackageCollection *packages, int index);
-void removeFirstPackage(PackageCollection *packages);
 void receiveData(PackageCollection *packages);
 void sendData(PackageCollection *packages);
 void resetSensorReading(SensorReading *reading);
