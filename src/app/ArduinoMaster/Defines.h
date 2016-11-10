@@ -97,6 +97,14 @@ typedef struct {
     Package items[PACKAGE_BUFFER_SIZE];
 } PackageCollection;
 
+typedef struct {
+	double kalmanGain;
+	double errorInEstimate; 
+	double previousErrorInEstimate; 
+	double errorInMeasurement; 
+	double currentEstimate; 
+	double previousEstimate;
+} KalmanFilterInformation;
 
 
 

@@ -9,6 +9,7 @@
 	#include "WProgram.h"
 #endif
 
+#include "Defines.h"
 
 //Defines
 #define FROM_ULT_TO_COLOUR_SENSOR_MS 440

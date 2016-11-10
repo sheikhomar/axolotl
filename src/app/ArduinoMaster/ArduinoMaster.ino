@@ -4,6 +4,7 @@
 */
 
 //External libs
+#include "KalmanFilter.h"
 #include <SoftwareSerial.h>
 
 //Internal libs
