@@ -11,7 +11,7 @@ ser = serial.Serial('/dev/ttyUSB0',57600)
 
 def format_serial_package(input_array):
     if len(input_array) == 7:
-        return Package(int.from_bytes(input_array[4], byteorder='little'), int.from_bytes(input_array[3], byteorder='little'), int.from_bytes(input_array[6], byteorder='little'))
+        return Package(width=int.from_bytes(input_array[4], byteorder='little'), length=int.from_bytes(input_array[3], byteorder='little'), colour=int.from_bytes(input_array[6], byteorder='little'))
     else:
         raise InvalidArgError('Input to format_serial_package was not array of length 7')
 
@@ -152,6 +152,6 @@ while True:
 			client.send(bluetooth_format_bin(pa.find_bin_containing_package(p1)))
 		print(((pa.find_bin_containing_package(p1).bin_id % 2) + 1).to_bytes(1, byteorder='little'))
 		serial_write_push(ser, pa.find_bin_containing_package(p1).bin_id)
-		client.send(bluetooth_format_package(package))
+		client.send(bluetooth_format_package(p1, pa))
 	data.clear()
 	time.sleep(1)
