@@ -10,7 +10,6 @@
 //Internal libs
 #include "Defines.h"
 #include "Scheduler.h"
-#include "ImprovedScheduler.h"
 #include "LEDController.h"
 #include "SerialController.h"
 #include "UltrasoundSensor.h"
