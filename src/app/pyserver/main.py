@@ -20,7 +20,7 @@ def bluetooth_format_bin(bin):
 
 def format_serial_package(input_array):
     if len(input_array) == 7:
-        return Package(input_array[4], input_array[3], input_array[6])
+        return Package(width=int.from_bytes(input_array[4], byteorder='little'), length=int.from_bytes(input_array[3], byteorder='little'), colour=int.from_bytes(input_array[6], byteorder='little'))
     else:
         raise InvalidArgError('Input to format_serial_package was not array of length 7')
 
