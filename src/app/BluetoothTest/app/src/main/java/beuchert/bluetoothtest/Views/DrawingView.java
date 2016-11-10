@@ -95,26 +95,36 @@ public class DrawingView extends View {
         invalidate();
     }
 
-    private void redrawSelectedBinAndLayer(){
+    public void redrawSelectedBinAndLayer(){
+        Package packToHighlight = readPackage();
         frameDrawer.drawColor(Color.WHITE);
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setColor(Color.MAGENTA);
 
-        Rect r = new Rect(0, 0, width-1, length-1);
+        Rect r = new Rect(0, 0, width - 1, length - 1);
         frameDrawer.drawRect(r, borderPaint);
 
-        Bin bin = bins.get(selectedBin-1);
+        Bin bin = bins.get(selectedBin - 1);
 
-        Layer layer = bin.layers.get(selectedLayer-1);
+        Layer layer = bin.layers.get(selectedLayer - 1);
         List<Package> packList = layer.Packages;
-        for (Package pack:packList) {
-            Rect rBorder = new Rect(pack.x, pack.y, pack.x+pack.length, pack.y+pack.width);
-            frameDrawer.drawRect(rBorder,borderPaint);
-
-            Rect rFill = new Rect(pack.x+1, pack.y+1, pack.x+pack.length, pack.y+pack.width);
-            frameDrawer.drawRect(rFill,pack.paint);
+        for (Package pack : packList) {
+            Rect rBorder = new Rect(pack.x, pack.y, pack.x + pack.length, pack.y + pack.width);
+            frameDrawer.drawRect(rBorder, borderPaint);
+            Rect rFill = new Rect(pack.x + 1, pack.y + 1, pack.x + pack.length, pack.y + pack.width);
+            frameDrawer.drawRect(rFill, pack.paint);
         }
 
-        frameDrawer.drawBitmap(frame, null, bounds , null);
-        //readAndHighlightPackage();
+        if(packToHighlight != null) {
+            Rect rBorderHigh = new Rect(packToHighlight.x, packToHighlight.y, packToHighlight.x + packToHighlight.length, packToHighlight.y + packToHighlight.width);
+            frameDrawer.drawRect(rBorderHigh, paint);
+
+            Rect rFillHigh = new Rect(packToHighlight.x + 1, packToHighlight.y + 1, packToHighlight.x + packToHighlight.length, packToHighlight.y + packToHighlight.width);
+            frameDrawer.drawRect(rFillHigh, paint);
+        }
+
+        frameDrawer.drawBitmap(frame, null, bounds, null);
         invalidate();
     }
 
@@ -125,7 +135,6 @@ public class DrawingView extends View {
         mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
         setSpinner2();
         redrawSelectedBinAndLayer();
-        readAndHighlightPackage();
     }
 
     private void setSpinner2(){
@@ -136,15 +145,16 @@ public class DrawingView extends View {
         }
     }
 
-    private void readAndHighlightPackage(){
-        selectPackage(mainActivity.readCurrentPackage());
+    private Package readPackage(){
+        return selectPackage(mainActivity.readCurrentPackage());
     }
 
-    public void selectPackage(int packID){
+    public Package selectPackage(int packID){
         if(packID > 0) {
             List<Package> packList = bins.get(selectedBin - 1).layers.get(selectedLayer - 1).Packages;
-            highlightPackage(packList.get(packID - 1).x, packList.get(packID - 1).y);
+            return packList.get(packID - 1);
         }
+        return null;
     }
 
     public void setSize(int length, int width){
@@ -167,18 +177,15 @@ public class DrawingView extends View {
         if(bins.size() != 0){
             if(selectedLayer != bins.get(selectedBin-1).layers.size()){
                 selectedLayer = selectedLayer+1;
-                selectBinAndLayer(selectedBin, selectedLayer);
+                //selectBinAndLayer(selectedBin, selectedLayer);
             }
-            else{
-                if(selectedBin != bins.size()){
-                    selectedBin = selectedBin + 1;
-                    selectedLayer = 1;
-                }
+            else if(selectedBin != bins.size()) {
+                selectedBin = selectedBin + 1;
+                selectedLayer = 1;
             }
 
             selectBinAndLayer(selectedBin, selectedLayer);
             mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
-            readAndHighlightPackage();
         }
     }
 
@@ -186,35 +193,48 @@ public class DrawingView extends View {
         if(bins.size() != 0){
             if(selectedLayer != 1){
                 selectedLayer = selectedLayer-1;
-                selectBinAndLayer(selectedBin, selectedLayer);
+                //selectBinAndLayer(selectedBin, selectedLayer);
             }
-            else{
-                if(selectedBin != 1){
-                    selectedBin = selectedBin - 1;
-                    selectedLayer = 3;
-                }
+            else if(selectedBin != 1) {
+                selectedBin = selectedBin - 1;
+                selectedLayer = 3;
             }
 
             selectBinAndLayer(selectedBin, selectedLayer);
             mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
-            readAndHighlightPackage();
+        }
+    }
+
+    public void shiftRight2(){
+        int eleInSpin2 = mainActivity.spinner2Count();
+        int currentEleInSpin2 = mainActivity.readCurrentPackage();
+        if(eleInSpin2 != 0 && currentEleInSpin2 < eleInSpin2) {
+            mainActivity.setSelectedElementInSpinner(currentEleInSpin2 + 1);
+            redrawSelectedBinAndLayer();
+        }
+    }
+
+    public void shiftLeft2(){
+        int eleInSpin2 = mainActivity.spinner2Count();
+        int currentEleInSpin2 = mainActivity.readCurrentPackage();
+        if(eleInSpin2 != 0 && currentEleInSpin2 > 0) {
+            mainActivity.setSelectedElementInSpinner(currentEleInSpin2 - 1);
+            redrawSelectedBinAndLayer();
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int pack = highlightPackage((int)event.getX(), (int)event.getY());
+        int pack = locatePackage((int)event.getX(), (int)event.getY());
         mainActivity.setSelectedElementInSpinner(pack);
+        redrawSelectedBinAndLayer();
         return super.onTouchEvent(event);
     }
 
-    // Highlighting a package if it is pressed
-    private int highlightPackage(int x, int y){
+    private int locatePackage(int x, int y){
         Layer layer = bins.get(selectedBin - 1).layers.get(selectedLayer - 1);
         for(int i = 0; i < layer.Packages.size(); i++){
             if(correctPackage(layer.Packages.get(i), x, y)){
-                redrawSelectedBinAndLayer();
-                highlight(layer.Packages.get(i), Color.MAGENTA);
                 return i + 1;
             }
         }
@@ -224,26 +244,8 @@ public class DrawingView extends View {
     // Checking if a package is pressed and returning true if pressed
     private boolean correctPackage(Package packToCheck, int x, int y){
         if(packToCheck.x <= x && x < packToCheck.x + packToCheck.length && packToCheck.y <= y && y < packToCheck.y + packToCheck.width){
-            Log.d("Spinner2", "Pass: " + Integer.toString(packToCheck.x) + ", " + Integer.toString(packToCheck.y));
             return true;
         }
         return false;
-    }
-
-    // Highlighting the specific package with the specific colour
-    private void highlight(Package pack, int colour){
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setColor(colour);
-
-        Rect rBorder = new Rect(pack.x, pack.y, pack.x+pack.length, pack.y+pack.width);
-        frameDrawer.drawRect(rBorder, paint);
-
-        Rect rFill = new Rect(pack.x+1, pack.y+1, pack.x+pack.length, pack.y+pack.width);
-        frameDrawer.drawRect(rFill, paint);
-
-        frameDrawer.drawBitmap(frame, null, bounds , null);
-
-        invalidate();
     }
 }

@@ -123,7 +123,7 @@
         android:layout_height="50dp"
         android:id="@+id/leftArrowButton2"
         android:textSize="25sp"
-        android:onClick="leftArrowOnClick"
+        android:onClick="leftArrow2OnClick"
         android:layout_below="@+id/spinner2"
         android:layout_alignParentStart="true" />
 
@@ -132,7 +132,7 @@
         android:layout_width="50dp"
         android:id="@+id/rightArrowButton2"
         android:textSize="25sp"
-        android:onClick="rightArrowOnClick"
+        android:onClick="rightArrow2OnClick"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:padding="0dp"

@@ -122,14 +122,15 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         blueService.disconnect();
     }
 
-    public void rightArrowOnClick(View view){
-        drawingView.shiftRight();
-    }
+    public void rightArrowOnClick(View view){ drawingView.shiftRight(); }
 
     public void leftArrowOnClick(View view){
         drawingView.shiftLeft();
     }
 
+    public void rightArrow2OnClick(View view) { drawingView.shiftRight2(); }
+
+    public void leftArrow2OnClick(View view) { drawingView.shiftLeft2(); }
 
     // interface methods:
     @Override
@@ -228,11 +229,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             drawingView.selectBinAndLayer(sAsInt1, sAsInt2);
         }
         else if(spinner.getId() == R.id.spinner2){
-            String s = parent.getItemAtPosition(pos).toString();
-            String[] split = s.split(" ");
-            int packID = Integer.parseInt(split[1]);
-            Log.d("Spinner2", "Pack " + Integer.toString(packID));
-            drawingView.selectPackage(packID);
+            drawingView.redrawSelectedBinAndLayer();
         }
     }
 
@@ -294,7 +291,14 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     }
 
     public int readCurrentPackage(){
-        return (int)spinner2.getSelectedItemId();
+        if(spinner2.getCount() != 0) {
+            Log.d("Chosen pack", "Number " + Integer.toString((int) spinner2.getSelectedItemId() + 1));
+            return (int) spinner2.getSelectedItemId() + 1;
+        }
+        else{
+            Log.d("Chosen pack", "Number " + Integer.toString(0));
+            return 0;
+        }
     }
 
     public void clearSpinner(int spinnerID){
@@ -305,6 +309,10 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             spinnerAdapter2.clear();
             spinnerAdapter2.notifyDataSetChanged();
         }
+    }
+
+    public int spinner2Count(){
+        return spinnerAdapter2.getCount();
     }
 
     public void showInvalidPackageError(){
