@@ -86,7 +86,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ImprovedScheduler.cpp" />
     <ClCompile Include="LEDController.cpp" />
     <ClCompile Include="LEDControllerTest.cpp" />
     <ClCompile Include="ObjectIdentification.cpp" />
@@ -100,7 +99,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Defines.h" />
-    <ClInclude Include="ImprovedScheduler.h" />
     <ClInclude Include="LEDController.h" />
     <ClInclude Include="LEDControllerTest.h" />
     <ClInclude Include="ObjectIdentification.h" />
