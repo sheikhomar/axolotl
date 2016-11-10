@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private boolean drawingViewCreated = false;
     private int binLayers;
     boolean firstTime = true;
-    private double drawingViewScale = 0;
+    public double drawingViewScale = 0;
 
 
     //Activity methods
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             int y = (int)(Integer.parseInt(PackSplit[2]) * drawingViewScale);
             int length = (int)(Integer.parseInt(PackSplit[3]) * drawingViewScale);
             int width = (int)(Integer.parseInt(PackSplit[4]) * drawingViewScale);
-            int height = Integer.parseInt(PackSplit[5]);
+            int height = (int)(Integer.parseInt(PackSplit[5]) * drawingViewScale);
             int color = Integer.parseInt(PackSplit[6]);
             int fragile = Integer.parseInt(PackSplit[7]);
             int layer = Integer.parseInt(PackSplit[8]);
@@ -297,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         }
         else{
             Log.d("Chosen pack", "Number " + Integer.toString(0));
+            updatePackInfoDisplay("", "", "");
             return 0;
         }
     }
@@ -313,6 +314,15 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
 
     public int spinner2Count(){
         return spinnerAdapter2.getCount();
+    }
+
+    public void updatePackInfoDisplay(String dim, String colour, String fragile){
+        TextView dimVal = (TextView) findViewById(R.id.textViewDimVal);
+        TextView colVal = (TextView) findViewById(R.id.textViewColVal);
+        TextView fraVal = (TextView) findViewById(R.id.textViewFraVal);
+        dimVal.setText(dim);
+        colVal.setText(colour);
+        fraVal.setText(fragile);
     }
 
     public void showInvalidPackageError(){

@@ -85,7 +85,7 @@
         android:layout_alignStart="@+id/rectCanvas" />
 
     <TextView
-        android:text="TempText1"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewDimVal"
@@ -96,7 +96,7 @@
         android:textSize="20dp"  />
 
     <TextView
-        android:text="TempText2"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewColVal"
@@ -107,7 +107,7 @@
         android:textSize="20dp"  />
 
     <TextView
-        android:text="TempText3"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewFraVal"

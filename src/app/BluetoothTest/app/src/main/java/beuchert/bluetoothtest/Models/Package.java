@@ -7,7 +7,7 @@ public class Package {
     public int width;
     public int length;
     public int height;
-    private int color;
+    private int colour;
     public boolean fragile;
     public int x;
     public int y;
@@ -23,6 +23,7 @@ public class Package {
         height = packHeight;
         layer = layerNumber;
         bin = binNumber;
+        colour = paintColor;
 
         if(packFragile == 0){
             fragile = false;
@@ -50,6 +51,16 @@ public class Package {
             default:
                 paint.setColor(Color.WHITE);
                 break;
+        }
+    }
+
+    public String getColour(){
+        switch(colour){
+            case 0: return "Red";
+            case 1: return "Green";
+            case 2: return "Blue";
+            case 3: return "Yellow";
+            default: return "Unknown";
         }
     }
 }

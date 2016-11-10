@@ -122,6 +122,8 @@ public class DrawingView extends View {
 
             Rect rFillHigh = new Rect(packToHighlight.x + 1, packToHighlight.y + 1, packToHighlight.x + packToHighlight.length, packToHighlight.y + packToHighlight.width);
             frameDrawer.drawRect(rFillHigh, paint);
+
+            showPackInfo(packToHighlight);
         }
 
         frameDrawer.drawBitmap(frame, null, bounds, null);
@@ -247,5 +249,21 @@ public class DrawingView extends View {
             return true;
         }
         return false;
+    }
+
+    private void showPackInfo(Package pack){
+        String dim = Integer.toString((int)(Math.ceil(((double)pack.length / mainActivity.drawingViewScale))));
+        dim += " x " + Integer.toString((int)(Math.ceil(((double)pack.width / mainActivity.drawingViewScale))));
+        dim += " x " + Integer.toString((int)(Math.ceil(((double)pack.height / mainActivity.drawingViewScale))));
+        String colour = pack.getColour();
+        String fragile;
+        if(pack.fragile){
+            fragile = "Yes";
+        }
+        else{
+            fragile = "No";
+        }
+
+        mainActivity.updatePackInfoDisplay(dim, colour, fragile);
     }
 }
