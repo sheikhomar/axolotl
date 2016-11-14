@@ -41,25 +41,25 @@ class SerLib:
 				if ser.inWaiting() >= 1:
 					data.append(int.from_bytes(ser.read(), byteorder='little'))
 					if data[1] <= 11:
-						data = read_x_bytes(ser, data, x = data[1] + 1)
+						data = self.read_x_bytes(ser, data, x = data[1] + 1)
 						data.clear()
-						return serial_read(ser, data)
+						return self.serial_read(ser, data)
 					else:
 						print('Implied message for Non-Raspberry, but length was incompatible: {}'.format(data[1]))
 						data.clear()
-						return serial_read(ser, data)
+						return self.serial_read(ser, data)
 		
 		if data[0] == b'r':
 			while True:
 				if ser.inWaiting() >= 1:
 					data.append(int.from_bytes(ser.read(), byteorder='little'))
 					if data[1] <= 11:
-						data = read_x_bytes(ser, data, x=data[1] + 1)
+						data = self.read_x_bytes(ser, data, x=data[1] + 1)
 						return (data, True)
 					else:
 						print('Implied message for Raspberry, but length was incompatible: {}'.format(data[1]))
 						data.clear()
-						return serial_read(ser, data)
+						return self.serial_read(ser, data)
 		else:
 			raise ArithmeticError('First byte does not indicate proper message')
 			
