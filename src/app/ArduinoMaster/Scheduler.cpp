@@ -171,6 +171,8 @@ void receiveData(PackageCollection *packages) {
             // Remove current package.
             removePackage(packages, 0);
         }
+
+        printPackages(packages);
     }
     else if (command == COMM_PI_ADVICEPACKAGE) {
 
@@ -209,11 +211,6 @@ void sendData(PackageCollection *packages) {
     //serialDebugLN(String(packages->count));
 
     for (int i = 0; i < packages->count; i++) {
-        if (i > 3) {
-            serialDebug("Count wrong? ");
-            serialDebugLN(String(packages->count));
-        }
-
         Package *package = &(packages->items[i]);
         if (package->colour == COLOUR_NOT_REQUESTED) {
             // Colour has not been requested
@@ -225,6 +222,7 @@ void sendData(PackageCollection *packages) {
 
             serialDebug("3) PackCount: ");
             serialDebugLN(String(packages->count));
+
         }
         
         if (package->colour != COLOUR_REQUESTED &&
@@ -349,8 +347,27 @@ void packageEmulator(PackageCollection *packages, int *count) {
         package->width = 3200;
         package->length = 1600;
         package->middleTime = 400;
+
+        printPackages(packages);
     }
     delay(10);
+}
+
+void printPackages(PackageCollection *packages) {
+    for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
+        Package *package = &(packages->items[i]);
+        String packageOutput = "";
+        packageOutput.concat(String(i+1));
+        packageOutput.concat("] ");
+        packageOutput.concat(String(package->id));
+        packageOutput.concat(" ");
+        packageOutput.concat(String(package->length));
+        packageOutput.concat(" ");
+        packageOutput.concat(String(package->colour));
+        packageOutput.concat(" ");
+        packageOutput.concat(String(package->bin));
+        serialDebugLN(packageOutput);
+    }
 }
 
 

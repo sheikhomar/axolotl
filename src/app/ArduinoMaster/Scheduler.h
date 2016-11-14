@@ -19,6 +19,7 @@
 #define NOT_DETECTED_THRESHOLD 3
 
 //Functions
+void printPackages(PackageCollection *packages);
 void sendPackageInfoToRaspberryPi(Package *package);
 void pushArm(PackageCollection *packages);
 void requestColourInformation(Package *package);

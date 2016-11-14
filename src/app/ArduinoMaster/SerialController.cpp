@@ -101,7 +101,8 @@ client serialReadData(byte data[], int data_length, int *command) {
 	int i;
 	bool incorrectSender = false;
 
-    if (RS485Serial.available() < 1) {
+    // We expect the package size to always be 4
+    if (RS485Serial.available() <= 3) {
         return none;
     }
 
@@ -122,7 +123,7 @@ client serialReadData(byte data[], int data_length, int *command) {
 	} while (incorrectSender);
 
 	//Read length and command
-	serialBuffTimeout(2);
+	serialBuffTimeout(2); 
 	length = RS485Serial.read();
 	*command = RS485Serial.read();
 
@@ -177,16 +178,20 @@ serialBuffTimeout
 
 Continuously checks the RS485 buffer to see if # of required elements are present.
 ***************************/
-bool serialBuffTimeout(byte numberOfRequiredElements) {
-	long time = micros();
+bool serialBuffTimeout(int numberOfRequiredElements) {
+	unsigned long time = micros() + RS485_TIMEOUT_US;
 	bool reachedTarget, reachedTimeout;
 
 	do
 	{
-		reachedTimeout = time + RS485_TIMEOUT_US < micros();
+		reachedTimeout = time < micros();
 		reachedTarget = numberOfRequiredElements <= Serial.available();
+        
 	} while (!reachedTarget && !reachedTimeout);
 
+    if (reachedTimeout) {
+        serialDebugLN("Buffer timeout!");
+    }
 	return reachedTarget;
 }
 
