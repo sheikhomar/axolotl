@@ -73,6 +73,7 @@
         android:id="@+id/ConnectButton"
         android:onClick="onConnectClick"
         android:layout_alignParentTop="true"
+        android:visibility="invisible"
         android:layout_alignEnd="@+id/spinner" />
 
     <Button
@@ -81,6 +82,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/DisconnectButton"
         android:onClick="DisconnectOnClick"
+        android:visibility="invisible"
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/rectCanvas" />
 

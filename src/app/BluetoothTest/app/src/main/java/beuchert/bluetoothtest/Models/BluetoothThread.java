@@ -39,10 +39,7 @@ public class BluetoothThread extends Thread {
     }
 
     public void run() {
-        byte[] buffer = new byte[1024];  // buffer store for the stream
-        int bytes; // bytes returned from read()
         BufferedReader r = new BufferedReader(new InputStreamReader(mmInStream));
-
 
         while (true) {
             try {

@@ -2,6 +2,8 @@ package beuchert.bluetoothtest.Activities;
 
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -74,52 +76,20 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         Log.d("MainActivity", "MainActivity Started");
         Intent blueIntent = new Intent(this, BluetoothService.class);
         bindService(blueIntent, mServiceConnection, BIND_AUTO_CREATE);
-
         createDrawingView(1, 1);
     }
 
-
-    // this int is used to test with onConnectClick without connecting with PI
-    private int i = 0;
-    // onClick methods:
-    public void onConnectClick(View view) {
-        blueService.connect();
-
-        // bin packing example
-        /*if(i == 0){
-            handlePackage("B: 500 250 3");
+    @Override
+    public void isServiceReady(boolean ready) {
+        if(ready){
+            blueService.connect();
         }
-        else if (i == 1){
-            handlePackage("P: 0 0 100 150 1 1");
-        }
-        else if (i == 2){
-            handlePackage("P: 0 150 100 100 1 2");
-        }
-        else if (i == 3){
-            handlePackage("P: 100 0 100 200 1 3");
-        }
-        else if (i == 4){
-            handlePackage("B: 500 250 3");
-        }
-        else if (i == 5){
-            handlePackage("P: 300 0 100 200 1 1");
-        }
-        else if (i == 6){
-            handlePackage("P: 200 150 100 100 0 2");
-        }
-        else if (i == 7){
-            handlePackage("P: 400 0 100 200 1 3");
-        }
-        else if (i == 8){
-            handlePackage("P: 0 0 100 100 2 2");
-        }
-        else
-            showBluetoothConnectionAlert();
-        i++;*/
     }
 
+    public void onConnectClick(View view) {  }
+
     public void DisconnectOnClick(View view){
-        blueService.disconnect();
+        //blueService.disconnect();
     }
 
     public void rightArrowOnClick(View view){ drawingView.shiftRight(); }
@@ -135,50 +105,17 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     // interface methods:
     @Override
     public void showBluetoothConnectionAlert() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Connection Error");
-        alertDialogBuilder.setMessage("There was a bluetooth connection error (IOException).");
-        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialogBuilder.setCancelable(false);
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        showAlert("Connection Error", "There was a bluetooth connection error (IOException).", true);
     }
 
     @Override
     public void showBluetoothAdapterAlert() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("No Bluetooth adapter");
-        alertDialogBuilder.setMessage("Your device does not have a working bluetooth adapter.");
-        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                System.exit(0);
-            }
-        });
-        alertDialogBuilder.setCancelable(false);
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        showAlert("No Bluetooth adapter", "Your device does not have a working bluetooth adapter.", false);
     }
 
     @Override
     public void showBluetoothNotEnabledAlert() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Bluetooth not turned on.");
-        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-        });
-        alertDialogBuilder.setCancelable(false);
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        showAlert("Bluetooth not turned on.", "", true);
     }
 
     @Override
@@ -229,7 +166,8 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             drawingView.selectBinAndLayer(sAsInt1, sAsInt2);
         }
         else if(spinner.getId() == R.id.spinner2){
-            drawingView.redrawSelectedBinAndLayer();
+            //drawingView.redrawSelectedBinAndLayer(true);
+            // This activates whenever an element is chosen -- not only when selecting in the spinner2
         }
     }
 
@@ -326,16 +264,29 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     }
 
     public void showInvalidPackageError(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Package error");
-        alertDialogBuilder.setMessage("The application don't know how to handle the message which was recieved.");
-        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        showAlert("Package error", "The application don't know how to handle the message which was received.", true);
+    }
 
+    private void showAlert(String title, String msg, boolean dismiss){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage(msg);
+        if(dismiss) {
+            alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        else{
+            alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.exit(0);
+                }
+            });
+        }
         alertDialogBuilder.setCancelable(false);
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();

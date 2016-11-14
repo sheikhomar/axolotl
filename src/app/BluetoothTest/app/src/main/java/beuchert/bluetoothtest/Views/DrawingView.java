@@ -95,7 +95,7 @@ public class DrawingView extends View {
         invalidate();
     }
 
-    public void redrawSelectedBinAndLayer(){
+    public void redrawSelectedBinAndLayer(boolean highlightPack){
         Package packToHighlight = readPackage();
         frameDrawer.drawColor(Color.WHITE);
         Paint paint = new Paint();
@@ -116,7 +116,7 @@ public class DrawingView extends View {
             frameDrawer.drawRect(rFill, pack.paint);
         }
 
-        if(packToHighlight != null) {
+        if(highlightPack && packToHighlight != null) {
             Rect rBorderHigh = new Rect(packToHighlight.x, packToHighlight.y, packToHighlight.x + packToHighlight.length, packToHighlight.y + packToHighlight.width);
             frameDrawer.drawRect(rBorderHigh, paint);
 
@@ -136,7 +136,7 @@ public class DrawingView extends View {
         selectedLayer = layer;
         mainActivity.setSelectedElementInSpinner(selectedBin, selectedLayer);
         setSpinner2();
-        redrawSelectedBinAndLayer();
+        redrawSelectedBinAndLayer(false);
     }
 
     private void setSpinner2(){
@@ -179,7 +179,6 @@ public class DrawingView extends View {
         if(bins.size() != 0){
             if(selectedLayer != bins.get(selectedBin-1).layers.size()){
                 selectedLayer = selectedLayer+1;
-                //selectBinAndLayer(selectedBin, selectedLayer);
             }
             else if(selectedBin != bins.size()) {
                 selectedBin = selectedBin + 1;
@@ -195,7 +194,6 @@ public class DrawingView extends View {
         if(bins.size() != 0){
             if(selectedLayer != 1){
                 selectedLayer = selectedLayer-1;
-                //selectBinAndLayer(selectedBin, selectedLayer);
             }
             else if(selectedBin != 1) {
                 selectedBin = selectedBin - 1;
@@ -212,7 +210,7 @@ public class DrawingView extends View {
         int currentEleInSpin2 = mainActivity.readCurrentPackage();
         if(eleInSpin2 != 0 && currentEleInSpin2 < eleInSpin2) {
             mainActivity.setSelectedElementInSpinner(currentEleInSpin2 + 1);
-            redrawSelectedBinAndLayer();
+            redrawSelectedBinAndLayer(true);
         }
     }
 
@@ -221,7 +219,7 @@ public class DrawingView extends View {
         int currentEleInSpin2 = mainActivity.readCurrentPackage();
         if(eleInSpin2 != 0 && currentEleInSpin2 > 0) {
             mainActivity.setSelectedElementInSpinner(currentEleInSpin2 - 1);
-            redrawSelectedBinAndLayer();
+            redrawSelectedBinAndLayer(true);
         }
     }
 
@@ -229,7 +227,7 @@ public class DrawingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         int pack = locatePackage((int)event.getX(), (int)event.getY());
         mainActivity.setSelectedElementInSpinner(pack);
-        redrawSelectedBinAndLayer();
+        redrawSelectedBinAndLayer(true);
         return super.onTouchEvent(event);
     }
 

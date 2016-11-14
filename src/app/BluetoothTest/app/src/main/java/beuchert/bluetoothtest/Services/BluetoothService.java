@@ -62,6 +62,7 @@ public class BluetoothService extends Service {
     public void registerClient(Activity activity){
         this.activity = (Callbacks) activity;
         mHandler.setActivity(this.activity);
+        this.activity.isServiceReady(true);
     }
 
     // Methods:
@@ -83,10 +84,6 @@ public class BluetoothService extends Service {
         } catch (IOException e) {
             activity.showBluetoothConnectionAlert();
         }
-    }
-
-    public void sendMessage(String message){
-        mBlueThread.write(message);
     }
 
     private void initializeAdapter(){
