@@ -45,4 +45,4 @@ while True:
 		elif input_serial[0][2] == b'R':
 			SLib.serial_write_last_push(ser)
 	data.clear()
-	time.sleep(1)
+	#time.sleep(1)
