@@ -20,7 +20,7 @@ while True:
 			print(p1.width)
 			pa.handle(p1)
 			print(((pa.find_bin_containing_package(p1).bin_id % 2) + 1).to_bytes(1, byteorder='little'))
-			serial_write_push(ser, pa.find_bin_containing_package(p1).bin_id)
+			SLib.serial_write_push(ser, pa.find_bin_containing_package(p1).bin_id)
 		elif cyka[0][2] == b'R':
 			SLib.serial_write_last_push(ser)
 	data.clear()
