@@ -1,5 +1,7 @@
 import serial
 
+from . import Package
+
 class SerLib:
 	def __init__(self, baudrate=57600):
 		self.baudrate = baudrate
