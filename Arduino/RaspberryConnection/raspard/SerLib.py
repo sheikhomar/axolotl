@@ -5,6 +5,7 @@ from . import Package
 class SerLib:
 	def __init__(self, baudrate=57600):
 		self.baudrate = baudrate
+		self.last_bin_id = None
 
 	def format_serial_package(self, input_array):
 		if len(input_array) == 7:
@@ -71,7 +72,14 @@ class SerLib:
 		ser.write(b'p')
 		ser.write(((bin_id % 2) + 1).to_bytes(1, byteorder='little'))
 		print('Just send bin_id: {bin_id}'.format(bin_id=bin_id))
+		self.last_bin_id = bin_id
 		
 	def make_serial(self):
 		serial_instance = serial.Serial('/dev/ttyUSB0', self.baudrate)
 		return serial_instance
+		
+	def serial_write_last_push(self, ser):
+		if self.last_bin_id is not None:
+			self.serial_write_push(ser, self.last_bin_id)
+		else:
+			raise ArithmeticError('No last push to resend')
