@@ -93,7 +93,7 @@ typedef struct {
 } Package;
 
 typedef struct {
-    unsigned int count = 0;
+    int count = 0;
     Package items[PACKAGE_BUFFER_SIZE];
 } PackageCollection;
 

@@ -5,6 +5,7 @@
 #include "Defines.h"
 
 #include "SerialController.h"
+#include "Utilities.h"
 
 //External libs
 #include <SoftwareSerial.h>
@@ -135,6 +136,10 @@ client serialReadData(byte data[], int data_length, int *command) {
 	if (length < 0 || length > RS485_DATA_LENGTH_MAX) {
 		return unknown;
 	}
+
+    if (length != data_length) {
+        die("length does not match!");
+    }
 	serialBuffTimeout(length);
 
 	//Read non-Arduino messages

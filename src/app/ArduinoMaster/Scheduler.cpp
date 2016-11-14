@@ -42,6 +42,7 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 // End Loop
 void pushArm(PackageCollection *packages) {
     for (int i = 0; i < packages->count; i++) {
+        
         Package *package = &(packages->items[i]);
 
         if (package->bin != BIN_NOT_REQUESTED && package->bin != BIN_REQUESTED) {
@@ -58,8 +59,11 @@ void pushArm(PackageCollection *packages) {
                 removePackage(packages, i);
                 i--;
             } else if (package->bin != 1 && package->bin != 2) {
-                serialDebug("Wrong bin for PID: ");
-                //serialDebugLN(String(package->id));
+                serialDebug("1) PackCount: ");
+                serialDebugLN(String(packages->count));
+
+                serialDebug("WRong bin for PID: ");
+                serialDebugLN(String(package->id));
                 removePackage(packages, i);
                 i--;
             }
@@ -95,8 +99,15 @@ void resetPackage(Package *package) {
 }
 
 void removePackage(PackageCollection *packages, int index) {
+    if (packages->count <= 0 || packages->count > PACKAGE_BUFFER_SIZE) {
+        die("Cannot remove package!");
+    }
+
     serialDebug("Removing package: ");
     serialDebugLN(String(packages->items[index].id));
+
+    serialDebug("Count before: ");
+    serialDebugLN(String(packages->count));
 
     // Remove package from the buffer
     for (int i = index; i < packages->count; i++) {
@@ -104,6 +115,9 @@ void removePackage(PackageCollection *packages, int index) {
     }
 
     packages->count = packages->count - 1;
+
+    serialDebug("Count after: ");
+    serialDebugLN(String(packages->count));
 }
 
 // Read serial
@@ -133,9 +147,16 @@ void receiveData(PackageCollection *packages) {
         return;
     }
 
+    serialDebug(".");
+
     Package *package = &(packages->items[0]);
      
     if (command == COMM_ARDUINO_COLOUR_INFO) {
+
+
+        serialDebug("5) PackCount: ");
+        serialDebugLN(String(packages->count));
+
         // We have recieved data from NXT
         package->colour = buf[0];
         serialDebug("\nReceived Colour: [");
@@ -152,6 +173,10 @@ void receiveData(PackageCollection *packages) {
         }
     }
     else if (command == COMM_PI_ADVICEPACKAGE) {
+
+        serialDebug("6) PackCount: ");
+        serialDebugLN(String(packages->count));
+
         // We have recieved data from Raspberry Pi
         package->bin = buf[0];
         serialDebug("\nReceived bin: [");
@@ -160,6 +185,10 @@ void receiveData(PackageCollection *packages) {
         serialDebug(String(package->id));
     }
     else {
+
+        serialDebug("7) PackCount: ");
+        serialDebugLN(String(packages->count));
+
         serialDebug("\nWrong command: ");
         serialDebugLN(String(command));
         
@@ -179,11 +208,23 @@ void sendData(PackageCollection *packages) {
     //serialDebug("Number of packages: ");
     //serialDebugLN(String(packages->count));
 
-    for (unsigned int i = 0; i < packages->count; i++) {
+    for (int i = 0; i < packages->count; i++) {
+        if (i > 3) {
+            serialDebug("Count wrong? ");
+            serialDebugLN(String(packages->count));
+        }
+
         Package *package = &(packages->items[i]);
         if (package->colour == COLOUR_NOT_REQUESTED) {
             // Colour has not been requested
+            serialDebug("8) PackCount: ");
+            serialDebugLN(String(packages->count));
+            
             requestColourInformation(package);
+
+
+            serialDebug("3) PackCount: ");
+            serialDebugLN(String(packages->count));
         }
         
         if (package->colour != COLOUR_REQUESTED &&
@@ -191,6 +232,9 @@ void sendData(PackageCollection *packages) {
             package->bin == BIN_NOT_REQUESTED) {
             // Packing advice not requested, but the colour is known.
             sendPackageInfoToRaspberryPi(package);
+
+            serialDebug("4) PackCount: ");
+            serialDebugLN(String(packages->count));
         }
     }
 }
@@ -285,6 +329,30 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
 
 }
 
+void packageEmulator(PackageCollection *packages, int *count) {
+    *count += 1;
+    if (*count == 400) {
+        *count = 0;
+        serialDebugLN("Creating new package.");
+
+        Package *package = &(packages->items[packages->count]);
+        packages->count += 1;
+        resetPackage(package);
+
+        serialDebug("Bin initialised: ");
+        serialDebugLN(String(package->bin));
+
+        package->id = __nextPackageId;
+        __nextPackageId += 1;
+        
+        package->height = 2000;
+        package->width = 3200;
+        package->length = 1600;
+        package->middleTime = 400;
+    }
+    delay(10);
+}
+
 
 void runScheduler() {
     // Setup
@@ -294,13 +362,16 @@ void runScheduler() {
     
     // Initialisation
     resetSensorData(&sensor1, &sensor2, &sensor3);
+    int count = 0;
 
     while (true) {
-        bool readyToHandle = readSensorsEx(&sensor1, &sensor1, &sensor3);
-        
-        if (readyToHandle) {
-            handlePackage(&packages, &sensor1, &sensor1, &sensor3);
-        }
+        //bool readyToHandle = readSensorsEx(&sensor1, &sensor1, &sensor3);
+        //
+        //if (readyToHandle) {
+        //    handlePackage(&packages, &sensor1, &sensor1, &sensor3);
+        //}
+
+        packageEmulator(&packages, &count);
         
         receiveData(&packages);
 
