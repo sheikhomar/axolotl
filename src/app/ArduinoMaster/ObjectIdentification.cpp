@@ -28,15 +28,17 @@ bool readSensor(SensorReading *reading, int whichSensor) {
 	else if (reading->bufferCount == 0){
 		return false;
 	} 
-	else {
-		addReading(reading, dist);
-		checkAndIncrement(reading, sensorTag);
+	else {		
+		if (reading->falseCount < NOT_DETECTED_THRESHOLD) {
+			addReading(reading, dist);
+			checkAndIncrement(reading, sensorTag);
+		}
 
 		if (reading->falseCount == 0) {
 			reading->endTime = millis();
 		}
 
-		if (reading->falseCount == NOT_DETECTED_THRESHOLD) {
+		if (reading->falseCount >= NOT_DETECTED_THRESHOLD) {
 			return true;
 		}
 		return false;

@@ -261,8 +261,21 @@ bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
     delay(5);
     bool readyForHandling3 = readSensor(r3, SENSOR_3);
 
+	//Handle sensor noise
+	handleSensorNoise(r1);
+	handleSensorNoise(r2);
+	handleSensorNoise(r3);
+
 	return readyForHandling1 && readyForHandling2 && readyForHandling3;
 }
+
+void handleSensorNoise(SensorReading *reading) {
+	if (reading->falseCount >= NOT_DETECTED_THRESHOLD && 
+		reading->bufferCount <= (NOT_DETECTED_THRESHOLD + SENSOR_ALLOWED_FALSE_POSITIVES)) {
+		resetSensorReading(reading);
+	}
+}
+
 
 void checkBufferCount(unsigned short buffer1,unsigned short buffer2, unsigned short buffer3) {
     if (buffer1 >= SENSOR_BUFFER_SIZE ||
@@ -412,7 +425,7 @@ void runScheduler() {
         bool readyToHandle = readSensorsEx(&sensor1, &sensor2, &sensor3);
 
         if (readyToHandle) {
-            handlePackage(&packages, &sensor1, &sensor1, &sensor3);
+            handlePackage(&packages, &sensor1, &sensor2, &sensor3);
         }
         
         receiveData(&packages);

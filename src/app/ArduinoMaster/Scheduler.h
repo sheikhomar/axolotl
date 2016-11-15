@@ -17,8 +17,7 @@
 #define FROM_ULT_TO_ARM2_MS 2004
 
 #define PI_RESPONSE_TIMEOUT_MS 10 
-
-#define NOT_DETECTED_THRESHOLD 3
+#define SENSOR_ALLOWED_FALSE_POSITIVES 2
 
 //Functions
 void printPackages(PackageCollection *packages);
@@ -37,6 +36,7 @@ void cleanBuffer(SensorReading *reading, short sensor);
 void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3);
 void runScheduler();
 void checkBufferCount(unsigned short buffer1, unsigned short buffer2, unsigned short buffer3);
+void handleSensorNoise(SensorReading *reading);
 
 #endif
 
