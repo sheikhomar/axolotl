@@ -36,6 +36,6 @@ loop
 Main control loop of the Arduino.
 ***************************/
 void loop() {
-    //runConveyorBeltAtSpeed(50);
+    runConveyorBeltAtSpeed(50);
 	runScheduler();
 }

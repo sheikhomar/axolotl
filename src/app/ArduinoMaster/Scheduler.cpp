@@ -294,6 +294,7 @@ void cleanBuffer(SensorReading *reading, short sensor) {
 void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3) {
     serialDebugLN("Handling new package.");
 
+
     //cleaning buffer from obvious mistakes
     cleanBuffer(r1, SENSOR_1);
     cleanBuffer(r2, SENSOR_2);
@@ -391,6 +392,7 @@ void runScheduler() {
     PackageCollection packages;
     SensorReading sensor1, sensor2, sensor3;
     
+
     // Initialisation
     resetSensorData(&sensor1, &sensor2, &sensor3);
     int count = 0;
@@ -398,13 +400,13 @@ void runScheduler() {
 	printPackages(&packages);
 
     while (true) {
-        //bool readyToHandle = readSensorsEx(&sensor1, &sensor1, &sensor3);
-        //
-        //if (readyToHandle) {
-        //    handlePackage(&packages, &sensor1, &sensor1, &sensor3);
-        //}
+        bool readyToHandle = readSensorsEx(&sensor1, &sensor1, &sensor3);
+        
+		delay(50);
 
-        packageEmulator(&packages, &count);
+        if (readyToHandle) {
+            handlePackage(&packages, &sensor1, &sensor1, &sensor3);
+        }
         
         receiveData(&packages);
 
@@ -412,6 +414,6 @@ void runScheduler() {
 
         pushArm(&packages);
 
-        //serialDebug(".");
+        serialDebug(".");
     }
 }
