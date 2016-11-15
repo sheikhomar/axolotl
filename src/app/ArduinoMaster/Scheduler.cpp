@@ -249,7 +249,11 @@ void resetSensorData(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
 }
 
 bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
-    //Reading sensors
+
+    // checking buffer bound
+    checkBufferCount(r1->bufferCount, r2->bufferCount, r3->bufferCount);
+	
+	//Reading sensors
     delay(5);
     bool readyForHandling2 = readSensor(r2, SENSOR_2);
     delay(5);
@@ -257,21 +261,19 @@ bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
     delay(5);
     bool readyForHandling3 = readSensor(r3, SENSOR_3);
 
-    // checking buffer bound
-    checkBufferCount(r1->bufferCount, r2->bufferCount, r3->bufferCount);
-
-    return readyForHandling1 && readyForHandling2 && readyForHandling3;
+	return readyForHandling1 && readyForHandling2 && readyForHandling3;
 }
 
 void checkBufferCount(unsigned short buffer1,unsigned short buffer2, unsigned short buffer3) {
     if (buffer1 >= SENSOR_BUFFER_SIZE ||
 		buffer2 >= SENSOR_BUFFER_SIZE ||
 		buffer3 >= SENSOR_BUFFER_SIZE) {
-		serialDebug("Buff 1");
+		serialDebugLN("");
+		serialDebug("Bufff 1 ");
 		serialDebugLN(String(buffer1));
-		serialDebug("Buff 2");
+		serialDebug("Buff 2 ");
 		serialDebugLN(String(buffer2));
-		serialDebug("Buff 3");
+		serialDebug("Buff 3 ");
 		serialDebugLN(String(buffer3));
 
         die("Panic! Buffer for sensor data is full.");
@@ -407,9 +409,7 @@ void runScheduler() {
 	printPackages(&packages);
 
     while (true) {
-        bool readyToHandle = readSensorsEx(&sensor1, &sensor1, &sensor3);
-        
-		delay(150);
+        bool readyToHandle = readSensorsEx(&sensor1, &sensor2, &sensor3);
 
         if (readyToHandle) {
             handlePackage(&packages, &sensor1, &sensor1, &sensor3);

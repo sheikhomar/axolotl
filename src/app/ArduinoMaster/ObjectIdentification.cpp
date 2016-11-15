@@ -13,13 +13,13 @@
 #define SPEED_CONVEYOR 140
 
 bool readSensor(SensorReading *reading, int whichSensor) {
-	bool sensor = false;
+	bool sensorTag = false;
 	unsigned short dist;
 
 	dist = makeReading(whichSensor);
-	sensor = checkReading(whichSensor, dist);
+	sensorTag = checkReading(whichSensor, dist);
 
-	if (reading->bufferCount == 0 && sensor) {
+	if (reading->bufferCount == 0 && sensorTag) {
 		addReading(reading, dist);
 		reading->startTime = millis();
 		reading->endTime = millis();
@@ -30,11 +30,12 @@ bool readSensor(SensorReading *reading, int whichSensor) {
 	} 
 	else {
 		addReading(reading, dist);
-		checkAndIncrement(reading, sensor);
+		checkAndIncrement(reading, sensorTag);
 
 		if (reading->falseCount == 0) {
 			reading->endTime = millis();
 		}
+
 		if (reading->falseCount == NOT_DETECTED_THRESHOLD) {
 			return true;
 		}
@@ -82,17 +83,21 @@ bool checkReading(int whichSensor, int dist) {
 
 void addReading(SensorReading *reading, unsigned short dist) {
 	reading->sensorReadingBuffer[reading->bufferCount] = dist;
-	reading->bufferCount = reading->bufferCount + 1;
+	reading->bufferCount = (reading->bufferCount) + 1;
 }
 
-void checkAndIncrement(SensorReading *reading, bool bVal) {
+void checkAndIncrement(SensorReading *reading, bool sensorTag) {
 	
-	if (bVal)
+	if (sensorTag) {
 		reading->falseCount = 0;
+	}
 	else if (reading->falseCount == NOT_DETECTED_THRESHOLD)
+	{
 		reading->falseCount = NOT_DETECTED_THRESHOLD;
-	else
+	}
+	else {
 		reading->falseCount = reading->falseCount + 1;
+	}
 }
 
 void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReading *sensor2, SensorReading *sensor3){
