@@ -21,7 +21,7 @@ s = BLib.setup_server()
 client = None #Client is initially set to None and is later created in thread
 
 ###### Threading stuff #######
-bluetooth_lock = _thread.allocate.lock()
+bluetooth_lock = _thread.allocate_lock()
 BTReady = False
 
 bin_buf = []
@@ -52,11 +52,11 @@ pa = PackingAdvisor(bin1)
 bin_buf.append(pa.bins[0])
 bin_buf.append(pa.bins_foreign[0])
 
-_thread.start_new_thread(make_client_thread, (s,))
+_thread.start_new_thread(make_client_thread, (s,)) #Start new thread to handle accepting bluetooth connection.
 
 data = []
 
-while True:
+while True: #THE REAL DEAL
 	input_serial = SLib.serial_read(ser, data)
 	if input_serial[1]:
 		print('Message received')
