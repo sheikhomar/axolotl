@@ -46,6 +46,7 @@
 
 #define BIN_NOT_REQUESTED 222
 #define BIN_REQUESTED 223
+#define BIN_REQUESTED_AGAIN 224
 
 #define COLOUR_RED 0
 #define COLOUR_GREEN 1
@@ -83,17 +84,18 @@ typedef enum client {
 } client;
 
 typedef struct {
-	unsigned int id;
-	unsigned int length;
-	unsigned int width;
-	unsigned int height;
-	byte colour;
-	unsigned long middleTime;
-	byte bin;
+	unsigned int id = 0;
+	unsigned int length = 0;
+	unsigned int width = 0;
+	unsigned int height = 0;
+	byte colour = COLOUR_NOT_REQUESTED;
+	unsigned long middleTime = 0;
+	byte bin = BIN_NOT_REQUESTED;
 } Package;
 
 typedef struct {
     int count = 0;
+	unsigned long packageTimeoutMS = 0; //the time in ms when the current package should timeout
     Package items[PACKAGE_BUFFER_SIZE];
 } PackageCollection;
 

@@ -32,6 +32,14 @@ void sendPackageInfoToRaspberryPi(Package *package) {
     package->bin = BIN_REQUESTED;
 }
 
+void resendPackageInfoToRaspberryPI(Package *package) {
+	serialSendData(RaspberryPi,'R');
+	package->bin = BIN_REQUESTED_AGAIN;
+	serialDebugLN("Resending package to PI");
+}
+
+
+
 // Loop through all packages
 //   If package can be pushed
 //      If time to push
@@ -45,7 +53,7 @@ void pushArm(PackageCollection *packages) {
         
         Package *package = &(packages->items[i]);
 
-        if (package->bin != BIN_NOT_REQUESTED && package->bin != BIN_REQUESTED) {
+        if (package->bin != BIN_NOT_REQUESTED && package->bin != BIN_REQUESTED && package->bin != BIN_REQUESTED_AGAIN) {
             unsigned long currentTime = millis();
             unsigned long timeDiff = currentTime - package->middleTime;
 
@@ -136,18 +144,16 @@ void receiveData(PackageCollection *packages) {
     int command = -1;
     client clientInfo = serialReadData(buf, 1, &command);
 
-    if (packages->count == 0) {
-        // Handle buffer noise in the serial.
-        while (serialReadData(buf, 1, &command) != none) {
-            return;
-        }
-    }
 
     if (clientInfo != Arduino) {
         return;
     }
 
     serialDebug(".");
+
+	if (packages->count == 0) {
+		return;
+	}
 
     Package *package = &(packages->items[0]);
      
@@ -209,11 +215,14 @@ void receiveData(PackageCollection *packages) {
 void sendData(PackageCollection *packages) {
     //serialDebug("Number of packages: ");
     //serialDebugLN(String(packages->count));
+	bool hasRequestedPacking = false; //PI can only handle one request at a time.
 
     for (int i = 0; i < packages->count; i++) {
         Package *package = &(packages->items[i]);
+
+
+        //Request Colour
         if (package->colour == COLOUR_NOT_REQUESTED) {
-            // Colour has not been requested
             serialDebug("8) PackCount: ");
             serialDebugLN(String(packages->count));
             
@@ -225,12 +234,29 @@ void sendData(PackageCollection *packages) {
 
         }
         
-        if (package->colour != COLOUR_REQUESTED &&
+		//Request Packing
+        if (!hasRequestedPacking &&
+			package->colour != COLOUR_REQUESTED &&
             package->colour != COLOUR_NOT_REQUESTED &&
-            package->bin == BIN_NOT_REQUESTED) {
-            // Packing advice not requested, but the colour is known.
-            sendPackageInfoToRaspberryPi(package);
+			(package->bin == BIN_NOT_REQUESTED || package->bin == BIN_REQUESTED || package->bin == BIN_REQUESTED_AGAIN)) {
+				
+			hasRequestedPacking = true;
 
+			if (package->bin == BIN_NOT_REQUESTED) {
+				sendPackageInfoToRaspberryPi(package);
+				packages->packageTimeoutMS = millis() + PI_RESPONSE_TIMEOUT_MS;
+			}
+			else if (packages->packageTimeoutMS < millis()) {
+				if (package->bin == BIN_REQUESTED) {
+					resendPackageInfoToRaspberryPI(package);
+					packages->packageTimeoutMS = millis() + PI_RESPONSE_TIMEOUT_MS;
+				}
+				else {
+					removePackage(packages, i);
+					serialDebugLN("Removed timedout bin package");
+					i--;
+				}
+			}
             serialDebug("4) PackCount: ");
             serialDebugLN(String(packages->count));
         }

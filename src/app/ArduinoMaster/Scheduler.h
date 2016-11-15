@@ -16,11 +16,14 @@
 #define FROM_ULT_TO_ARM1_MS 1258
 #define FROM_ULT_TO_ARM2_MS 1762
 
+#define PI_RESPONSE_TIMEOUT_MS 10 
+
 #define NOT_DETECTED_THRESHOLD 3
 
 //Functions
 void printPackages(PackageCollection *packages);
 void sendPackageInfoToRaspberryPi(Package *package);
+void resendPackageInfoToRaspberryPI(Package *package);
 void pushArm(PackageCollection *packages);
 void requestColourInformation(Package *package);
 void resetPackage(Package *package);
