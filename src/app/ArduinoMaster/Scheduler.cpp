@@ -111,6 +111,7 @@ void removePackage(PackageCollection *packages, int index) {
         die(masterString);
     }
 
+	serialDebugLN("");
     serialDebug("Removing package: ");
     serialDebugLN(String(packages->items[index].id));
 
@@ -143,8 +144,6 @@ void receiveData(PackageCollection *packages) {
         return;
     }
 
-    serialDebug(".");
-
 	if (packages->count == 0) {
 		return;
 	}
@@ -173,7 +172,7 @@ void receiveData(PackageCollection *packages) {
         serialDebug("\nReceived bin: [");
         serialDebug(String(package->bin));
         serialDebug("] for PID: ");
-        serialDebug(String(package->id));
+        serialDebugLN(String(package->id));
     }
     else {
         serialDebug("\nWrong command: ");
@@ -362,6 +361,7 @@ void packageEmulator(PackageCollection *packages, int *count) {
 }
 
 void printPackages(PackageCollection *packages) {
+	serialDebugLN("");
 	serialDebug("Count ");
 	serialDebug(String(packages->count));
 	serialDebug(" Timeout ");
@@ -370,6 +370,8 @@ void printPackages(PackageCollection *packages) {
 
     for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
         Package *package = &(packages->items[i]);
+		serialDebug("");
+		serialDebug("[");
 		serialDebug(String(i));
 		serialDebug("] ");
 		serialDebug(String(package->id));
