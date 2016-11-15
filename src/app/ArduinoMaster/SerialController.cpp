@@ -209,8 +209,8 @@ void serialDebug(String message) {
 }
 
 void serialDebugLN(String message) {
-	serialDebug("\r\n");
 	serialDebug(message);
+	serialDebug("\r\n");
 }
 
 /***************************
