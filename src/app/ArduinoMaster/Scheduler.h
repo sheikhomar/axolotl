@@ -33,10 +33,10 @@ void sendData(PackageCollection *packages);
 void resetSensorReading(SensorReading *reading);
 void resetSensorData(SensorReading *r1, SensorReading *r2, SensorReading *r3);
 bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3);
-void checkBufferCount(short buffCount);
 void cleanBuffer(SensorReading *reading, short sensor);
 void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3);
 void runScheduler();
+void checkBufferCount(unsigned short buffer1, unsigned short buffer2, unsigned short buffer3);
 
 #endif
 

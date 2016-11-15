@@ -258,16 +258,23 @@ bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
     bool readyForHandling3 = readSensor(r3, SENSOR_3);
 
     // checking buffer bound
-    checkBufferCount(r1->bufferCount);
-    checkBufferCount(r2->bufferCount);
-    checkBufferCount(r3->bufferCount);
+    checkBufferCount(r1->bufferCount, r2->bufferCount, r3->bufferCount);
 
     return readyForHandling1 && readyForHandling2 && readyForHandling3;
 }
 
-void checkBufferCount(short buffCount) {
-    if (buffCount == SENSOR_BUFFER_SIZE) {
-        die("Panic! Buffer for sensor 1 data is full.");
+void checkBufferCount(unsigned short buffer1,unsigned short buffer2, unsigned short buffer3) {
+    if (buffer1 >= SENSOR_BUFFER_SIZE ||
+		buffer2 >= SENSOR_BUFFER_SIZE ||
+		buffer3 >= SENSOR_BUFFER_SIZE) {
+		serialDebug("Buff 1");
+		serialDebugLN(String(buffer1));
+		serialDebug("Buff 2");
+		serialDebugLN(String(buffer2));
+		serialDebug("Buff 3");
+		serialDebugLN(String(buffer3));
+
+        die("Panic! Buffer for sensor data is full.");
     }
 }
 
@@ -292,7 +299,7 @@ void cleanBuffer(SensorReading *reading, short sensor) {
 }
 
 void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3) {
-    serialDebugLN("Handling new package.");
+    serialDebugLN("\nHandling new package.");
 
 
     //cleaning buffer from obvious mistakes
@@ -402,7 +409,7 @@ void runScheduler() {
     while (true) {
         bool readyToHandle = readSensorsEx(&sensor1, &sensor1, &sensor3);
         
-		delay(50);
+		delay(150);
 
         if (readyToHandle) {
             handlePackage(&packages, &sensor1, &sensor1, &sensor3);
