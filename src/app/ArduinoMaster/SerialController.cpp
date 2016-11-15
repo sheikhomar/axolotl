@@ -209,7 +209,7 @@ void serialDebug(String message) {
 }
 
 void serialDebugLN(String message) {
-	message.concat("\r\n");
+	serialDebug("\r\n");
 	serialDebug(message);
 }
 
