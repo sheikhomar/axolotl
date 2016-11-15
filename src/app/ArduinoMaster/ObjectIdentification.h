@@ -22,9 +22,6 @@
 #define HEIGHT_BETWEEN_SENSOR_AND_BELT 5200 // TODO: Calibrate this
 
 //Functions
-bool readSensors(SensorData *sensorData);
-void handleSensorData(Package *package, SensorData buffer[], int bufferStartIndex, int bufferCount);
-
 bool readSensor(SensorReading *reading, int sensor);
 short makeReading(int whichSensor);
 bool checkReading(int whichSensor, int dist);
@@ -32,8 +29,6 @@ void addReading(SensorReading *reading, unsigned short dist);
 void checkAndIncrement(SensorReading *reading, bool bVal);
 
 void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReading *sensor2, SensorReading *sensor3);
-unsigned long findAverage(SensorData buffer[], int startIndex, int bufferSize, byte whichSensor);
-int findMode(SensorData buffer[], int bufferStartIndex, int bufferCount, byte sensor);
 unsigned long findLength(SensorReading *sensor);
 unsigned long normalizeSensorData(SensorReading *sensor);
 unsigned long findMiddleTime(SensorReading *sensor);

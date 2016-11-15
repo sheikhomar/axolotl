@@ -108,15 +108,6 @@ typedef struct {
 	double previousEstimate;
 } KalmanFilterInformation;
 
-
-
-typedef struct {
-	unsigned short sensor1 = 0;
-	unsigned short sensor2 = 0;
-	unsigned short sensor3 = 0;
-	unsigned long time = 0;
-} SensorData;
-
 typedef struct {
 	unsigned short sensorReadingBuffer[SENSOR_BUFFER_SIZE];
 	unsigned short bufferCount = 0;
