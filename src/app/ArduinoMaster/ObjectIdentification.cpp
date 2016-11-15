@@ -118,8 +118,6 @@ void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReadin
 	package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - sensor1Length;
 	package->width = LENGTH_BETWEEN_SENSORS - sensor2Length - sensor3Length;
 
-	printPackageSize(package);
-
 	//Finding middle time
 	unsigned long sensor1MiddleTime = findMiddleTime(sensor1);
 	unsigned long sensor2MiddleTime = findMiddleTime(sensor2);

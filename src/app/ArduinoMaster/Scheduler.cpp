@@ -35,7 +35,7 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 void resendPackageInfoToRaspberryPI(Package *package) {
 	serialSendData(RaspberryPi,'R');
 	package->bin = BIN_REQUESTED_AGAIN;
-	serialDebugLN("Resending package to PI");
+	serialDebugLN("\nResending package to PI");
 }
 
 
@@ -314,10 +314,7 @@ void cleanBuffer(SensorReading *reading, short sensor) {
 }
 
 void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3) {
-    serialDebugLN("\nHandling new package.");
-
-
-    //cleaning buffer from obvious mistakes
+    //Cleaning buffer from obvious mistakes
     cleanBuffer(r1, SENSOR_1);
     cleanBuffer(r2, SENSOR_2);
     cleanBuffer(r3, SENSOR_3);
@@ -339,7 +336,7 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
 
     
 
-    serialDebug("New package ID: ");
+    serialDebug("\nNew package with ID: ");
     serialDebugLN(String(package->id));
 
     //Fill Package object using collected sensor data
@@ -419,8 +416,6 @@ void runScheduler() {
     resetSensorData(&sensor1, &sensor2, &sensor3);
     int count = 0;
 
-	printPackages(&packages);
-
     while (true) {
         bool readyToHandle = readSensorsEx(&sensor1, &sensor2, &sensor3);
 
@@ -433,7 +428,5 @@ void runScheduler() {
         sendData(&packages);
 
         pushArm(&packages);
-
-        serialDebug(".");
     }
 }
