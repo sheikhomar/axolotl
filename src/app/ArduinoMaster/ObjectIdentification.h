@@ -12,7 +12,7 @@
 //Defines
 #define ult1_TagDist 3800					// TODO: Calibrate this
 #define ult2_TagDist 5800					// TODO: Calibrate this
-#define ult3_TagDist 3600					// TODO: Calibrate this
+#define ult3_TagDist 7000					// TODO: Calibrate this
 
 #define ARRAY_SIZE 20
 #define NOT_DETECTED_THRESHOLD 5
