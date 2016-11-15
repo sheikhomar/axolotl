@@ -19,7 +19,7 @@ void serialSendData(client receiver, byte data[], byte sizeOfData, byte reciverF
 void serialSendData(client receiver, byte reciverFunction);
 client serialReadData(byte data[], int data_length);
 client serialReadData(byte data[], int data_length, int *command);
-bool serialBuffTimeout(byte numberOfRequiredElements);
+bool serialBuffTimeout(int numberOfRequiredElements);
 void serialDebug(String message);
 void serialDebugLN(String message);
 void serialWrite(int data);
