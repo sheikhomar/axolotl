@@ -47,7 +47,7 @@ void readColourSensor() {
 	byte colour = -1;
 	client sender = unknown;
 
-	serialSendData(NXT, dataS, 0, 11);
+	serialSendData(NXT, dataS, 1, 11);
 	do {
 		sender = serialReadData(dataRec, 1);
 	} while (sender != Arduino);
