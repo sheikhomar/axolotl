@@ -18,6 +18,7 @@
 
 #define PI_RESPONSE_TIMEOUT_MS 10 
 #define SENSOR_ALLOWED_FALSE_POSITIVES 2
+#define BLINKINTERVAL 100
 
 //Functions
 void printPackages(PackageCollection *packages);
@@ -37,6 +38,7 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
 void runScheduler();
 void checkBufferCount(unsigned short buffer1, unsigned short buffer2, unsigned short buffer3);
 void handleSensorNoise(SensorReading *reading);
+void lampToggle(int *val);
 
 #endif
 

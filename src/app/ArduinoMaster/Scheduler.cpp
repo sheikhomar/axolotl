@@ -7,6 +7,7 @@
 #include "SerialController.h"
 #include "UltrasoundSensor.h"
 #include "ObjectIdentification.h"
+#include "LEDController.h"
 
 #include "Scheduler.h"
 
@@ -33,7 +34,7 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 }
 
 void resendPackageInfoToRaspberryPI(Package *package) {
-	serialDebugLN("\n--->Resending package to PI");
+	serialDebugLN("--->Resending package to PI");
 	serialSendData(RaspberryPi,'R');
 	package->bin = BIN_REQUESTED_AGAIN;
 }
@@ -221,7 +222,7 @@ void sendData(PackageCollection *packages) {
 					packages->packageTimeoutMS = millis() + PI_RESPONSE_TIMEOUT_MS;
 				}
 				else {
-					serialDebugLN("--->Timedout bin package");
+					serialDebugLN("\n--->Timedout bin package");
 					removePackage(packages, i);
 					i--;
 				}
@@ -320,9 +321,9 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
 
 	//Check bound for packages
 	if (packages->count >= PACKAGE_BUFFER_SIZE) {
-		String masterString = "Reached max packages _ ";
-		masterString.concat(packages->count);
-		die(masterString);
+		serialDebug("Reached max packages _ ");
+		serialDebugLN(String(packages->count));
+		die("");
 	}
 
 
@@ -403,12 +404,27 @@ void printPackages(PackageCollection *packages) {
     }
 }
 
+void lampToggle(int *val) {
+	if (*val < BLINKINTERVAL/2) {
+		led(LED_BUILTIN, true);
+	}
+	else {
+		led(LED_BUILTIN, false);
+	}
+
+	if (*val >= BLINKINTERVAL) {
+		*val = 0;
+	}
+
+	*val += 1;
+}
 
 void runScheduler() {
     // Setup
     serialDebug("Scheduler started.\n");
     PackageCollection packages;
     SensorReading sensor1, sensor2, sensor3;
+	int lampCounter = 0;
     
 
     // Initialisation
@@ -427,5 +443,7 @@ void runScheduler() {
         sendData(&packages);
 
         pushArm(&packages);
+
+		lampToggle(&lampCounter);
     }
 }
