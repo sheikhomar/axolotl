@@ -362,27 +362,23 @@ void packageEmulator(PackageCollection *packages, int *count) {
 }
 
 void printPackages(PackageCollection *packages) {
-	String overallPackage = "\nPackages: ";
-	overallPackage.concat("Count ");
-	overallPackage.concat(packages->count);
-	overallPackage.concat(" Timeout ");
-	overallPackage.concat(packages->packageTimeoutMS);
-	
-	serialDebugLN(overallPackage);
+	serialDebug("Count ");
+	serialDebug(String(packages->count));
+	serialDebug(" Timeout ");
+	serialDebug(String(packages->packageTimeoutMS));
+	serialDebugLN("");
 
     for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
         Package *package = &(packages->items[i]);
-        String packageOutput = "";
-        packageOutput.concat(String(i+1));
-        packageOutput.concat("] ");
-        packageOutput.concat(String(package->id));
-        packageOutput.concat(" ");
-        packageOutput.concat(String(package->length));
-        packageOutput.concat(" ");
-        packageOutput.concat(String(package->colour));
-        packageOutput.concat(" ");
-        packageOutput.concat(String(package->bin));
-        serialDebugLN(packageOutput);
+		serialDebug(String(i));
+		serialDebug("] ");
+		serialDebug(String(package->id));
+		serialDebug(" ");
+		serialDebug(String(package->length));
+		serialDebug(" ");
+		serialDebug(String(package->colour));
+		serialDebug(" ");
+		serialDebugLN(String(package->bin));
     }
 }
 
