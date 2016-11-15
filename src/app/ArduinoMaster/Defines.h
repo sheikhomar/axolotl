@@ -102,10 +102,9 @@ typedef struct {
 typedef struct {
 	double kalmanGain;
 	double errorInEstimate; 
-	double previousErrorInEstimate; 
 	double errorInMeasurement; 
 	double currentEstimate; 
-	double previousEstimate;
+	double sensorError;
 } KalmanFilterInformation;
 
 typedef struct {
