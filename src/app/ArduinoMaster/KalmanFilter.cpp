@@ -13,16 +13,11 @@ void runKalmanScheduler() {
 	double measurement = 0;
 	short falseCount = 0;
 	short count = 0;
-	bool constantReadingMode = false;
+	bool constantReadingMode = true;
 	bool running = false;
 	bool first = true;
-
-	kalmanFilterInfo.kalmanGain = 0;
-	kalmanFilterInfo.errorInEstimate = 300;
-	kalmanFilterInfo.previousErrorInEstimate = 0;
-	kalmanFilterInfo.errorInMeasurement = 100;
-	kalmanFilterInfo.currentEstimate = 3200;
-	kalmanFilterInfo.previousEstimate = 0;
+	
+	resetKalmanFilter(&kalmanFilterInfo);
 
 	while (true) {
 		delay(5);
@@ -35,9 +30,7 @@ void runKalmanScheduler() {
 			first = true;
 			if (running && !(measurement <= 3800)) {
 				falseCount += 1;
-				//serialDebug("Kalman Estimate: " + String(kalmanFilterInfo.currentEstimate));
-				//serialDebugLN(" Error in Estimate: " + String(kalmanFilterInfo.errorInEstimate));
-				//serialDebugLN(" falseCount: " + String(falseCount));
+
 				if (!constantReadingMode) {
 					if (falseCount == 3)
 						running = false;
@@ -46,6 +39,7 @@ void runKalmanScheduler() {
 			else
 				falseCount = 0;
 
+			kalmanFilterInfo.errorInEstimate += kalmanFilterInfo.sensorError;
 			calculateKalmanGain(&kalmanFilterInfo, measurement);
 			calculateKalmanEstimate(&kalmanFilterInfo, measurement);
 			calculateKalmanErrorInEstimate(&kalmanFilterInfo);
@@ -54,7 +48,8 @@ void runKalmanScheduler() {
 				serialDebug("Measured distance: " + String(measurement));
 				//serialDebug(" Kalman Gain: " + String(kalmanFilterInfo.kalmanGain));
 				serialDebug(" Kalman Estimate: " + String(kalmanFilterInfo.currentEstimate));
-				serialDebugLN(" Error in Estimate: " + String(kalmanFilterInfo.errorInEstimate));
+				//serialDebug(" Error in Estimate: " + String(kalmanFilterInfo.errorInEstimate));
+				serialDebug("\n");
 			}
 		}
 		else {
@@ -63,17 +58,13 @@ void runKalmanScheduler() {
 				serialDebug("Kalman Estimate: " + String(kalmanFilterInfo.currentEstimate));
 				serialDebug(" Error in Estimate: " + String(kalmanFilterInfo.errorInEstimate));
 				serialDebug(" falseCount: " + String(falseCount));
-				short height = 4769.29 - kalmanFilterInfo.currentEstimate;
-				serialDebug(" Height: " + String(height));
-				serialDebugLN(" count: " + String(count) + "\n\n");
+				//short height = 4769.29 - kalmanFilterInfo.currentEstimate;
+				//serialDebug(" Height: " + String(height));
+				//serialDebugLN(" count: " + String(count) + "\n\n");
 				
 			}
-			kalmanFilterInfo.kalmanGain = 0;
-			kalmanFilterInfo.errorInEstimate = 300;
-			kalmanFilterInfo.previousErrorInEstimate = 0;
-			kalmanFilterInfo.errorInMeasurement = 100;
-			kalmanFilterInfo.currentEstimate = 3200;
-			kalmanFilterInfo.previousEstimate = 0;
+			
+			resetKalmanFilter(&kalmanFilterInfo);
 
 			count = 0;
 			falseCount = 0;
@@ -82,16 +73,22 @@ void runKalmanScheduler() {
 	}
 }
 
+void resetKalmanFilter(KalmanFilterInformation *kfi) {
+	kfi->kalmanGain = 0;
+	kfi->errorInEstimate = 5000;
+	kfi->errorInMeasurement = 100;
+	kfi->currentEstimate = 4000;
+	kfi->sensorError = 15;
+}
+
 void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo, short measurement) {
 	kalmanFilterInfo->kalmanGain = kalmanFilterInfo->errorInEstimate / (kalmanFilterInfo->errorInEstimate + kalmanFilterInfo->errorInMeasurement);
 }
 
 void calculateKalmanEstimate(KalmanFilterInformation *kalmanFilterInfo, short measurement) {
-	kalmanFilterInfo->previousEstimate = kalmanFilterInfo->currentEstimate;
-	kalmanFilterInfo->currentEstimate = kalmanFilterInfo->previousEstimate + kalmanFilterInfo->kalmanGain * (measurement - kalmanFilterInfo->previousEstimate);
+	kalmanFilterInfo->currentEstimate = kalmanFilterInfo->currentEstimate + kalmanFilterInfo->kalmanGain * (measurement - kalmanFilterInfo->currentEstimate);
 }
 
 void calculateKalmanErrorInEstimate(KalmanFilterInformation *kalmanFilterInfo) {
-	kalmanFilterInfo->previousErrorInEstimate = kalmanFilterInfo->errorInEstimate;
-	kalmanFilterInfo->errorInEstimate = (1 - kalmanFilterInfo->kalmanGain)*kalmanFilterInfo->previousErrorInEstimate;
+	kalmanFilterInfo->errorInEstimate = (1 - kalmanFilterInfo->kalmanGain)*kalmanFilterInfo->errorInEstimate;
 }

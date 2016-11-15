@@ -15,6 +15,7 @@ void runKalmanScheduler();
 void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo, short measurement);
 void calculateKalmanEstimate(KalmanFilterInformation *kalmanFilterInfo, short measurement);
 void calculateKalmanErrorInEstimate(KalmanFilterInformation *kalmanFilterInfo);
+void resetKalmanFilter(KalmanFilterInformation *kalmanFilterInfo);
 
 #endif
 
