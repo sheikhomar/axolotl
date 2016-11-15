@@ -33,9 +33,9 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 }
 
 void resendPackageInfoToRaspberryPI(Package *package) {
+	serialDebugLN("\n--->Resending package to PI");
 	serialSendData(RaspberryPi,'R');
 	package->bin = BIN_REQUESTED_AGAIN;
-	serialDebugLN("\nResending package to PI");
 }
 
 
@@ -67,7 +67,7 @@ void pushArm(PackageCollection *packages) {
                 removePackage(packages, i);
                 i--;
             } else if (package->bin != 1 && package->bin != 2) {
-                serialDebug("Wrong bin for PID: ");
+                serialDebug("\n--->Wrong bin for PID: ");
                 serialDebugLN(String(package->id));
                 removePackage(packages, i);
                 i--;
@@ -82,7 +82,7 @@ void requestColourInformation(Package *package) {
         unsigned long timeDiff = currentTime - package->middleTime;
 
         if (timeDiff >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
-            serialDebug("\nColour requested for PID: ");
+            serialDebug("Colour requested for PID: ");
             serialDebugLN(String(package->id));
 
             // Request colour information from the NXT
@@ -111,7 +111,6 @@ void removePackage(PackageCollection *packages, int index) {
         die(masterString);
     }
 
-	serialDebugLN("");
     serialDebug("Removing package: ");
     serialDebugLN(String(packages->items[index].id));
 
@@ -160,7 +159,7 @@ void receiveData(PackageCollection *packages) {
 
         if (package->colour == COLOUR_BLACK || package->colour == COLOUR_UNKNOWN) {
             // If we get these colours then, we just remove the package
-            serialDebugLN("\nBad colour");
+            serialDebugLN("\n--->Bad colour");
 
             // Remove current package.
             removePackage(packages, 0);
@@ -175,7 +174,7 @@ void receiveData(PackageCollection *packages) {
         serialDebugLN(String(package->id));
     }
     else {
-        serialDebug("\nWrong command: ");
+        serialDebug("\n--->Wrong command: ");
         serialDebugLN(String(command));
         
         // Wrong command. Remove package.
@@ -222,8 +221,8 @@ void sendData(PackageCollection *packages) {
 					packages->packageTimeoutMS = millis() + PI_RESPONSE_TIMEOUT_MS;
 				}
 				else {
+					serialDebugLN("--->Timedout bin package");
 					removePackage(packages, i);
-					serialDebugLN("Removed timedout bin package");
 					i--;
 				}
 			}
@@ -336,7 +335,7 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
 
     
 
-    serialDebug("\nNew package with ID: ");
+	serialDebug("\nNew package with ID: #");
     serialDebugLN(String(package->id));
 
     //Fill Package object using collected sensor data
