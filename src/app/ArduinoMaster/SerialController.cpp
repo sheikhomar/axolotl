@@ -179,6 +179,8 @@ serialBuffTimeout
 Continuously checks the RS485 buffer to see if # of required elements are present.
 ***************************/
 bool serialBuffTimeout(int numberOfRequiredElements) {
+	return true; //todo, make this work as described above.
+	
 	unsigned long time = micros() + RS485_TIMEOUT_US;
 	bool reachedTarget, reachedTimeout;
 
