@@ -67,10 +67,7 @@ void pushArm(PackageCollection *packages) {
                 removePackage(packages, i);
                 i--;
             } else if (package->bin != 1 && package->bin != 2) {
-                serialDebug("1) PackCount: ");
-                serialDebugLN(String(packages->count));
-
-                serialDebug("WRong bin for PID: ");
+                serialDebug("Wrong bin for PID: ");
                 serialDebugLN(String(package->id));
                 removePackage(packages, i);
                 i--;
@@ -108,14 +105,14 @@ void resetPackage(Package *package) {
 
 void removePackage(PackageCollection *packages, int index) {
     if (packages->count <= 0 || packages->count > PACKAGE_BUFFER_SIZE) {
-        die("Cannot remove package!");
+		String masterString = "Cannot remove package! - size ";
+		masterString.concat(packages->count);
+
+        die(masterString);
     }
 
     serialDebug("Removing package: ");
     serialDebugLN(String(packages->items[index].id));
-
-    serialDebug("Count before: ");
-    serialDebugLN(String(packages->count));
 
     // Remove package from the buffer
     for (int i = index; i < packages->count; i++) {
@@ -123,9 +120,6 @@ void removePackage(PackageCollection *packages, int index) {
     }
 
     packages->count = packages->count - 1;
-
-    serialDebug("Count after: ");
-    serialDebugLN(String(packages->count));
 }
 
 // Read serial
@@ -158,11 +152,6 @@ void receiveData(PackageCollection *packages) {
     Package *package = &(packages->items[0]);
      
     if (command == COMM_ARDUINO_COLOUR_INFO) {
-
-
-        serialDebug("5) PackCount: ");
-        serialDebugLN(String(packages->count));
-
         // We have recieved data from NXT
         package->colour = buf[0];
         serialDebug("\nReceived Colour: [");
@@ -177,14 +166,8 @@ void receiveData(PackageCollection *packages) {
             // Remove current package.
             removePackage(packages, 0);
         }
-
-        printPackages(packages);
     }
     else if (command == COMM_PI_ADVICEPACKAGE) {
-
-        serialDebug("6) PackCount: ");
-        serialDebugLN(String(packages->count));
-
         // We have recieved data from Raspberry Pi
         package->bin = buf[0];
         serialDebug("\nReceived bin: [");
@@ -193,10 +176,6 @@ void receiveData(PackageCollection *packages) {
         serialDebug(String(package->id));
     }
     else {
-
-        serialDebug("7) PackCount: ");
-        serialDebugLN(String(packages->count));
-
         serialDebug("\nWrong command: ");
         serialDebugLN(String(command));
         
@@ -223,15 +202,7 @@ void sendData(PackageCollection *packages) {
 
         //Request Colour
         if (package->colour == COLOUR_NOT_REQUESTED) {
-            serialDebug("8) PackCount: ");
-            serialDebugLN(String(packages->count));
-            
             requestColourInformation(package);
-
-
-            serialDebug("3) PackCount: ");
-            serialDebugLN(String(packages->count));
-
         }
         
 		//Request Packing
@@ -257,8 +228,6 @@ void sendData(PackageCollection *packages) {
 					i--;
 				}
 			}
-            serialDebug("4) PackCount: ");
-            serialDebugLN(String(packages->count));
         }
     }
 }
@@ -331,6 +300,14 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
     cleanBuffer(r2, SENSOR_2);
     cleanBuffer(r3, SENSOR_3);
 
+	//Check bound for packages
+	if (packages->count >= PACKAGE_BUFFER_SIZE) {
+		String masterString = "Reached max packages _ ";
+		masterString.concat(packages->count);
+		die(masterString);
+	}
+
+
     // Create new package
     Package *package = &(packages->items[packages->count]);
     packages->count = packages->count + 1;
@@ -359,12 +336,17 @@ void packageEmulator(PackageCollection *packages, int *count) {
         *count = 0;
         serialDebugLN("Creating new package.");
 
+
+		if (packages->count >= PACKAGE_BUFFER_SIZE) {
+			String masterString = "Reached max packages _ ";
+			masterString.concat(packages->count);
+			die(masterString);
+		}
+
+
         Package *package = &(packages->items[packages->count]);
         packages->count += 1;
         resetPackage(package);
-
-        serialDebug("Bin initialised: ");
-        serialDebugLN(String(package->bin));
 
         package->id = __nextPackageId;
         __nextPackageId += 1;
@@ -380,6 +362,14 @@ void packageEmulator(PackageCollection *packages, int *count) {
 }
 
 void printPackages(PackageCollection *packages) {
+	String overallPackage = "\nPackages: ";
+	overallPackage.concat("Count ");
+	overallPackage.concat(packages->count);
+	overallPackage.concat(" Timeout ");
+	overallPackage.concat(packages->packageTimeoutMS);
+	
+	serialDebugLN(overallPackage);
+
     for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
         Package *package = &(packages->items[i]);
         String packageOutput = "";
@@ -406,6 +396,8 @@ void runScheduler() {
     // Initialisation
     resetSensorData(&sensor1, &sensor2, &sensor3);
     int count = 0;
+
+	printPackages(&packages);
 
     while (true) {
         //bool readyToHandle = readSensorsEx(&sensor1, &sensor1, &sensor3);
