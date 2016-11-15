@@ -182,7 +182,7 @@ public class DrawingView extends View {
             }
             else if(selectedBin != bins.size()) {
                 selectedBin = selectedBin + 1;
-                selectedLayer = 1;
+                selectedLayer = 1; //Require the next bin has at least one layer
             }
 
             selectBinAndLayer(selectedBin, selectedLayer);
@@ -197,7 +197,7 @@ public class DrawingView extends View {
             }
             else if(selectedBin != 1) {
                 selectedBin = selectedBin - 1;
-                selectedLayer = 3;
+                selectedLayer = bins.get(selectedBin - 1).layers.size();
             }
 
             selectBinAndLayer(selectedBin, selectedLayer);
