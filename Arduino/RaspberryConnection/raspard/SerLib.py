@@ -67,11 +67,12 @@ class SerLib:
 			raise ArithmeticError('First byte does not indicate proper message')
 			
 	def serial_write_push(self, ser, bin_id):
-		ser.write(b'a')
-		ser.write((1).to_bytes(1, byteorder='little'))
-		ser.write(b'p')
-		ser.write(((bin_id % 2) + 1).to_bytes(1, byteorder='little'))
-		print('Just send bin_id: {bin_id}'.format(bin_id=bin_id))
+		if ((bin_id % 2) + 1) == 2:
+			hex_string = '02'
+		else:
+			hex_string = '01'
+		ser.write(bytes.fromhex('610170{hex}'.format(hex=hex_string))) #61=a 01 = 1 70 = p: Hardcoded message for performance
+		print('Just sent bin_id: {bin_id}'.format(bin_id=bin_id))
 		self.last_bin_id = bin_id
 		
 	def make_serial(self):
