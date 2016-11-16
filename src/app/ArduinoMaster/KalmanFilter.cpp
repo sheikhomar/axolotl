@@ -76,13 +76,13 @@ void runKalmanScheduler() {
 void resetKalmanFilter(KalmanFilterInformation *kfi) {
 	kfi->kalmanGain = 0;
 	kfi->errorInEstimate = 5000;
-	kfi->errorInMeasurement = 100;
+	kfi->sensorNoise = 100;
 	kfi->currentEstimate = 4000;
 	kfi->sensorError = 15;
 }
 
 void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo, short measurement) {
-	kalmanFilterInfo->kalmanGain = kalmanFilterInfo->errorInEstimate / (kalmanFilterInfo->errorInEstimate + kalmanFilterInfo->errorInMeasurement);
+	kalmanFilterInfo->kalmanGain = kalmanFilterInfo->errorInEstimate / (kalmanFilterInfo->errorInEstimate + kalmanFilterInfo->sensorNoise);
 }
 
 void calculateKalmanEstimate(KalmanFilterInformation *kalmanFilterInfo, short measurement) {
