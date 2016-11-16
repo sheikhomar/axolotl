@@ -33,12 +33,3 @@ void runConveyorBeltAtSpeed(byte speed) {
 	serialSendData(NXT, data, 1, COMM_NXT_ADJUST_BELT_SPEED);
 	serialSendData(NXT, data, 0, COMM_NXT_START_BELT);
 }
-
-void monitorRS485() {
-	byte data[] = { 0 };
-	while (true)
-	{
-		serialReadData(data,0);
-		delay(1);
-	}
-}

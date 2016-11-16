@@ -23,7 +23,7 @@ bool serialBuffTimeout(int numberOfRequiredElements);
 void serialDebug(String message);
 void serialDebugLN(String message);
 void serialWrite(int data);
-
+void monitorRS485();
 
 
 

@@ -267,3 +267,14 @@ void serialNoiseMaker() {
 	serialDebugLN("");
 	serialDebugLN("Done");
 }
+
+void monitorRS485() {
+	while (true)
+	{
+		int data = RS485Serial.read();
+		if (data != -1) {
+			serialWrite(data);
+		}
+		delay(1);
+	}
+}
