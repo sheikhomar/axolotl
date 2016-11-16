@@ -17,20 +17,30 @@ unsigned int __nextPackageId = 1;
 void sendPackageInfoToRaspberryPi(Package *package) {
     byte buf[] = { 0, 0, 0, 0 };
 
-    //buf[0] = (byte)package->width / 1600;
-    //buf[1] = (byte)package->length / 1600;
-    //buf[2] = (byte)package->height / 1600;
-    //buf[3] = package->colour;
-
-    buf[0] = 2;
-    buf[1] = 4;
-    buf[2] = 2;
+    buf[0] = convertSensroDataToLegoSize(package->width);
+    buf[1] = convertSensroDataToLegoSize(package->length);
+	buf[2] = convertSensroDataToLegoSize(package->height);
     buf[3] = package->colour;
 
     serialSendData(RaspberryPi, buf, 4, 'p');
     serialDebug("\n");
 
     package->bin = BIN_REQUESTED;
+}
+
+//Currently based on fractions of 2
+byte convertSensroDataToLegoSize(unsigned short number) {
+	double val = (double)number / 1600.0;
+	
+	if (val < 3) {
+		return 2;
+	}
+	else if (val < 6) {
+		return 4;
+	}
+	else {
+		return 8;
+	}
 }
 
 void resendPackageInfoToRaspberryPI(Package *package) {
