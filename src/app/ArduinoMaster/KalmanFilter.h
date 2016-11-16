@@ -11,11 +11,12 @@
 
 #include "Defines.h"
 
-void runKalmanScheduler();
-void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo, short measurement);
+void kalmanTestFunction();
+void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo);
 void calculateKalmanEstimate(KalmanFilterInformation *kalmanFilterInfo, short measurement);
 void calculateKalmanErrorInEstimate(KalmanFilterInformation *kalmanFilterInfo);
 void resetKalmanFilter(KalmanFilterInformation *kalmanFilterInfo);
+void updatePrediction(KalmanFilterInformation *kalmanFilterInfo);
 
 #endif
 

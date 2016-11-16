@@ -104,8 +104,14 @@ typedef struct {
 	double errorInEstimate; 
 	double sensorNoise; 
 	double currentEstimate; 
-	double sensorError;
+	double processNoise;
 } KalmanFilterInformation;
+
+typedef struct {
+	KalmanFilterInformation sensor1;
+	KalmanFilterInformation sensor2;
+	KalmanFilterInformation sensor3;
+} KalmanFilter;
 
 typedef struct {
 	unsigned short sensorReadingBuffer[SENSOR_BUFFER_SIZE];

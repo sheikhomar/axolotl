@@ -169,3 +169,7 @@ unsigned long findLength(SensorReading *sensor) {
 	//serialDebug("result = packageTime / 10 * SPEED_CONVEYOR = " + String(packageTime) + " / 10 * 140 = " + String(result) + "\n");
 	return result;
 }
+
+void runIdentification(KalmanFilter *kf) {
+
+}

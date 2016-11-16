@@ -8,7 +8,11 @@
 
 #include "KalmanFilter.h"
 
-void runKalmanScheduler() {
+void getKalmanEstimate(){
+
+}
+
+void kalmanTestFunction() {
 	KalmanFilterInformation kalmanFilterInfo;
 	double measurement = 0;
 	short falseCount = 0;
@@ -39,8 +43,8 @@ void runKalmanScheduler() {
 			else
 				falseCount = 0;
 
-			kalmanFilterInfo.errorInEstimate += kalmanFilterInfo.sensorError;
-			calculateKalmanGain(&kalmanFilterInfo, measurement);
+			updatePrediction(&kalmanFilterInfo);
+			calculateKalmanGain(&kalmanFilterInfo);
 			calculateKalmanEstimate(&kalmanFilterInfo, measurement);
 			calculateKalmanErrorInEstimate(&kalmanFilterInfo);
 			
@@ -76,12 +80,12 @@ void runKalmanScheduler() {
 void resetKalmanFilter(KalmanFilterInformation *kfi) {
 	kfi->kalmanGain = 0;
 	kfi->errorInEstimate = 5000;
-	kfi->sensorNoise = 100;
+	kfi->sensorNoise = 200;
 	kfi->currentEstimate = 4000;
-	kfi->sensorError = 15;
+	kfi->processNoise = 10;
 }
 
-void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo, short measurement) {
+void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo) {
 	kalmanFilterInfo->kalmanGain = kalmanFilterInfo->errorInEstimate / (kalmanFilterInfo->errorInEstimate + kalmanFilterInfo->sensorNoise);
 }
 
@@ -91,4 +95,8 @@ void calculateKalmanEstimate(KalmanFilterInformation *kalmanFilterInfo, short me
 
 void calculateKalmanErrorInEstimate(KalmanFilterInformation *kalmanFilterInfo) {
 	kalmanFilterInfo->errorInEstimate = (1 - kalmanFilterInfo->kalmanGain)*kalmanFilterInfo->errorInEstimate;
+}
+
+void updatePrediction(KalmanFilterInformation *kalmanFilterInfo) {
+	kalmanFilterInfo->errorInEstimate += kalmanFilterInfo->processNoise;
 }
