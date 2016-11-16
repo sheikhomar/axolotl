@@ -48,11 +48,11 @@
     <ClCompile Include="UltrasoundSensorTest.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="LEDControllerTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="KalmanFilter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LEDControllerTest.cpp">
+      <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

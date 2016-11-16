@@ -12,14 +12,12 @@
 void die(String abortMessage) {
 	serialDebug(abortMessage);
 	while (true) {
-		led(LED_BUILTIN, true);
 		led(LED_GREEN, true);
 		led(LED_RED, false);
 		led(LED_YELLOW, false);
 
 		delay(1000);
 
-		led(LED_BUILTIN, false);
 		led(LED_GREEN, false);
 		led(LED_RED, true);
 		led(LED_YELLOW, true);

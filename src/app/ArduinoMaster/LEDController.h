@@ -10,7 +10,7 @@
 #endif
 
 //Functions
-void ledSetup(long ledA, long ledB, long ledC, long ledD);
+void ledSetup(long ledA, long ledB, long ledC);
 void led(int LED, bool TurnOn);
 
 

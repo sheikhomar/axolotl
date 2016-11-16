@@ -23,7 +23,7 @@
 void setup() {
 	//Initiate Serial Communication
 	serialSetup(BAUD, BAUD_DEBUG);
-	ledSetup(LED_RED,LED_YELLOW,LED_GREEN,LED_BUILTIN);
+	ledSetup(LED_RED,LED_YELLOW,LED_GREEN);
 	ultSetup(ULT1_TRIG_PIN, ULT1_ECHO_PIN, ULT2_TRIG_PIN, ULT2_ECHO_PIN, ULT3_TRIG_PIN, ULT3_ECHO_PIN);
 
 	delayMicroseconds(20);

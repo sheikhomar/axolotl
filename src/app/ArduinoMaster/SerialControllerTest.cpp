@@ -106,7 +106,7 @@ void serialArduinoPICommTestHelperFunction(byte data[]) {
 
 
 	while (received[0] > 0) {
-		led(LED_BUILTIN, true);
+		led(LED_YELLOW, true);
 		delay(500);
 		received[0] -= 1;
 	}
