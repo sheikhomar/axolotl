@@ -24,7 +24,7 @@ void determineTimeBetweenSensors() {
 		//case true: serialDebug("true"); break;
 		//default: break;
 		//}
-		delay(ULT_MEASUREMENT_CYCLE_MS);
+		delay(5); //earlier was ULT_MEASUREMENT_CYCLE_MS
 	}
 
 	iniTime = millis();
