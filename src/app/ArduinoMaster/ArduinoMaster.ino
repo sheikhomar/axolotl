@@ -24,7 +24,7 @@ void setup() {
 	//Initiate Serial Communication
 	serialSetup(BAUD, BAUD_DEBUG);
 	ledSetup(LED_RED,LED_YELLOW,LED_GREEN);
-	ultSetup(ULT1_TRIG_PIN, ULT1_ECHO_PIN, ULT2_TRIG_PIN, ULT2_ECHO_PIN, ULT3_TRIG_PIN, ULT3_ECHO_PIN);
+	ultSetup(ULT_TOP_TRIG_PIN, ULT_TOP_ECHO_PIN, ULT_RIGHT_TRIG_PIN, ULT_RIGHT_ECHO_PIN, ULT_LEFT_TRIG_PIN, ULT_LEFT_ECHO_PIN);
 
 	delayMicroseconds(20);
 	serialDebugLN("Starting Arduino");

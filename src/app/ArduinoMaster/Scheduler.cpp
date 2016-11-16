@@ -255,11 +255,11 @@ bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
 	
 	//Reading sensors
     delay(5);
-    bool readyForHandling2 = readSensor(r2, SENSOR_2);
+    bool readyForHandling2 = readSensor(r2, ULT_RIGHT_SENSOR);
     delay(5);
-    bool readyForHandling1 = readSensor(r1, SENSOR_1);
+    bool readyForHandling1 = readSensor(r1, ULT_TOP_SENSOR);
     delay(5);
-    bool readyForHandling3 = readSensor(r3, SENSOR_3);
+    bool readyForHandling3 = readSensor(r3, ULT_LEFT_SENSOR);
 
 	//Handle sensor noise
 	handleSensorNoise(r1);
@@ -295,11 +295,11 @@ void checkBufferCount(unsigned short buffer1,unsigned short buffer2, unsigned sh
 
 void cleanBuffer(SensorReading *reading, short sensor) {
     unsigned short tagDist;
-    if (sensor == SENSOR_1)
+    if (sensor == ULT_TOP_SENSOR)
         tagDist = ult1_TagDist;
-    else if (sensor == SENSOR_2)
+    else if (sensor == ULT_RIGHT_SENSOR)
         tagDist = ult2_TagDist;
-    else if (sensor == SENSOR_3)
+    else if (sensor == ULT_LEFT_SENSOR)
         tagDist = ult3_TagDist;
 
     for (int i = 0; i < reading->bufferCount; i++) {
@@ -315,9 +315,9 @@ void cleanBuffer(SensorReading *reading, short sensor) {
 
 void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3) {
     //Cleaning buffer from obvious mistakes
-    cleanBuffer(r1, SENSOR_1);
-    cleanBuffer(r2, SENSOR_2);
-    cleanBuffer(r3, SENSOR_3);
+    cleanBuffer(r1, ULT_TOP_SENSOR);
+    cleanBuffer(r2, ULT_RIGHT_SENSOR);
+    cleanBuffer(r3, ULT_LEFT_SENSOR);
 
 	//Check bound for packages
 	if (packages->count >= PACKAGE_BUFFER_SIZE) {

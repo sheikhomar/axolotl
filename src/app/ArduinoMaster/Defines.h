@@ -11,12 +11,12 @@
 
 //Pins 
 	//Ult Sensors
-	#define ULT1_TRIG_PIN 2
-	#define ULT1_ECHO_PIN 3
-	#define ULT2_TRIG_PIN 4
-	#define ULT2_ECHO_PIN 5
-	#define ULT3_TRIG_PIN 6
-	#define ULT3_ECHO_PIN 7
+	#define ULT_TOP_TRIG_PIN 2
+	#define ULT_TOP_ECHO_PIN 3
+	#define ULT_RIGHT_TRIG_PIN 4
+	#define ULT_RIGHT_ECHO_PIN 5
+	#define ULT_LEFT_TRIG_PIN 6
+	#define ULT_LEFT_ECHO_PIN 7
 	//LEDs
 	#define LED_GREEN 8
 	#define LED_YELLOW 9
@@ -69,9 +69,9 @@
 #define RS485_SERIAL_PRINT_BINARY 0
 #define DEBUG 1
 
-#define SENSOR_1 1
-#define SENSOR_2 2
-#define SENSOR_3 3
+#define ULT_TOP_SENSOR 1
+#define ULT_RIGHT_SENSOR 2
+#define ULT_LEFT_SENSOR 3
 
 //Enums
 typedef enum client {

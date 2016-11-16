@@ -21,7 +21,7 @@ void runKalmanScheduler() {
 
 	while (true) {
 		delay(5);
-		measurement = (double) GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
+		measurement = (double) GetUltDistance(ULT_TOP_TRIG_PIN, ULT_TOP_ECHO_PIN, false);
 
 		if (measurement <= 3800 || running || constantReadingMode) {
 			count += 1;

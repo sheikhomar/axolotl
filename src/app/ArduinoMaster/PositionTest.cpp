@@ -59,13 +59,13 @@ bool readSensorsBest() { //Returning true when an object is detected by ult sens
 	bool sensor1, sensor2, sensor3;
 	unsigned short dist1, dist2, dist3;
 
-	dist1 = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
+	dist1 = GetUltDistance(ULT_TOP_TRIG_PIN, ULT_TOP_ECHO_PIN, false);
 	sensor1 = dist1 < ult1_TagDist;
 
-	dist2 = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
+	dist2 = GetUltDistance(ULT_RIGHT_TRIG_PIN, ULT_RIGHT_ECHO_PIN, false);
 	sensor2 = dist2 < ult2_TagDist;
 
-	dist3 = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
+	dist3 = GetUltDistance(ULT_LEFT_TRIG_PIN, ULT_LEFT_ECHO_PIN, false);
 	sensor3 = dist3 < ult3_TagDist;
 
 	return sensor1 && sensor2;

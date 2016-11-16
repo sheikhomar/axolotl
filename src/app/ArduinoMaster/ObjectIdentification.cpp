@@ -48,14 +48,14 @@ bool readSensor(SensorReading *reading, int whichSensor) {
 short makeReading(int whichSensor) {
 	short dist;
 
-	if (whichSensor == SENSOR_1) {
-		dist = GetUltDistance(ULT1_TRIG_PIN, ULT1_ECHO_PIN, false);
+	if (whichSensor == ULT_TOP_SENSOR) {
+		dist = GetUltDistance(ULT_TOP_TRIG_PIN, ULT_TOP_ECHO_PIN, false);
 	}
-	else if (whichSensor == SENSOR_2) {
-		dist = GetUltDistance(ULT2_TRIG_PIN, ULT2_ECHO_PIN, false);
+	else if (whichSensor == ULT_RIGHT_SENSOR) {
+		dist = GetUltDistance(ULT_RIGHT_TRIG_PIN, ULT_RIGHT_ECHO_PIN, false);
 	}
-	else if (whichSensor == SENSOR_3) {
-		dist = GetUltDistance(ULT3_TRIG_PIN, ULT3_ECHO_PIN, false);
+	else if (whichSensor == ULT_LEFT_SENSOR) {
+		dist = GetUltDistance(ULT_LEFT_TRIG_PIN, ULT_LEFT_ECHO_PIN, false);
 	}
 	else {
 		die("ERROR - No real sensor.");
@@ -67,13 +67,13 @@ short makeReading(int whichSensor) {
 bool checkReading(int whichSensor, int dist) {
 	bool bVal;
 
-	if (whichSensor == SENSOR_1) {
+	if (whichSensor == ULT_TOP_SENSOR) {
 		bVal = dist < ult1_TagDist;
 	}
-	else if (whichSensor == SENSOR_2) {
+	else if (whichSensor == ULT_RIGHT_SENSOR) {
 		bVal = dist < ult2_TagDist;
 	}
-	else if (whichSensor == SENSOR_3) {
+	else if (whichSensor == ULT_LEFT_SENSOR) {
 		bVal = dist < ult3_TagDist;
 	}
 	else {
