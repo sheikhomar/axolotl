@@ -12,13 +12,14 @@
 #include "Defines.h"
 
 //Defines
-#define FROM_ULT_TO_COLOUR_SENSOR_MS 501
-#define FROM_ULT_TO_ARM1_MS 1431
-#define FROM_ULT_TO_ARM2_MS 2004
+#define FROM_ULT_TO_COLOUR_SENSOR_MS 600
+#define FROM_ULT_TO_ARM1_MS 1714
+#define FROM_ULT_TO_ARM2_MS 2400
 
 #define PI_RESPONSE_TIMEOUT_MS 10 
 #define SENSOR_ALLOWED_FALSE_POSITIVES 2
-#define BLINKINTERVAL 100
+#define BLINKINTERVAL 50
+#define LEDTOGGLE_LED LED_YELLOW
 
 //Functions
 void printPackages(PackageCollection *packages);

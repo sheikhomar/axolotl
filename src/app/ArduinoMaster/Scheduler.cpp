@@ -405,19 +405,17 @@ void printPackages(PackageCollection *packages) {
 }
 
 void lampToggle(int *val) {
-	if (*val < BLINKINTERVAL/2) {
-		led(LED_BUILTIN, true);
+	if (*val == BLINKINTERVAL/2) {
+		led(LEDTOGGLE_LED, true);
 	}
-	else {
-		led(LED_BUILTIN, false);
-	}
-
-	if (*val >= BLINKINTERVAL) {
+	else if (*val >= BLINKINTERVAL){
+		led(LEDTOGGLE_LED, false);
 		*val = 0;
 	}
 
 	*val += 1;
 }
+
 
 void runScheduler() {
     // Setup
