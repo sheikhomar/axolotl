@@ -31,12 +31,10 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 
 //Currently based on fractions of 2
 byte convertSensroDataToLegoSize(unsigned short number) {
-	double val = (double)number / 1600.0;
-	
-	if (val < 3) {
+	if (number < 5200) {
 		return 2;
 	}
-	else if (val < 6) {
+	else if (number < 9800) {
 		return 4;
 	}
 	else {
@@ -360,11 +358,6 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
     resetSensorReading(r1);
     resetSensorReading(r2);
     resetSensorReading(r3);
-
-	serialDebug("...");
-	serialDebug((String(package->length)));
-	serialDebug("\n");
-
 }
 
 void packageEmulator(PackageCollection *packages, int *count) {
