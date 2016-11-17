@@ -12,9 +12,9 @@
 #include "Defines.h"
 
 //Defines
-#define FROM_ULT_TO_COLOUR_SENSOR_MS 501
-#define FROM_ULT_TO_ARM1_MS 1431
-#define FROM_ULT_TO_ARM2_MS 2004
+#define FROM_ULT_TO_COLOUR_SENSOR_MS 550
+#define FROM_ULT_TO_ARM1_MS 1550
+#define FROM_ULT_TO_ARM2_MS 2100
 
 #define PI_RESPONSE_TIMEOUT_MS 10 
 #define SENSOR_ALLOWED_FALSE_POSITIVES 2
@@ -41,6 +41,7 @@ void checkBufferCount(unsigned short buffer1, unsigned short buffer2, unsigned s
 void handleSensorNoise(SensorReading *reading);
 void lampToggle(int *val);
 byte convertSensroDataToLegoSize(unsigned short number);
+void debugLamp(int command);
 
 #endif
 

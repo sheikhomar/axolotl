@@ -13,6 +13,7 @@
 
 // Global variables
 unsigned int __nextPackageId = 1;
+int debugLEDCounter = 0;
 
 void sendPackageInfoToRaspberryPi(Package *package) {
     byte buf[] = { 0, 0, 0, 0 };
@@ -170,6 +171,7 @@ void receiveData(PackageCollection *packages) {
 
         if (package->colour == COLOUR_BLACK || package->colour == COLOUR_UNKNOWN) {
             // If we get these colours then, we just remove the package
+			debugLamp(1);
             serialDebugLN("\n--->Bad colour");
 
             // Remove current package.
@@ -185,6 +187,7 @@ void receiveData(PackageCollection *packages) {
         serialDebugLN(String(package->id));
     }
     else {
+		debugLamp(1);
         serialDebug("\n--->Wrong command: ");
         serialDebugLN(String(command));
         
@@ -232,6 +235,7 @@ void sendData(PackageCollection *packages) {
 					packages->packageTimeoutMS = millis() + PI_RESPONSE_TIMEOUT_MS;
 				}
 				else {
+					debugLamp(1);
 					serialDebugLN("\n--->Timedout bin package");
 					removePackage(packages, i);
 					i--;
@@ -357,6 +361,10 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
     resetSensorReading(r2);
     resetSensorReading(r3);
 
+	serialDebug("...");
+	serialDebug((String(package->length)));
+	serialDebug("\n");
+
 }
 
 void packageEmulator(PackageCollection *packages, int *count) {
@@ -426,6 +434,32 @@ void lampToggle(int *val) {
 	*val += 1;
 }
 
+//Commands:1 blinke once, 255 update times
+void debugLamp(int command) {
+	const int blinkLength = 100;
+
+	switch (command)
+	{
+		case 1: debugLEDCounter = blinkLength; Serial.println(debugLEDCounter); break;
+		default: break;
+	}
+
+	if (debugLEDCounter == 0) {
+		return;
+	}
+
+	//Single blink
+	if (debugLEDCounter > 0) {
+		if (debugLEDCounter == blinkLength) {
+			led(LED_RED, true);
+		}
+		else if (debugLEDCounter == blinkLength/2) {
+			led(LED_RED, false);
+		}
+		debugLEDCounter--;
+	}
+}
+
 
 void runScheduler() {
     // Setup
@@ -453,5 +487,7 @@ void runScheduler() {
         pushArm(&packages);
 
 		lampToggle(&lampCounter);
+		
+		debugLamp(255);
     }
 }
