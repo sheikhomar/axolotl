@@ -65,6 +65,7 @@
 #define SERIAL_MAX_DATA_SIZE 12
 #define SENSOR_BUFFER_SIZE 100
 #define PACKAGE_BUFFER_SIZE 10
+#define SENSOR_READINGS_SIZE 30
 #define RS485_DATA_LENGTH_MAX 11
 #define RS485_SERIAL_PRINT_BINARY 0
 #define DEBUG 1
@@ -100,18 +101,37 @@ typedef struct {
 } PackageCollection;
 
 typedef struct {
-	double kalmanGain;
-	double errorInEstimate; 
-	double sensorNoise; 
-	double currentEstimate; 
-	double processNoise;
+    double kalmanGain;
+    double errorInEstimate;
+    double sensorNoise;
+    double currentEstimate;
+    double processNoise;
 } KalmanFilterInformation;
 
+
 typedef struct {
-	KalmanFilterInformation sensor1;
-	KalmanFilterInformation sensor2;
-	KalmanFilterInformation sensor3;
-} KalmanFilter;
+    unsigned short readings[SENSOR_READINGS_SIZE];
+    int count = 0;
+} ReadingCollection;
+
+
+typedef struct {
+    KalmanFilterInformation topSensor;
+    KalmanFilterInformation rightSensor;
+    KalmanFilterInformation leftSensor;
+
+    SensorBuffer topSensorBuffer;
+    SensorBuffer rightSensorBuffer;
+    SensorBuffer leftSensorBuffer;
+
+} ObjectIdentificationState;
+
+typedef struct {
+    ReadingCollection data;
+    unsigned short result;
+    bool isReady;
+} SensorBuffer;
+
 
 typedef struct {
 	unsigned short sensorReadingBuffer[SENSOR_BUFFER_SIZE];

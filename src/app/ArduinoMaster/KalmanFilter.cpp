@@ -8,8 +8,11 @@
 
 #include "KalmanFilter.h"
 
-void getKalmanEstimate(){
-
+void updateKalmanFilter(KalmanFilterInformation *kfi, double measurement){
+    updatePrediction(kfi);
+    calculateKalmanGain(kfi);
+    calculateKalmanEstimate(kfi, measurement);
+    calculateKalmanErrorInEstimate(kfi);
 }
 
 void kalmanTestFunction() {
@@ -83,6 +86,15 @@ void resetKalmanFilter(KalmanFilterInformation *kfi) {
 	kfi->sensorNoise = 200;
 	kfi->currentEstimate = 4000;
 	kfi->processNoise = 10;
+}
+
+
+void initKalmanFilter(KalmanFilterInformation *kfi, double errorInEstimate, double sensorNoise, double currentEstimate, double processNoise) {
+    kfi->kalmanGain = 0;
+    kfi->errorInEstimate = errorInEstimate;
+    kfi->sensorNoise = sensorNoise;
+    kfi->currentEstimate = currentEstimate;
+    kfi->processNoise = processNoise;
 }
 
 void calculateKalmanGain(KalmanFilterInformation *kalmanFilterInfo) {

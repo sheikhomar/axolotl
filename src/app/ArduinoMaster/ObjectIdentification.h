@@ -21,6 +21,13 @@
 #define LENGTH_BETWEEN_SENSORS 11950			// TODO: Calibrate this
 #define HEIGHT_BETWEEN_SENSOR_AND_BELT 5200 // TODO: Calibrate this
 
+
+#define TOP_SENSOR_CHECK_DISTANCE 20 // TODO: Calibrate this
+#define LEFT_SENSOR_CHECK_DISTANCE 20 // TODO: Calibrate this
+#define RIGHT_SENSOR_CHECK_DISTANCE 20 // TODO: Calibrate this
+
+#define CORRECT_AMOUNT_THRESHOLD 4 
+
 //Functions
 bool readSensor(SensorReading *reading, int sensor);
 short makeReading(int whichSensor);
@@ -34,6 +41,12 @@ unsigned long normalizeSensorData(SensorReading *sensor);
 unsigned long findMiddleTime(SensorReading *sensor);
 void printPackageSize(Package *package);
 
+void initObjectIdentification(ObjectIdentificationState *state);
+void runIdentification(ObjectIdentificationState *state, PackageCollection *packages);
+void setSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance);
+unsigned short calculateSensorResult(ReadingCollection *collection, unsigned short checkDistance);
+bool performReading(KalmanFilterInformation *kfi, ReadingCollection *collection, int whichSensor);
+void addItemToCollection(ReadingCollection *collection, double estimate);
 
 #endif
 
