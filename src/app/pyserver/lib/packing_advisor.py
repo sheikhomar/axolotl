@@ -22,6 +22,8 @@ class PackingAdvisor:
         self.fragile = False #Currently obsolete
         self.foreign = False
 
+        self.COLUMN_LENGTH = 2
+
     def handle(self, package): #Packs input package and returns whether a new bin was opened or not
 
         self.set_meta_data(package)
@@ -98,11 +100,11 @@ class PackingAdvisor:
     def propose_new_x_y(self, p_occupying, layer, package_to_pack): #Sets new x,y and calls propose_x_y again (or returns if no place in layer)
         if self.y + p_occupying.width + package_to_pack.width > layer.width: #package_to_pack does not fit in current column
             self.y = 0 
-            if self.x + layer.find_occupying_package(self.x, self.y).length + package_to_pack.length > layer.length:
+            if self.x + self.COLUMN_LENGTH + package_to_pack.length > layer.length:
                 self.package_fits = False #No further columns are available in layer
                 return
             else:
-                self.x = self.x + layer.find_occupying_package(self.x, self.y).length #start new column
+                self.x = self.x + self.COLUMN_LENGTH #start new column
                 self.propose_x_y(layer, package_to_pack)
                 return
         else: #package_to_pack does fit further down in current column
@@ -132,11 +134,11 @@ class PackingAdvisor:
             self.package_fits = True
             return
         else: #Gravitational support too low: Try another column
-            if self.x + 2 + package_to_pack.length > layer.length:
+            if self.x + self.COLUMN_LENGTH + package_to_pack.length > layer.length:
                 self.package_fits = False #No further columns are available in layer
                 return
             else:
-                self.x = self.x + 2 #start new column
+                self.x = self.x + self.COLUMN_LENGTH #start new column
                 self.propose_x_y(layer, package_to_pack)
                 return
     
