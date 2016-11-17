@@ -138,6 +138,7 @@ class PackingAdvisor:
                 self.package_fits = False #No further columns are available in layer
                 return
             else:
+                self.y = 0
                 self.x = self.x + self.COLUMN_LENGTH #start new column
                 self.propose_x_y(layer, package_to_pack)
                 return
