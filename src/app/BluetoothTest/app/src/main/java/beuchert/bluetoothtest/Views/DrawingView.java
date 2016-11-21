@@ -250,6 +250,7 @@ public class DrawingView extends View {
     }
 
     private void showPackInfo(Package pack){
+
         String dim = Integer.toString((int)(Math.ceil(((double)pack.length / mainActivity.drawingViewScale))));
         dim += " x " + Integer.toString((int)(Math.ceil(((double)pack.width / mainActivity.drawingViewScale))));
         dim += " x " + Integer.toString((int)(Math.ceil(((double)pack.height / mainActivity.drawingViewScale))));
@@ -261,7 +262,8 @@ public class DrawingView extends View {
         else{
             fragile = "No";
         }
+        String destination = "To " + bins.get(selectedBin - 1).destination;
 
-        mainActivity.updatePackInfoDisplay(dim, colour, fragile);
+        mainActivity.updatePackInfoDisplay(dim, colour, fragile, destination);
     }
 }

@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     private int binLayers;
     boolean firstTime = true;
     public double drawingViewScale = 0;
-
+    TextView destVal;
 
     //Activity methods
     @Override
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
         spinner.setOnItemSelectedListener(this);
+        destVal = (TextView) findViewById(R.id.textViewDest);
 
         spinner2 = (Spinner) findViewById(R.id.spinner2);
         spinnerAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
@@ -127,8 +128,9 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
             PackSplit[2] = PackSplit[2].replaceAll("\n", "");
             int length = Integer.parseInt(PackSplit[1]);
             int width = Integer.parseInt(PackSplit[2]);
-            binLayers = Integer.parseInt(PackSplit[3]);
-            drawingView.addBin(new Bin(binLayers));
+            binLayers = Integer.parseInt(PackSplit[3]); //4 is missing because of Marc (bin id)
+            String destination = PackSplit[5];
+            drawingView.addBin(new Bin(binLayers, destination));
 
             if(firstTime) {
                 drawingViewScale = (double)drawingView.getWidth() / (double)Math.max(width, length);
@@ -255,12 +257,17 @@ public class MainActivity extends AppCompatActivity implements Callbacks, Adapte
     }
 
     public void updatePackInfoDisplay(String dim, String colour, String fragile){
+        updatePackInfoDisplay(dim, colour, fragile, destVal.getText().toString());
+    }
+
+    public void updatePackInfoDisplay(String dim, String colour, String fragile, String dest){
         TextView dimVal = (TextView) findViewById(R.id.textViewDimVal);
         TextView colVal = (TextView) findViewById(R.id.textViewColVal);
         TextView fraVal = (TextView) findViewById(R.id.textViewFraVal);
         dimVal.setText(dim);
         colVal.setText(colour);
         fraVal.setText(fragile);
+        destVal.setText(dest.replace(',', ' '));
     }
 
     public void showInvalidPackageError(){
