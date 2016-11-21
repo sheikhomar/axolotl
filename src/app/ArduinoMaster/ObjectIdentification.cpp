@@ -10,8 +10,8 @@
 #include "ObjectIdentification.h"
 #include "KalmanFilter.h"
 
-#define ARRAY_SIZE 20
-#define SPEED_CONVEYOR 140
+// Global variables
+unsigned int ___nextPackageId = 1;
 
 bool readSensor(SensorReading *reading, int whichSensor) {
 	bool sensorTag = false;
@@ -175,22 +175,137 @@ void initObjectIdentification(ObjectIdentificationState *state) {
     initKalmanFilter(&state->topSensor, 5000, 200, 4000, 10);
     initKalmanFilter(&state->rightSensor, 5000, 200, 4000, 10);
     initKalmanFilter(&state->leftSensor, 5000, 200, 4000, 10);
+
+    initSensorBuffer(&state->topSensorBuffer);
+    initSensorBuffer(&state->rightSensorBuffer);
+    initSensorBuffer(&state->leftSensorBuffer);
+}
+
+void initSensorBuffer(SensorBuffer *buffer) {
+    buffer->isReady = false;
+    buffer->result = 0;
+    buffer->data.count = 0;
+}
+
+void resetPackage2(Package *package) {
+    package->id = 0;
+    package->length = 0;
+    package->width = 0;
+    package->height = 0;
+    package->colour = COLOUR_NOT_REQUESTED;
+    package->bin = BIN_NOT_REQUESTED;
+    package->middleTime = 0;
 }
 
 void runIdentification(ObjectIdentificationState *state, PackageCollection *packages) {
-    bool leftSensorTag = performReading(&state->leftSensor, &state->leftSensorBuffer.data, ULT_LEFT_SENSOR);
-    bool topSensorTag = performReading(&state->topSensor, &state->topSensorBuffer.data, ULT_TOP_SENSOR);
-    bool rightSensorTag = performReading(&state->rightSensor, &state->rightSensorBuffer.data, ULT_RIGHT_SENSOR);
+    bool leftSensorTag = performReading(&state->leftSensor, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
+    bool topSensorTag = performReading(&state->topSensor, &state->topSensorBuffer, ULT_TOP_SENSOR);
+    bool rightSensorTag = performReading(&state->rightSensor, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
     
-    setSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE);
-    setSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE);
-    setSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE);
+    createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE);
+    createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE);
+    createSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE);
 
-    // TODO: Package generation.
+    queueResult(&state->leftSensorBuffer, &state->leftSensorResultQueue);
+    queueResult(&state->topSensorBuffer, &state->topSensorResultQueue);
+    queueResult(&state->rightSensorBuffer, &state->rightSensorResultQueue);
+    
+    if (state->leftSensorResultQueue.count > 0 && 
+        state->topSensorResultQueue.count > 0 &&
+        state->rightSensorResultQueue.count > 0) {
+
+        // Create new package
+        Package *package = &(packages->items[packages->count]);
+        packages->count = packages->count + 1;
+        resetPackage2(package);
+        package->id = ___nextPackageId;
+        ___nextPackageId += 1;
+
+        serialDebug("\nNew package with ID: #");
+        serialDebugLN(String(package->id));
+
+        setPackageInfo(package,
+            dequeue(&state->leftSensorResultQueue),
+            dequeue(&state->topSensorResultQueue),
+            dequeue(&state->rightSensorResultQueue)
+        );
+    }
 }
 
-void setSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance) {
-    if (!tag && sensorBuffer->data.count > 0) {
+SensorResult* dequeue(SensorResultQueue *queue) {
+    SensorResult* item = &(queue->data[0]);
+
+    for (int i = 0; i < queue->count; i++) {
+        if (i < queue->count - 1) {
+            queue->data[i] = queue->data[i + 1];
+        }
+    }
+
+    queue->count -= 1;
+
+    return item;
+}
+
+void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *topResult, SensorResult *rightResult) {
+    package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - topResult->result;
+    package->width = LENGTH_BETWEEN_SENSORS - rightResult->result - leftResult->result;
+    
+    unsigned long leftLength = calcLength(leftResult);
+    unsigned long topLength = calcLength(topResult);
+    unsigned long rightLength = calcLength(rightResult);
+
+    package->length = findMedian(leftLength, topLength, rightLength);
+
+    unsigned long leftMiddleTime = (leftResult->endTime - leftResult->startTime) / 2;
+    unsigned long topMiddleTime = (topResult->endTime - topResult->startTime) / 2;
+    unsigned long rightMiddleTime = (rightResult->endTime - rightResult->startTime) / 2;
+
+    package->middleTime = findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
+}
+
+unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right) {
+    unsigned long lengthArray[3];
+    lengthArray[0] = left;
+    lengthArray[1] = right;
+    lengthArray[2] = top;
+
+    sort(lengthArray, 3);
+    
+    return lengthArray[1];
+}
+
+// Source: http://hwhacks.com/2016/05/03/bubble-sorting-with-an-arduinoc-application/
+// Bubble sort
+void sort(unsigned long a[], int size) {
+    for (int i = 0; i<(size - 1); i++) {
+        for (int o = 0; o<(size - (i + 1)); o++) {
+            if (a[o] > a[o + 1]) {
+                unsigned long t = a[o];
+                a[o] = a[o + 1];
+                a[o + 1] = t;
+            }
+        }
+    }
+}
+
+unsigned long calcLength(SensorResult *result) {
+    unsigned long diff = result->endTime - result->startTime;
+    return diff / 10 * SPEED_CONVEYOR;
+}
+
+void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue) {
+    if (sensorBuffer->isReady) {
+        if (queue->count >= SENSOR_RESULT_SIZE) {
+            die("Sensor result size!");
+        }
+        queue->data[queue->count].result = sensorBuffer->result;
+        queue->count += 1;
+        initSensorBuffer(sensorBuffer);
+    }
+}
+
+void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance) {
+    if (!packageDetected && sensorBuffer->data.count > 0) {
         if (sensorBuffer->data.count > CORRECT_AMOUNT_THRESHOLD) {
             sensorBuffer->result = calculateSensorResult(&sensorBuffer->data, sensorCheckDistance);
             sensorBuffer->isReady = true;
@@ -198,8 +313,6 @@ void setSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensor
 
         sensorBuffer->data.count = 0;
     }
-
-    sensorBuffer->isReady = false;
 }
 
 unsigned short calculateSensorResult(ReadingCollection *collection, unsigned short checkDistance) {
@@ -232,7 +345,7 @@ unsigned short calculateSensorResult(ReadingCollection *collection, unsigned sho
     return bestValue;
 }
 
-bool performReading(KalmanFilterInformation *kfi, ReadingCollection *collection, int whichSensor) {
+bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor) {
     delay(5);
     double measurement = (double)makeReading(whichSensor);
 
@@ -240,8 +353,13 @@ bool performReading(KalmanFilterInformation *kfi, ReadingCollection *collection,
 
     bool tag = checkReading(whichSensor, kfi->currentEstimate);
     if (tag) {
+        if (buffer->data.count == 0) {
+            buffer->startTime = millis();
+        }
+
+        buffer->endTime = millis();
         double estimate = kfi->currentEstimate;
-        addItemToCollection(collection, estimate);
+        addItemToCollection(&buffer->data, estimate);
     }
 
     return tag;

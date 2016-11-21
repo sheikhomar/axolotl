@@ -28,6 +28,8 @@
 
 #define CORRECT_AMOUNT_THRESHOLD 4 
 
+#define SPEED_CONVEYOR 140
+
 //Functions
 bool readSensor(SensorReading *reading, int sensor);
 short makeReading(int whichSensor);
@@ -42,11 +44,18 @@ unsigned long findMiddleTime(SensorReading *sensor);
 void printPackageSize(Package *package);
 
 void initObjectIdentification(ObjectIdentificationState *state);
+void initSensorBuffer(SensorBuffer *buffer);
 void runIdentification(ObjectIdentificationState *state, PackageCollection *packages);
-void setSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance);
+void createSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance);
 unsigned short calculateSensorResult(ReadingCollection *collection, unsigned short checkDistance);
-bool performReading(KalmanFilterInformation *kfi, ReadingCollection *collection, int whichSensor);
+bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor);
 void addItemToCollection(ReadingCollection *collection, double estimate);
+void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue);
+void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *topResult, SensorResult *rightResult);
+SensorResult* dequeue(SensorResultQueue *queue);
+unsigned long calcLength(SensorResult *result);
+unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right);
+void sort(unsigned long buffer[], int size);
 
 #endif
 

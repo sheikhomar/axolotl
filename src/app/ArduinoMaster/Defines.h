@@ -69,6 +69,7 @@
 #define RS485_DATA_LENGTH_MAX 11
 #define RS485_SERIAL_PRINT_BINARY 0
 #define DEBUG 1
+#define SENSOR_RESULT_SIZE 5
 
 #define ULT_TOP_SENSOR 1
 #define ULT_RIGHT_SENSOR 2
@@ -108,12 +109,29 @@ typedef struct {
     double processNoise;
 } KalmanFilterInformation;
 
-
 typedef struct {
     unsigned short readings[SENSOR_READINGS_SIZE];
     int count = 0;
 } ReadingCollection;
 
+typedef struct {
+    ReadingCollection data;
+    unsigned short result;
+    bool isReady;
+    unsigned long startTime;
+    unsigned long endTime;
+} SensorBuffer;
+
+typedef struct {
+    unsigned short result;
+    unsigned long startTime;
+    unsigned long endTime;
+} SensorResult;
+
+typedef struct {
+    SensorResult data[SENSOR_RESULT_SIZE];
+    int count;
+} SensorResultQueue;
 
 typedef struct {
     KalmanFilterInformation topSensor;
@@ -124,13 +142,10 @@ typedef struct {
     SensorBuffer rightSensorBuffer;
     SensorBuffer leftSensorBuffer;
 
+    SensorResultQueue topSensorResultQueue;
+    SensorResultQueue rightSensorResultQueue;
+    SensorResultQueue leftSensorResultQueue;
 } ObjectIdentificationState;
-
-typedef struct {
-    ReadingCollection data;
-    unsigned short result;
-    bool isReady;
-} SensorBuffer;
 
 
 typedef struct {
