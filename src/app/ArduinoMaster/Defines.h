@@ -18,9 +18,9 @@
 	#define ULT_LEFT_TRIG_PIN 6
 	#define ULT_LEFT_ECHO_PIN 7
 	//LEDs
-	#define LED_GREEN 8
+	#define LED_RED 8
 	#define LED_YELLOW 9
-	#define LED_RED 10
+	#define LED_GREEN 10
 	//Rs485
 	#define RS485_RX 11
 	#define RS485_TX 12
