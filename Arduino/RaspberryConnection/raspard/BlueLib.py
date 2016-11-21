@@ -21,7 +21,11 @@ class BlueLib:
 			return 'P: error - position not set'
 	
 	def bluetooth_format_bin(self, bin):
-		return 'B: {x} {y} {max_layers} {bin_id}\n'.format(x=bin.length, y=bin.width, max_layers=bin.max_layers, bin_id=bin.bin_id)
+		if bin.foreign == True:
+			destination = 'France'
+		else:
+			destination = 'Isle of Mors'
+		return 'B: {x} {y} {max_layers} {bin_id} {destination}\n'.format(x=bin.length, y=bin.width, max_layers=bin.max_layers, bin_id=bin.bin_id, destination=destination)
 		
 	def setup_server(self):
 		s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)

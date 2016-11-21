@@ -2,13 +2,14 @@ from .invalid_arg_error import *
 from .layer import *
 
 class Bin:
-    def __init__(self, width, length, max_layers):
+    def __init__(self, width, length, max_layers, foreign = False):
         self.width = width
         self.length = length
         self.max_layers = max_layers
         self.current_layer = Layer(width=width, length=length, previous_layer=None)
         self.layers = [self.current_layer]
         self.bin_id = 0
+        self.foreign = foreign
 
     # Closes the current layer and opens new layer in the bin.
     def new_layer(self):

@@ -65,7 +65,7 @@ class PackingAdvisor:
             if len(self.bins) > self.current_bin:
                 return self.bins[self.current_bin]
             else:
-                self.bins.append(Bin(self.bins[0].width, self.bins[0].length, self.bins[0].max_layers))
+                self.bins.append(Bin(self.bins[0].width, self.bins[0].length, self.bins[0].max_layers, False))
                 self.bins[self.current_bin].bin_id = self.next_bin_id
                 self.next_bin_id = self.next_bin_id + 1
                 return self.bins[self.current_bin]
@@ -73,7 +73,7 @@ class PackingAdvisor:
             if len(self.bins_foreign) > self.current_bin_foreign:
                 return self.bins_foreign[self.current_bin_foreign]
             else:
-                self.bins_foreign.append(Bin(self.bins_foreign[0].width, self.bins_foreign[0].length, self.bins_foreign[0].max_layers))
+                self.bins_foreign.append(Bin(self.bins_foreign[0].width, self.bins_foreign[0].length, self.bins_foreign[0].max_layers, True))
                 self.bins_foreign[self.current_bin_foreign].bin_id = self.next_bin_id
                 self.next_bin_id = self.next_bin_id + 1
                 return self.bins_foreign[self.current_bin_foreign]
