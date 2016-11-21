@@ -179,6 +179,10 @@ void initObjectIdentification(ObjectIdentificationState *state) {
     initSensorBuffer(&state->topSensorBuffer);
     initSensorBuffer(&state->rightSensorBuffer);
     initSensorBuffer(&state->leftSensorBuffer);
+
+    state->leftSensorResultQueue.count = 0;
+    state->topSensorResultQueue.count = 0;
+    state->rightSensorResultQueue.count = 0;
 }
 
 void initSensorBuffer(SensorBuffer *buffer) {
@@ -261,6 +265,11 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
     unsigned long rightMiddleTime = (rightResult->endTime - rightResult->startTime) / 2;
 
     package->middleTime = findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
+
+    serialDebug("t: "); serialDebugLN(String(topMiddleTime));
+    serialDebug("w: "); serialDebugLN(String(package->width));
+    serialDebug("l: "); serialDebugLN(String(package->length));
+    serialDebug("h: "); serialDebugLN(String(package->height));
 }
 
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right) {
@@ -299,6 +308,9 @@ void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue) {
             die("Sensor result size!");
         }
         queue->data[queue->count].result = sensorBuffer->result;
+        queue->data[queue->count].startTime = sensorBuffer->startTime;
+        queue->data[queue->count].endTime = sensorBuffer->endTime;
+
         queue->count += 1;
         initSensorBuffer(sensorBuffer);
     }

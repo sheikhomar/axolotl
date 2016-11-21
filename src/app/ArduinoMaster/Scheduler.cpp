@@ -456,22 +456,16 @@ void debugLamp(int command) {
 
 void runScheduler() {
     // Setup
-    serialDebug("Scheduler started.\n");
+    serialDebug("Scheduler v2 started.\n");
     PackageCollection packages;
-    SensorReading sensor1, sensor2, sensor3;
-	int lampCounter = 0;
+    ObjectIdentificationState state;
+    int lampCounter = 0;
     
-
     // Initialisation
-    resetSensorData(&sensor1, &sensor2, &sensor3);
-    int count = 0;
+    initObjectIdentification(&state);
 
     while (true) {
-        bool readyToHandle = readSensorsEx(&sensor1, &sensor2, &sensor3);
-
-        if (readyToHandle) {
-            handlePackage(&packages, &sensor1, &sensor2, &sensor3);
-        }
+        runIdentification(&state, &packages);
         
         receiveData(&packages);
 
