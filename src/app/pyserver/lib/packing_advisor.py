@@ -5,9 +5,11 @@ class PackingAdvisor:
     def __init__(self, bin):
         #Initialise internal bin-lists NOTE: two lists of bins - one foreign and one non-foreign
         bin.bin_id = 1
+        bin.foreign = False
         self.bins = [bin]
         bin2 = Bin(bin.width, bin.length, bin.max_layers)
         bin2.bin_id = 2
+        bin2.foreign = True
         self.bins_foreign = [bin2]
 
         # Internal global variables. Strict rules for which methods may assign to these

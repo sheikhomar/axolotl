@@ -24,7 +24,7 @@ class BlueLib:
 		if bin.foreign == True:
 			destination = 'France'
 		else:
-			destination = 'Isle of Mors'
+			destination = 'Isle,of,Mors'
 		return 'B: {x} {y} {max_layers} {bin_id} {destination}\n'.format(x=bin.length, y=bin.width, max_layers=bin.max_layers, bin_id=bin.bin_id, destination=destination)
 		
 	def setup_server(self):
