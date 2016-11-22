@@ -177,7 +177,7 @@ public class ControlBrick {
 	}
 	
 	private static void fullSpeedC(){
-		mc.backward();
+		mc.forward();
 		beltRunning = true;
 	}
 	
@@ -256,11 +256,11 @@ public class ControlBrick {
 		}
 		else if(Button.ENTER.isPressed()){
 			if(beltRunning){
-				mc.forward();
-				beltRunning = false;
+				mc.backward();
+				beltRunning = true;
 			}
 			else{
-				mc.backward();
+				mc.forward();
 				beltRunning = true;
 			}
 			Delay.msDelay(500);
