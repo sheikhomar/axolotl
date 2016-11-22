@@ -10,7 +10,7 @@
 #endif
 
 //Functions
-void determineTimeBetweenSensors();
+void determineTimeBetweenSensors(int numbOfRuns);
 void readColourSensor();
 bool readSensorsBest();
 String determineColour(byte input);
