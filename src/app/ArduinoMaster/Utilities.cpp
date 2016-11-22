@@ -16,13 +16,19 @@ void die(String abortMessage) {
 		led(LED_RED, false);
 		led(LED_YELLOW, false);
 
-		delay(1000);
+		delay(200);
 
 		led(LED_GREEN, false);
 		led(LED_RED, true);
+		led(LED_YELLOW, false);
+
+		delay(200);
+
+		led(LED_GREEN, false);
+		led(LED_RED, false);
 		led(LED_YELLOW, true);
 
-		delay(1000);
+		delay(200);
 	}
 }
 
