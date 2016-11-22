@@ -10,27 +10,25 @@
 #endif
 
 //Defines
-#define ULT_TOP_TAG_DIST 3400					// TODO: Calibrate this
-#define ULT_RIGHT_TAG_DIST 4600					// TODO: Calibrate this
-#define ULT_LEFT_TAG_DIST 4300 					// TODO: Calibrate this
+#define ULT_TOP_TAG_DIST 3800					// TODO: Calibrate this
+#define ULT_RIGHT_TAG_DIST 5500					// TODO: Calibrate this
+#define ULT_LEFT_TAG_DIST 4500 					// TODO: Calibrate this
 
 #define ARRAY_SIZE 20
 #define NOT_DETECTED_THRESHOLD 4
-#define SPEED_CONVEYOR 200					// TODO: Calibrate this
+#define SPEED_CONVEYOR 195					// TODO: Calibrate this
 
 #define LENGTH_BETWEEN_SENSORS 11300			// TODO: Calibrate this  -- Old: 11950
 #define HEIGHT_BETWEEN_SENSOR_AND_BELT 4950 // TODO: Calibrate this
 
 
-#define TOP_SENSOR_CHECK_DISTANCE 20 // TODO: Calibrate this
-#define LEFT_SENSOR_CHECK_DISTANCE 20 // TODO: Calibrate this
-#define RIGHT_SENSOR_CHECK_DISTANCE 20 // TODO: Calibrate this
+#define TOP_SENSOR_CHECK_DISTANCE 50 // TODO: Calibrate this
+#define LEFT_SENSOR_CHECK_DISTANCE 50 // TODO: Calibrate this
+#define RIGHT_SENSOR_CHECK_DISTANCE 50 // TODO: Calibrate this
 
-#define TRANSPORT_TIME 10000 // transport time through the sensors in millis
+#define TRANSPORT_TIME 500 // transport time through the sensors in millis
 
-#define CORRECT_AMOUNT_THRESHOLD 4 
-
-#define SPEED_CONVEYOR 140
+#define CORRECT_AMOUNT_THRESHOLD 3
 
 //Functions
 bool readSensor(SensorReading *reading, int sensor);
@@ -48,14 +46,14 @@ void printPackageSize(Package *package);
 void initObjectIdentification(ObjectIdentificationState *state);
 void initSensorBuffer(SensorBuffer *buffer);
 void runIdentification(ObjectIdentificationState *state, PackageCollection *packages);
-void createSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance);
+void createSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String s);
 unsigned short calculateSensorResult(ReadingCollection *collection, unsigned short checkDistance);
 bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor);
 void addItemToCollection(ReadingCollection *collection, double estimate);
 void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue);
 void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *topResult, SensorResult *rightResult);
 void checkForFailedSensor(unsigned long endtime, ObjectIdentificationState *state);
-SensorResult* dequeue(SensorResultQueue *queue);
+SensorResult dequeue(SensorResultQueue *queue);
 unsigned long calcLength(SensorResult *result);
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right);
 void sort(unsigned long buffer[], int size);

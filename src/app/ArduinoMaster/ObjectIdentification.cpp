@@ -172,9 +172,9 @@ unsigned long findLength(SensorReading *sensor) {
 }
 
 void initObjectIdentification(ObjectIdentificationState *state) {
-    initKalmanFilter(&state->topSensor, 5000, 200, 4000, 10);
-    initKalmanFilter(&state->rightSensor, 5000, 200, 4000, 10);
-    initKalmanFilter(&state->leftSensor, 5000, 200, 4000, 10);
+    initKalmanFilter(&state->topSensor, 5000, 150, 4000, 30);
+    initKalmanFilter(&state->rightSensor, 5000, 150, 4000, 30);
+    initKalmanFilter(&state->leftSensor, 5000, 150, 4000, 30);
 
     initSensorBuffer(&state->topSensorBuffer);
     initSensorBuffer(&state->rightSensorBuffer);
@@ -206,20 +206,20 @@ void runIdentification(ObjectIdentificationState *state, PackageCollection *pack
 	bool topSensorTag = performReading(&state->topSensor, &state->topSensorBuffer, ULT_TOP_SENSOR);
 	bool rightSensorTag = performReading(&state->rightSensor, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
 
-	createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE);
-	createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE);
-	createSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE);
+	createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE, "Left ");
+	createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE, "Top ");
+	createSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE, "Right");
 
 	queueResult(&state->leftSensorBuffer, &state->leftSensorResultQueue);
 	queueResult(&state->topSensorBuffer, &state->topSensorResultQueue);
 	queueResult(&state->rightSensorBuffer, &state->rightSensorResultQueue);
 	
-	/*if(state->leftSensorResultQueue.count > 0)
+	if(state->leftSensorResultQueue.count > 0)
 		checkForFailedSensor(state->leftSensorResultQueue.data[0].endTime, state);
 	if(state->topSensorResultQueue.count > 0)
 		checkForFailedSensor(state->topSensorResultQueue.data[0].endTime, state);
 	if(state->rightSensorResultQueue.count > 0)
-		checkForFailedSensor(state->rightSensorResultQueue.data[0].endTime, state);*/
+		checkForFailedSensor(state->rightSensorResultQueue.data[0].endTime, state);
 
     if (state->leftSensorResultQueue.count > 0 && 
         state->topSensorResultQueue.count > 0 &&
@@ -232,7 +232,7 @@ void runIdentification(ObjectIdentificationState *state, PackageCollection *pack
         package->id = ___nextPackageId;
         ___nextPackageId += 1;
 
-        serialDebug("\nNew package with ID: #");
+        serialDebug("\n\n\nNew package with ID: #");
         serialDebugLN(String(package->id));
 
         setPackageInfo(package,
@@ -261,8 +261,8 @@ void checkForFailedSensor(unsigned long endtime, ObjectIdentificationState *stat
 	}
 }
 
-SensorResult* dequeue(SensorResultQueue *queue) {
-    SensorResult* item = &(queue->data[0]);
+SensorResult dequeue(SensorResultQueue *queue) {
+    SensorResult item = queue->data[0];
 
     for (int i = 0; i < queue->count; i++) {
         if (i < queue->count - 1) {
@@ -290,18 +290,29 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
 
     package->length = findMedian(leftLength, topLength, rightLength);
 
-    unsigned long leftMiddleTime = leftResult->startTime + (leftResult->endTime - leftResult->startTime) / 2;
-    unsigned long topMiddleTime = topResult->startTime + (topResult->endTime - topResult->startTime) / 2;
-    unsigned long rightMiddleTime = rightResult->startTime + (rightResult->endTime - rightResult->startTime) / 2;
+    unsigned long leftMiddleTime = (leftResult->endTime - leftResult->startTime) / 2;
+    unsigned long topMiddleTime = (topResult->endTime - topResult->startTime) / 2;
+    unsigned long rightMiddleTime = (rightResult->endTime - rightResult->startTime) / 2;
 
-    package->middleTime = findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
+	unsigned short largestStartTime = 0; 
 
-	serialDebug("height: ");
+	if (leftResult->startTime >= largestStartTime)
+		largestStartTime = leftResult->startTime;
+	if (topResult->startTime >= largestStartTime)
+		largestStartTime = topResult->startTime;
+	if (rightResult->startTime >= largestStartTime)
+		largestStartTime = rightResult->startTime;
+
+    package->middleTime = largestStartTime + findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
+
+	serialDebug("h: ");
 	serialDebug(String(package->height));
-	serialDebug(" width: ");
+	serialDebug(" w: ");
 	serialDebug(String(package->width));
-	serialDebug(" length: ");
-	serialDebugLN(String(package->length));
+	serialDebug(" l: ");
+	serialDebug(String(package->length));
+	serialDebug(" mt: ");
+	serialDebugLN(String(package->middleTime));
 }
 
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right) {
@@ -348,13 +359,18 @@ void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue) {
     }
 }
 
-void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance) {
+void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String sensor) {
     if (!packageDetected && sensorBuffer->data.count > 0) {
         if (sensorBuffer->data.count > CORRECT_AMOUNT_THRESHOLD) {
             sensorBuffer->result = calculateSensorResult(&sensorBuffer->data, sensorCheckDistance);
             sensorBuffer->isReady = true;
         }
-
+		serialDebug("sensorBufferCount: ");
+		serialDebug(String(sensorBuffer->data.count));
+		serialDebug("   sensorResult: ");
+		serialDebug(String(sensorBuffer->result));
+		serialDebug("     ");
+		serialDebugLN(sensor);
         sensorBuffer->data.count = 0;
     }
 }
@@ -385,12 +401,12 @@ unsigned short calculateSensorResult(ReadingCollection *collection, unsigned sho
             bestNumberOfNeighbours = currentNumberOfNeighbours;
         }
     }
-
+	
     return bestValue;
 }
 
 bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor) {
-    delay(5);
+	delay(1);
     double measurement = (double)makeReading(whichSensor);
 
     updateKalmanFilter(kfi, measurement);
@@ -405,6 +421,12 @@ bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whic
         double estimate = kfi->currentEstimate;
         addItemToCollection(&buffer->data, estimate);
     }
+
+	if (whichSensor == ULT_RIGHT_SENSOR) {
+		//serialDebug(String(measurement));
+		//serialDebug("\t");
+		//serialDebugLN(String(kfi->currentEstimate));
+	}
 
     return tag;
 }
