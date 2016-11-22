@@ -18,9 +18,9 @@ int debugLEDCounter = 0;
 void sendPackageInfoToRaspberryPi(Package *package) {
     byte buf[] = { 0, 0, 0, 0 };
 
-    buf[0] = convertSensroDataToLegoSize(package->width);
-    buf[1] = convertSensroDataToLegoSize(package->length);
-	buf[2] = convertSensroDataToLegoSize(package->height);
+    buf[0] = convertSensorDataToLegoSize(package->width);
+    buf[1] = convertSensorDataToLegoSize(package->length);
+	buf[2] = convertSensorDataToLegoSize(package->height);
     buf[3] = package->colour;
 
     serialSendData(RaspberryPi, buf, 4, 'p');
@@ -30,7 +30,7 @@ void sendPackageInfoToRaspberryPi(Package *package) {
 }
 
 //Currently based on fractions of 2
-byte convertSensroDataToLegoSize(unsigned short number) {
+byte convertSensorDataToLegoSize(unsigned short number) {
 	if (number < 5200) {
 		return 2;
 	}
