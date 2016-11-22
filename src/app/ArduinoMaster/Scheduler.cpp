@@ -308,11 +308,11 @@ void checkBufferCount(unsigned short buffer1,unsigned short buffer2, unsigned sh
 void cleanBuffer(SensorReading *reading, short sensor) {
     unsigned short tagDist;
     if (sensor == ULT_TOP_SENSOR)
-        tagDist = ult1_TagDist;
+        tagDist = ULT_TOP_TAG_DIST;
     else if (sensor == ULT_RIGHT_SENSOR)
-        tagDist = ult2_TagDist;
+        tagDist = ULT_RIGHT_TAG_DIST;
     else if (sensor == ULT_LEFT_SENSOR)
-        tagDist = ult3_TagDist;
+        tagDist = ULT_LEFT_TAG_DIST;
 
     for (int i = 0; i < reading->bufferCount; i++) {
         if (reading->sensorReadingBuffer[i] > tagDist) {

@@ -32,11 +32,11 @@ void TestUltSensors() {
 	masterString.concat(String(distance3));
 	masterString.concat("\t");
 
-	masterString.concat(String(distance1 < ult1_TagDist));
+	masterString.concat(String(distance1 < ULT_TOP_TAG_DIST));
 	masterString.concat("  ");
-	masterString.concat(String(distance2 < ult2_TagDist));
+	masterString.concat(String(distance2 < ULT_RIGHT_TAG_DIST));
 	masterString.concat("  ");
-	masterString.concat(String(distance3 < ult3_TagDist));
+	masterString.concat(String(distance3 < ULT_LEFT_TAG_DIST));
 	serialDebugLN(masterString);
 
 	delay(ULT_MEASUREMENT_CYCLE_MS);

@@ -69,13 +69,13 @@ bool checkReading(int whichSensor, int dist) {
 	bool bVal;
 
 	if (whichSensor == ULT_TOP_SENSOR) {
-		bVal = dist < ult1_TagDist;
+		bVal = dist < ULT_TOP_TAG_DIST;
 	}
 	else if (whichSensor == ULT_RIGHT_SENSOR) {
-		bVal = dist < ult2_TagDist;
+		bVal = dist < ULT_RIGHT_TAG_DIST;
 	}
 	else if (whichSensor == ULT_LEFT_SENSOR) {
-		bVal = dist < ult3_TagDist;
+		bVal = dist < ULT_LEFT_TAG_DIST;
 	}
 	else {
 		die("ERROR - No real sensor.");
@@ -202,18 +202,25 @@ void resetPackage2(Package *package) {
 }
 
 void runIdentification(ObjectIdentificationState *state, PackageCollection *packages) {
-    bool leftSensorTag = performReading(&state->leftSensor, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
-    bool topSensorTag = performReading(&state->topSensor, &state->topSensorBuffer, ULT_TOP_SENSOR);
-    bool rightSensorTag = performReading(&state->rightSensor, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
-    
-    createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE);
-    createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE);
-    createSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE);
+	bool leftSensorTag = performReading(&state->leftSensor, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
+	bool topSensorTag = performReading(&state->topSensor, &state->topSensorBuffer, ULT_TOP_SENSOR);
+	bool rightSensorTag = performReading(&state->rightSensor, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
 
-    queueResult(&state->leftSensorBuffer, &state->leftSensorResultQueue);
-    queueResult(&state->topSensorBuffer, &state->topSensorResultQueue);
-    queueResult(&state->rightSensorBuffer, &state->rightSensorResultQueue);
-    
+	createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE);
+	createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE);
+	createSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE);
+
+	queueResult(&state->leftSensorBuffer, &state->leftSensorResultQueue);
+	queueResult(&state->topSensorBuffer, &state->topSensorResultQueue);
+	queueResult(&state->rightSensorBuffer, &state->rightSensorResultQueue);
+	
+	/*if(state->leftSensorResultQueue.count > 0)
+		checkForFailedSensor(state->leftSensorResultQueue.data[0].endTime, state);
+	if(state->topSensorResultQueue.count > 0)
+		checkForFailedSensor(state->topSensorResultQueue.data[0].endTime, state);
+	if(state->rightSensorResultQueue.count > 0)
+		checkForFailedSensor(state->rightSensorResultQueue.data[0].endTime, state);*/
+
     if (state->leftSensorResultQueue.count > 0 && 
         state->topSensorResultQueue.count > 0 &&
         state->rightSensorResultQueue.count > 0) {
@@ -236,6 +243,24 @@ void runIdentification(ObjectIdentificationState *state, PackageCollection *pack
     }
 }
 
+void checkForFailedSensor(unsigned long endtime, ObjectIdentificationState *state) {
+	if (millis() >= (endtime + TRANSPORT_TIME)) {
+		if (state->leftSensorResultQueue.count > 0) {
+			dequeue(&state->leftSensorResultQueue);
+		}
+
+		if (state->topSensorResultQueue.count > 0) {
+			dequeue(&state->topSensorResultQueue);
+		}
+
+		if (state->rightSensorResultQueue.count > 0) {
+			dequeue(&state->rightSensorResultQueue);
+		}
+		
+		serialDebugLN("\nWaited too long. Flushing queues.");
+	}
+}
+
 SensorResult* dequeue(SensorResultQueue *queue) {
     SensorResult* item = &(queue->data[0]);
 
@@ -254,6 +279,11 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
     package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - topResult->result;
     package->width = LENGTH_BETWEEN_SENSORS - rightResult->result - leftResult->result;
     
+	serialDebug("RightResult: ");
+	serialDebug(String(rightResult->result));
+	serialDebug(" LeftResult ");
+	serialDebugLN(String(leftResult->result));
+
     unsigned long leftLength = calcLength(leftResult);
     unsigned long topLength = calcLength(topResult);
     unsigned long rightLength = calcLength(rightResult);
@@ -265,6 +295,13 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
     unsigned long rightMiddleTime = rightResult->startTime + (rightResult->endTime - rightResult->startTime) / 2;
 
     package->middleTime = findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
+
+	serialDebug("height: ");
+	serialDebug(String(package->height));
+	serialDebug(" width: ");
+	serialDebug(String(package->width));
+	serialDebug(" length: ");
+	serialDebugLN(String(package->length));
 }
 
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right) {
