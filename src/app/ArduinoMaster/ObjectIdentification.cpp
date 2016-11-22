@@ -260,16 +260,11 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
 
     package->length = findMedian(leftLength, topLength, rightLength);
 
-    unsigned long leftMiddleTime = (leftResult->endTime - leftResult->startTime) / 2;
-    unsigned long topMiddleTime = (topResult->endTime - topResult->startTime) / 2;
-    unsigned long rightMiddleTime = (rightResult->endTime - rightResult->startTime) / 2;
+    unsigned long leftMiddleTime = leftResult->startTime + (leftResult->endTime - leftResult->startTime) / 2;
+    unsigned long topMiddleTime = topResult->startTime + (topResult->endTime - topResult->startTime) / 2;
+    unsigned long rightMiddleTime = rightResult->startTime + (rightResult->endTime - rightResult->startTime) / 2;
 
     package->middleTime = findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
-
-    serialDebug("t: "); serialDebugLN(String(topMiddleTime));
-    serialDebug("w: "); serialDebugLN(String(package->width));
-    serialDebug("l: "); serialDebugLN(String(package->length));
-    serialDebug("h: "); serialDebugLN(String(package->height));
 }
 
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right) {
