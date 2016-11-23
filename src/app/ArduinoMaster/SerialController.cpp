@@ -150,7 +150,7 @@ client serialReadData(byte data[], int data_length, int *command) {
 			#if DEBUG
 				serialWrite(RS485Serial.read());
 			#else
-				RS485Serial.read()
+				RS485Serial.read();
 			#endif
 		}
 		return (client)id;
