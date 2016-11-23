@@ -174,7 +174,7 @@ unsigned long findLength(SensorReading *sensor) {
 void initObjectIdentification(ObjectIdentificationState *state) {
     initKalmanFilter(&state->topSensor, 5000, 150, 4000, 30);
     initKalmanFilter(&state->rightSensor, 5000, 150, 4000, 30);
-    initKalmanFilter(&state->leftSensor, 5000, 150, 4000, 30);
+    initKalmanFilter(&state->leftSensor, 5000, 125, 4000, 10);
 
     initSensorBuffer(&state->topSensorBuffer);
     initSensorBuffer(&state->rightSensorBuffer);
@@ -236,9 +236,9 @@ void runIdentification(ObjectIdentificationState *state, PackageCollection *pack
         serialDebugLN(String(package->id));
 
         setPackageInfo(package,
-            dequeue(&state->leftSensorResultQueue),
-            dequeue(&state->topSensorResultQueue),
-            dequeue(&state->rightSensorResultQueue)
+            &dequeue(&state->leftSensorResultQueue),
+            &dequeue(&state->topSensorResultQueue),
+            &dequeue(&state->rightSensorResultQueue)
         );
     }
 }
@@ -257,7 +257,7 @@ void checkForFailedSensor(unsigned long endtime, ObjectIdentificationState *stat
 			dequeue(&state->rightSensorResultQueue);
 		}
 		
-		serialDebugLN("\nWaited too long. Flushing queues.");
+		serialDebugLN("\nWaited too long. Flushing queues.\n");
 	}
 }
 
@@ -279,10 +279,10 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
     package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - topResult->result;
     package->width = LENGTH_BETWEEN_SENSORS - rightResult->result - leftResult->result;
     
-	serialDebug("RightResult: ");
-	serialDebug(String(rightResult->result));
-	serialDebug(" LeftResult ");
-	serialDebugLN(String(leftResult->result));
+	//serialDebug("RightResult: ");
+	//serialDebug(String(rightResult->result));
+	//serialDebug(" LeftResult ");
+	//serialDebugLN(String(leftResult->result));
 
     unsigned long leftLength = calcLength(leftResult);
     unsigned long topLength = calcLength(topResult);
@@ -294,7 +294,7 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
     unsigned long topMiddleTime = (topResult->endTime - topResult->startTime) / 2;
     unsigned long rightMiddleTime = (rightResult->endTime - rightResult->startTime) / 2;
 
-	unsigned short largestStartTime = 0; 
+	unsigned long largestStartTime = 0; 
 
 	if (leftResult->startTime >= largestStartTime)
 		largestStartTime = leftResult->startTime;
@@ -365,32 +365,46 @@ void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsign
             sensorBuffer->result = calculateSensorResult(&sensorBuffer->data, sensorCheckDistance);
             sensorBuffer->isReady = true;
         }
-		serialDebug("sensorBufferCount: ");
-		serialDebug(String(sensorBuffer->data.count));
-		serialDebug("   sensorResult: ");
-		serialDebug(String(sensorBuffer->result));
-		serialDebug("     ");
-		serialDebugLN(sensor);
+		//serialDebug("sensorBufferCount: ");
+		//serialDebug(String(sensorBuffer->data.count));
+		//serialDebug("   sensorResult: ");
+		//serialDebug(String(sensorBuffer->result));
+		//serialDebug("     ");
+		//serialDebugLN(sensor);
+
+		//unsigned short val = SENSOR_READINGS_SIZE;
+		//if (sensorBuffer->data.count < SENSOR_READINGS_SIZE) {
+		//	val = sensorBuffer->data.count;
+		//}
+		//for (int i = 0; i < val; i++) {
+		//	serialDebug(String(i));
+		//	serialDebug("\t\t");
+		//	serialDebugLN(String(sensorBuffer->data.readings[i]));
+		//}
         sensorBuffer->data.count = 0;
     }
 }
 
-unsigned short calculateSensorResult(ReadingCollection *collection, unsigned short checkDistance) {
+unsigned short calculateSensorResult(ReadingCollection *collection, long checkDistance) {
     unsigned short bestValue = 0;
     unsigned short bestNumberOfNeighbours = 0;
 
     int loopingBound = collection->count;
+
     if (loopingBound > SENSOR_READINGS_SIZE) {
         loopingBound = SENSOR_READINGS_SIZE;
     }
+
     for (int i = 0; i < loopingBound; i++) {
         unsigned short currentValue = collection->readings[i];
         unsigned short currentNumberOfNeighbours = 0;
 
         for (int j = 0; j < loopingBound; j++) {
-            unsigned short anotherValue = collection->readings[i];
-            unsigned short diff = abs(currentValue - anotherValue);
-            if (i != j && diff >= checkDistance) {
+            unsigned short anotherValue = collection->readings[j];
+			long diff = currentValue - anotherValue;
+			long posDiff = abs(diff);
+
+            if (i != j && diff <= checkDistance) {
                 currentNumberOfNeighbours += 1;
             }
         }
@@ -422,11 +436,11 @@ bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whic
         addItemToCollection(&buffer->data, estimate);
     }
 
-	if (whichSensor == ULT_RIGHT_SENSOR) {
-		//serialDebug(String(measurement));
-		//serialDebug("\t");
-		//serialDebugLN(String(kfi->currentEstimate));
-	}
+	//if (whichSensor == ULT_RIGHT_SENSOR) {
+	//	serialDebug(String(measurement));
+	//	serialDebug("\t");
+	//	serialDebugLN(String(kfi->currentEstimate));
+	//}
 
     return tag;
 }

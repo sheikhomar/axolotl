@@ -14,9 +14,8 @@
 #define ULT_RIGHT_TAG_DIST 5500					// TODO: Calibrate this
 #define ULT_LEFT_TAG_DIST 4500 					// TODO: Calibrate this
 
-#define ARRAY_SIZE 20
 #define NOT_DETECTED_THRESHOLD 4
-#define SPEED_CONVEYOR 195					// TODO: Calibrate this
+#define SPEED_CONVEYOR 180				// TODO: Calibrate this
 
 #define LENGTH_BETWEEN_SENSORS 11300			// TODO: Calibrate this  -- Old: 11950
 #define HEIGHT_BETWEEN_SENSOR_AND_BELT 4950 // TODO: Calibrate this
@@ -47,7 +46,7 @@ void initObjectIdentification(ObjectIdentificationState *state);
 void initSensorBuffer(SensorBuffer *buffer);
 void runIdentification(ObjectIdentificationState *state, PackageCollection *packages);
 void createSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String s);
-unsigned short calculateSensorResult(ReadingCollection *collection, unsigned short checkDistance);
+unsigned short calculateSensorResult(ReadingCollection *collection, long checkDistance);
 bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor);
 void addItemToCollection(ReadingCollection *collection, double estimate);
 void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue);
