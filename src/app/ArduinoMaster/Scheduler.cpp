@@ -132,6 +132,24 @@ void removePackage(PackageCollection *packages, int index) {
     packages->count = packages->count - 1;
 }
 
+
+Package *findNextPackageForColour(PackageCollection *packages) {
+    for (int i = 0; i < packages->count; i++) {
+        if (packages->items[i].colour == COLOUR_REQUESTED) {
+            return &(packages->items[i]);
+        }
+    }
+}
+
+Package *findNextPackageForPlacement(PackageCollection *packages) {
+    for (int i = 0; i < packages->count; i++) {
+        if (packages->items[i].bin == BIN_REQUESTED || 
+            packages->items[i].bin == BIN_REQUESTED_AGAIN) {
+            return &(packages->items[i]);
+        }
+    }
+}
+
 // Read serial
 // If Not For Us then 
 //   Return
@@ -157,9 +175,11 @@ void receiveData(PackageCollection *packages) {
 		return;
 	}
 
-    Package *package = &(packages->items[0]);
+    
      
     if (command == COMM_ARDUINO_COLOUR_INFO) {
+        Package *package = findNextPackageForColour(packages);
+        
         // We have recieved data from NXT
         package->colour = buf[0];
         serialDebug("\nReceived Colour: [");
@@ -177,6 +197,7 @@ void receiveData(PackageCollection *packages) {
         }
     }
     else if (command == COMM_PI_ADVICEPACKAGE) {
+        Package *package = findNextPackageForPlacement(packages);
         // We have recieved data from Raspberry Pi
         package->bin = buf[0];
         serialDebug("\nReceived bin: [");
