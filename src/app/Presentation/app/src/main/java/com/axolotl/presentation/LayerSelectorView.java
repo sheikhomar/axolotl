@@ -3,6 +3,7 @@ package com.axolotl.presentation;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.axolotl.presentation.model.Bin;
@@ -34,14 +35,17 @@ public class LayerSelectorView extends BaseSelectorView {
 
     public void setBin(Bin bin) {
         this.bin = bin;
+        clearSelection();
 
         if (bin != null) {
-            Log.d("LayerSelectorView", "Bin " + bin.getId() + " has " + bin.getNumberOfLayers() + " layers.");
-
             showIcons(bin.getNumberOfLayers());
             for (int i = 0; i < bin.getNumberOfLayers(); i++) {
                 Layer layer = bin.getLayerAt(i);
                 this.container.getChildAt(i).setTag(layer);
+
+                if (bin.isLayerSelected(i)) {
+                    this.highlightIcon(i);
+                }
             }
         }
     }

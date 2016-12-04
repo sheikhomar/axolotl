@@ -78,4 +78,8 @@ public class Bin {
 
         return null;
     }
+
+    public boolean isLayerSelected(int index) {
+        return this.selectedLayerIndex != -1 && this.selectedLayerIndex == index;
+    }
 }
