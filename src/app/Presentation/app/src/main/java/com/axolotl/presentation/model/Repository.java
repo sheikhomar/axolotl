@@ -41,4 +41,12 @@ public class Repository {
             selectedBinIndex = binIndex;
         }
     }
+
+    public Bin getSelectedBin() {
+        if (bins.size() > 0) {
+            return bins.get(selectedBinIndex);
+        }
+
+        return null;
+    }
 }
