@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.axolotl.presentation.model.Bin;
+
 public abstract class BaseSelectorView extends RelativeLayout {
 
     protected LinearLayout container;
@@ -93,11 +95,13 @@ public abstract class BaseSelectorView extends RelativeLayout {
         image.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                onIconClick((ImageView)v);
+                clearSelection();
+                ImageView imageView = (ImageView)v;
+                imageView.setImageDrawable(selectedIcon);
+                onIconClick(imageView);
             }
         });
 
         this.container.addView(image);
     }
-
 }

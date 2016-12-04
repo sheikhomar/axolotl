@@ -70,10 +70,7 @@ public class BinSelectorView extends BaseSelectorView {
 
     @Override
     protected void onIconClick(ImageView view) {
-        clearSelection();
-
         Bin bin = (Bin)view.getTag();
-        view.setImageDrawable(this.selectedIcon);
 
         if (this.onBinSelectListener != null) {
             this.onBinSelectListener.onBinSelect(bin);
