@@ -8,9 +8,6 @@ import android.support.annotation.Nullable;
 
 public class BluetoothService extends Service {
 
-    public static ServiceHandler getInstance() {
-        return new ServiceHandler();
-    }
 
     @Nullable
     @Override
