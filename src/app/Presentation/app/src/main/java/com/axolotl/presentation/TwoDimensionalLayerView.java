@@ -90,7 +90,7 @@ public class TwoDimensionalLayerView extends View {
         int width = layer.getLength() * scaleFactor;
         int height = layer.getWidth() * scaleFactor;
 
-        canvas.drawRect(0, 0, width-1, height-1, strokePaint);
+        //canvas.drawRect(0, 0, width-1, height-1, strokePaint);
 
         for (int i = 0; i < layer.getNumberOfPackages(); i++) {
             PackagedPackage p = layer.get(i);
