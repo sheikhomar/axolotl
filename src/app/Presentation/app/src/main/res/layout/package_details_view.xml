@@ -2,6 +2,57 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="5dp"
+    android:paddingTop="5dp"
     >
+
+    <TextView
+        android:id="@+id/label_destination"
+        android:text="Destination:"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@+id/package_details_destination"
+        android:text="Destination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/label_destination"
+        />
+
+    <TextView
+        android:id="@+id/label_dimension"
+        android:text="Dimension:"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label_destination"
+        />
+
+    <TextView
+        android:id="@+id/package_details_dimension"
+        android:text="000 x 000 x 000 mm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/package_details_destination"
+        android:layout_toRightOf="@id/label_dimension"
+        />
+
+    <TextView
+        android:id="@+id/label_colour"
+        android:text="Colour:"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label_dimension"
+        />
+
+    <TextView
+        android:id="@+id/package_details_colour"
+        android:text="Red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/package_details_dimension"
+        android:layout_toRightOf="@id/label_colour"
+        />
 
 </RelativeLayout>

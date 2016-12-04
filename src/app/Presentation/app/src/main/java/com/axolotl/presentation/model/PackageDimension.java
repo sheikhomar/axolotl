@@ -23,4 +23,15 @@ public class PackageDimension {
     public int getWidth() {
         return width;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(getLength());
+        buffer.append(" x ");
+        buffer.append(getWidth());
+        buffer.append(" x ");
+        buffer.append(getHeight());
+        return buffer.toString();
+    }
 }

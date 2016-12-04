@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private TwoDimensionalLayerView layerView;
     private BinSelectorView binSelector;
     private LayerSelectorView layerSelector;
+    private PackageDetailsView packageDetailsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,18 +27,19 @@ public class MainActivity extends AppCompatActivity {
 
         populateRepostioryWithTestData();
 
-        layerView = (TwoDimensionalLayerView) findViewById(R.id.layer_view);
-        layerView.setLayer(null);
-        layerView.setPackageSelectListener(new TwoDimensionalLayerView.OnPackageSelectListener() {
-            @Override
-            public void onPackageSelect(Package thePackage) {
+        this.layerView = (TwoDimensionalLayerView) findViewById(R.id.layer_view);
+        this.layerSelector = (LayerSelectorView)findViewById(R.id.layer_selector);
+        this.binSelector = (BinSelectorView)findViewById(R.id.bin_selector);
+        this.packageDetailsView = (PackageDetailsView)findViewById(R.id.package_details);
 
+        this.layerView.setLayer(repository.getSelectedLayer());
+        this.layerView.setPackageSelectListener(new TwoDimensionalLayerView.OnPackageSelectListener() {
+            @Override
+            public void onPackageSelect(Package aPackage) {
+                packageDetailsView.setPackage(aPackage);
             }
         });
 
-        this.layerSelector = (LayerSelectorView)findViewById(R.id.layer_selector);
-
-        this.binSelector = (BinSelectorView)findViewById(R.id.bin_selector);
         this.binSelector.setBins(repository.getBins());
         this.binSelector.setBinSelectListener(new BinSelectorView.OnBinSelectListener() {
             @Override
