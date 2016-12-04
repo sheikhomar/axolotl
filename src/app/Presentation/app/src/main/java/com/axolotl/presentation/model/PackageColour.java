@@ -12,9 +12,9 @@ public class PackageColour {
             new PackageColour(1, Color.argb(255, 0, 72, 181), "Blue"),
             new PackageColour(2, Color.argb(255, 0, 160, 18), "Green"),
             new PackageColour(3, Color.argb(255, 237, 197, 0), "Yellow"),
-            new PackageColour(6, Color.WHITE, "White"),
-            new PackageColour(7, Color.BLACK, "Black"),
-            new PackageColour(128, Color.BLACK, "Unknown"),
+            new PackageColour(6, Color.argb(255, 244, 244, 244), "White"),
+            new PackageColour(7, Color.argb(255, 35, 16, 0), "Black"),
+            new PackageColour(128, Color.argb(255, 255, 0, 102), "Unknown"),
     };
 
     private PackageColour(int code, int paintColour, String name) {

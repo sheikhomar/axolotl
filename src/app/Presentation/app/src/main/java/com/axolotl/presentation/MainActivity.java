@@ -62,7 +62,12 @@ public class MainActivity extends AppCompatActivity implements PackageSelectionC
 
             // Pack packages into layer 1
             cm.translate("P: 0 0 2 2 1 0 0 1 1", repository);
-            cm.translate("P: 3 2 2 4 1 1 0 1 1", repository);
+            cm.translate("P: 2 0 2 2 1 1 0 1 1", repository);
+            cm.translate("P: 4 0 2 2 1 2 0 1 1", repository);
+            cm.translate("P: 6 0 2 2 1 3 0 1 1", repository);
+            cm.translate("P: 0 2 2 2 1 6 0 1 1", repository);
+            cm.translate("P: 2 2 2 2 1 7 0 1 1", repository);
+            cm.translate("P: 4 2 2 2 1 128 0 1 1", repository);
 
             // Pack packages into layer 2
             cm.translate("P: 0 0 2 8 1 0 0 2 1", repository);
