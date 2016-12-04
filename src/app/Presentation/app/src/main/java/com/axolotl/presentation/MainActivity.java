@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements PackageSelectionC
                 layerView.setLayer(repository.getCurrentLayer());
             }
         });
+
+        LayerSelectorView layerSelector = (LayerSelectorView)findViewById(R.id.layer_selector);
+        layerSelector.setBin(repository.getSelectedBin());
     }
 
     @Override

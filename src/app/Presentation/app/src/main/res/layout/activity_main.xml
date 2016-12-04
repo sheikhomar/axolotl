@@ -11,12 +11,12 @@
         android:layout_width="70dp"
         android:layout_height="wrap_content" />
 
-    <View
+    <com.axolotl.presentation.LayerSelectorView
         android:id="@+id/layer_selector"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:background="#45e341"
         android:layout_toRightOf="@id/bin_selector" />
+
 
     <com.axolotl.presentation.TwoDimensionalLayerView
         android:id="@+id/drawingView"
