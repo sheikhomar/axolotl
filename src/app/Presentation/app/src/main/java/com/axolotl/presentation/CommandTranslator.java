@@ -1,4 +1,11 @@
-package com.axolotl.presentation.model;
+package com.axolotl.presentation;
+
+import com.axolotl.presentation.InvalidCommandException;
+import com.axolotl.presentation.model.Bin;
+import com.axolotl.presentation.model.Package;
+import com.axolotl.presentation.model.PackageColour;
+import com.axolotl.presentation.model.PackageDimension;
+import com.axolotl.presentation.model.Repository;
 
 public class CommandTranslator {
 

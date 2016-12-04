@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.axolotl.presentation.model.Bin;
-import com.axolotl.presentation.model.CommandTranslator;
-import com.axolotl.presentation.model.InvalidCommandException;
 import com.axolotl.presentation.model.Layer;
 import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.Repository;
