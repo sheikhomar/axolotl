@@ -57,6 +57,8 @@ public class BinSelectorView extends BaseSelectorView {
             Bin bin = bins.get(i);
             this.container.getChildAt(i).setTag(bin);
         }
+        this.clearSelection();
+        this.highlightIcon(0);
     }
 
     @Override
