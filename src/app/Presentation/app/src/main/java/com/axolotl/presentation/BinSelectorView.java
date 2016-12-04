@@ -16,32 +16,26 @@ import com.axolotl.presentation.model.Bin;
 
 import java.util.ArrayList;
 
-public class BinSelectorView extends RelativeLayout {
+public class BinSelectorView extends BaseSelectorView {
 
     private OnBinSelectListener onBinSelectListener;
 
-    public static interface OnBinSelectListener {
+    public interface OnBinSelectListener {
         void onBinSelect(Bin bin);
     }
 
     private ArrayList<Bin> bins;
-    private LinearLayout container;
-    private Drawable imageBin;
-    private Drawable imageBinSelected;
 
     public BinSelectorView(Context context) {
         super(context);
-        init(null, 0);
     }
 
     public BinSelectorView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs, 0);
     }
 
     public BinSelectorView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs, defStyle);
     }
 
     public void setBins(ArrayList<Bin> bins) {
@@ -66,69 +60,24 @@ public class BinSelectorView extends RelativeLayout {
         }
     }
 
-    private void init(AttributeSet attrs, int defStyle) {
-        inflate(getContext(), R.layout.bin_selector_view, this);
+    @Override
+    protected int getNormalIconResource() { return R.drawable.ic_bin; }
 
-        this.container = (LinearLayout)findViewById(R.id.bin_selector_container);
-        this.imageBin = ContextCompat.getDrawable(getContext(), R.drawable.ic_bin);
-        this.imageBinSelected = ContextCompat.getDrawable(getContext(), R.drawable.ic_bin_selected);
-    }
+    @Override
+    protected int getSelectedIconResource() { return R.drawable.ic_bin_selected; }
 
-    private void preloadImages(int numberOfBins) {
-        int childCount = this.container.getChildCount();
-        if (childCount < numberOfBins) {
-            for (int i = childCount; i < numberOfBins; i++) {
-                createNewImage();
-            }
-        }
-    }
+    @Override
+    protected int getResourceView() { return R.layout.bin_selector_view; }
 
-    private void hideExtraImages(int numberOfBins) {
-        int childCount = this.container.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            if (i >= numberOfBins) {
-                View view = this.container.getChildAt(i);
-                view.setVisibility(GONE);
-            }
-        }
-    }
+    @Override
+    protected void onIconClick(ImageView view) {
+        clearSelection();
 
-    private void onBinTouch(ImageView imageView) {
-        clearSelectedBin();
-
-        Bin bin = (Bin)imageView.getTag();
-        imageView.setImageDrawable(imageBinSelected);
+        Bin bin = (Bin)view.getTag();
+        view.setImageDrawable(this.selectedIcon);
 
         if (this.onBinSelectListener != null) {
             this.onBinSelectListener.onBinSelect(bin);
-        }
-    }
-
-    private void createNewImage() {
-        ImageView image = new ImageView(getContext());
-        image.setImageDrawable(this.imageBin);
-
-        LinearLayout.LayoutParams vp = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        image.setLayoutParams(vp);
-        image.setMaxHeight(50);
-        image.setMaxWidth(50);
-        image.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBinTouch((ImageView)v);
-            }
-        });
-
-        LinearLayout container = (LinearLayout)findViewById(R.id.bin_selector_container);
-        container.addView(image);
-    }
-
-    private void clearSelectedBin() {
-        int childCount = this.container.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            ImageView iv = (ImageView)this.container.getChildAt(i);
-            iv.setImageDrawable(imageBin);
         }
     }
 }
