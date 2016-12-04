@@ -76,8 +76,10 @@ public abstract class BaseSelectorView extends RelativeLayout {
     private void hideExtraIcons(int numberOfVisibleImages) {
         int childCount = this.container.getChildCount();
         for (int i = 0; i < childCount; i++) {
-            if (i >= numberOfVisibleImages) {
-                View view = this.container.getChildAt(i);
+            View view = this.container.getChildAt(i);
+            if (i < numberOfVisibleImages) {
+                view.setVisibility(VISIBLE);
+            } else {
                 view.setVisibility(GONE);
             }
         }
