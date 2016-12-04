@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         populateRepostioryWithTestData();
 
-        layerView = (TwoDimensionalLayerView) findViewById(R.id.drawingView);
+        layerView = (TwoDimensionalLayerView) findViewById(R.id.layer_view);
         layerView.setLayer(null);
         layerView.setPackageSelectListener(new TwoDimensionalLayerView.OnPackageSelectListener() {
             @Override

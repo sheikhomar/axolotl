@@ -9,21 +9,31 @@
     <com.axolotl.presentation.BinSelectorView
         android:id="@+id/bin_selector"
         android:layout_width="70dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        />
 
     <com.axolotl.presentation.LayerSelectorView
         android:id="@+id/layer_selector"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_toRightOf="@id/bin_selector" />
+        android:layout_toRightOf="@id/bin_selector"
+        />
 
+    <com.axolotl.presentation.PackageDetailsView
+        android:id="@+id/package_details"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_toRightOf="@id/bin_selector"
+        android:layout_alignParentBottom="true"
+        />
 
     <com.axolotl.presentation.TwoDimensionalLayerView
-        android:id="@+id/drawingView"
+        android:id="@+id/layer_view"
         android:background="#333333"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/bin_selector"
-        android:layout_below="@id/layer_selector" />
-
+        android:layout_below="@id/layer_selector"
+        android:layout_above="@id/package_details"
+        />
 </RelativeLayout>

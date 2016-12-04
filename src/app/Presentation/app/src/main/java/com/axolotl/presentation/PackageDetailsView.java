@@ -1,0 +1,26 @@
+package com.axolotl.presentation;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.widget.RelativeLayout;
+
+public class PackageDetailsView extends RelativeLayout {
+    public PackageDetailsView(Context context) {
+        super(context);
+        init(null, 0);
+    }
+
+    public PackageDetailsView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(attrs, 0);
+    }
+
+    public PackageDetailsView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(attrs, defStyle);
+    }
+
+    private void init(AttributeSet attrs, int defStyle) {
+        inflate(getContext(), R.layout.package_details_view, this);
+    }
+}
