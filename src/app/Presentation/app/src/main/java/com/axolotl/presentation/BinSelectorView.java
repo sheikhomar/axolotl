@@ -51,8 +51,7 @@ public class BinSelectorView extends BaseSelectorView {
         if (bins == null)
             return;
 
-        preloadImages(bins.size());
-        hideExtraImages(bins.size());
+        showIcons(bins.size());
 
         for (int i = 0; i < bins.size(); i++) {
             Bin bin = bins.get(i);

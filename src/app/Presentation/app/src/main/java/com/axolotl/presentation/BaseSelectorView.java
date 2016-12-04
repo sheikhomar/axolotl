@@ -49,23 +49,9 @@ public abstract class BaseSelectorView extends RelativeLayout {
         init(attrs, defStyle);
     }
 
-    protected void preloadImages(int numberOfVisibleImages) {
-        int childCount = this.container.getChildCount();
-        if (childCount < numberOfVisibleImages) {
-            for (int i = childCount; i < numberOfVisibleImages; i++) {
-                createNewImage();
-            }
-        }
-    }
-
-    protected void hideExtraImages(int numberOfVisibleImages) {
-        int childCount = this.container.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            if (i >= numberOfVisibleImages) {
-                View view = this.container.getChildAt(i);
-                view.setVisibility(GONE);
-            }
-        }
+    protected void showIcons(int numberOfIcons) {
+        createIcons(numberOfIcons);
+        hideExtraIcons(numberOfIcons);
     }
 
     protected void clearSelection() {
@@ -76,7 +62,26 @@ public abstract class BaseSelectorView extends RelativeLayout {
         }
     }
 
-    private void createNewImage() {
+    private void createIcons(int numberOfVisibleImages) {
+        int childCount = this.container.getChildCount();
+        if (childCount < numberOfVisibleImages) {
+            for (int i = childCount; i < numberOfVisibleImages; i++) {
+                createNewIcon();
+            }
+        }
+    }
+
+    private void hideExtraIcons(int numberOfVisibleImages) {
+        int childCount = this.container.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            if (i >= numberOfVisibleImages) {
+                View view = this.container.getChildAt(i);
+                view.setVisibility(GONE);
+            }
+        }
+    }
+
+    private void createNewIcon() {
         ImageView image = new ImageView(getContext());
         image.setImageDrawable(this.normalIcon);
 
