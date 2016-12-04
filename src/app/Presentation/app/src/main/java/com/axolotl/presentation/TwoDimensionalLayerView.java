@@ -8,23 +8,25 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.axolotl.presentation.model.Layer;
+import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.PackageDimension;
 import com.axolotl.presentation.model.PackagedPackage;
 
 public class TwoDimensionalLayerView extends View {
+    public interface OnPackageSelectListener {
+        void onPackageSelect(Package thePackage);
+    }
 
     private final Paint strokePaint;
     private final Paint fillPaint;
-    private final Paint boldPaint;
+    private final Rect rect;
     private final Drawable packageSelectedIcon;
     private Layer layer;
-    private PackageSelectionChangedEventListener pscEventListener;
-
+    private OnPackageSelectListener packageSelectListener;
 
     public TwoDimensionalLayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -38,9 +40,7 @@ public class TwoDimensionalLayerView extends View {
         fillPaint.setStyle(Paint.Style.FILL);
         fillPaint.setColor(Color.GRAY);
 
-        boldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        boldPaint.setStyle(Paint.Style.STROKE);
-        boldPaint.setColor(Color.GREEN);
+        rect = new Rect();
 
         this.packageSelectedIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_package_selected);
 
@@ -51,6 +51,27 @@ public class TwoDimensionalLayerView extends View {
         this.layer = layer;
         invalidate();
         requestLayout();
+    }
+
+    public void setPackageSelectListener(OnPackageSelectListener packageSelectListener) {
+        this.packageSelectListener = packageSelectListener;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (this.layer != null) {
+            int scaleFactor = calcScaleFactor(this.layer);
+            int x = (int)event.getX() / scaleFactor;
+            int y = (int)event.getY() / scaleFactor;
+            Package aPackage = this.layer.select(x, y);
+            if (aPackage != null && this.packageSelectListener != null) {
+                this.packageSelectListener.onPackageSelect(aPackage);
+            }
+            invalidate();
+            requestLayout();
+        }
+
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -64,38 +85,19 @@ public class TwoDimensionalLayerView extends View {
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (this.layer != null) {
-            int scaleFactor = calcScaleFactor(this.layer);
-            int x = (int)event.getX() / scaleFactor;
-            int y = (int)event.getY() / scaleFactor;
-            this.layer.select(x, y);
-            firePackageSelectionChangedEvent();
-            invalidate();
-            requestLayout();
-        }
-
-        return super.onTouchEvent(event);
-    }
-
     private void drawLayer(Canvas canvas) {
         int scaleFactor = calcScaleFactor(layer);
         int width = layer.getLength() * scaleFactor;
         int height = layer.getWidth() * scaleFactor;
 
-        canvas.drawRect(0, 0, width-1, height-1, boldPaint);
+        canvas.drawRect(0, 0, width-1, height-1, strokePaint);
 
         for (int i = 0; i < layer.getNumberOfPackages(); i++) {
             PackagedPackage p = layer.get(i);
             drawPackage(canvas, p, i, scaleFactor);
         }
 
-        drawDots(canvas, scaleFactor, layer.getLength(), layer.getWidth());
-    }
-
-    public void setPackageSelectionChangedEventListener(PackageSelectionChangedEventListener eventListener) {
-        this.pscEventListener = eventListener;
+        //drawDots(canvas, scaleFactor, layer.getLength(), layer.getWidth());
     }
 
     private void drawPackage(Canvas canvas, PackagedPackage packagedPackage, int index, int scaleFactor) {
@@ -142,30 +144,23 @@ public class TwoDimensionalLayerView extends View {
     }
 
     private void drawEmpty(Canvas canvas) {
-        float xpad = (float)(getPaddingLeft() + getPaddingRight());
-        float ypad = (float)(getPaddingTop() + getPaddingBottom());
+        fillPaint.setColor(Color.BLACK);
+        fillPaint.setTextSize(100);
 
-        float top = canvas.getClipBounds().top;
-        float left = canvas.getClipBounds().left;
-        float right = canvas.getClipBounds().right;
-        float bottom = canvas.getClipBounds().bottom;
+        String text = "No layer selected.";
 
-        float height = canvas.getHeight();
-        float width = canvas.getWidth();
-
-        canvas.drawLine(width/2, 0, width/2, height - 10, boldPaint);
-
-        canvas.drawRect(top, left, right, bottom, strokePaint);
-        canvas.drawLine(xpad, ypad, 1000, 1000, strokePaint);
+        // Source: http://stackoverflow.com/questions/11120392/android-center-text-on-canvas
+        canvas.getClipBounds(rect);
+        int cHeight = rect.height();
+        int cWidth = rect.width();
+        fillPaint.setTextAlign(Paint.Align.LEFT);
+        fillPaint.getTextBounds(text, 0, text.length(), rect);
+        float x = cWidth / 2f - rect.width() / 2f - rect.left;
+        float y = cHeight / 2f + rect.height() / 2f - rect.bottom;
+        canvas.drawText(text, x, y, fillPaint);
     }
 
     private int calcScaleFactor(Layer theLayer) {
         return Math.round((float)getMeasuredWidth() / (float)Math.max(theLayer.getLength(), theLayer.getWidth()));
-    }
-
-    private void firePackageSelectionChangedEvent() {
-        if (this.pscEventListener != null) {
-            this.pscEventListener.onPackageSelectionChanged();
-        }
     }
 }

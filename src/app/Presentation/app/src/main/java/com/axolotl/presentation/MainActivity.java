@@ -2,15 +2,15 @@ package com.axolotl.presentation;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.axolotl.presentation.model.Bin;
 import com.axolotl.presentation.model.CommandTranslator;
 import com.axolotl.presentation.model.InvalidCommandException;
 import com.axolotl.presentation.model.Layer;
+import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.Repository;
 
-public class MainActivity extends AppCompatActivity implements PackageSelectionChangedEventListener {
+public class MainActivity extends AppCompatActivity {
 
     private Repository repository;
     private TwoDimensionalLayerView layerView;
@@ -27,8 +27,13 @@ public class MainActivity extends AppCompatActivity implements PackageSelectionC
         populateRepostioryWithTestData();
 
         layerView = (TwoDimensionalLayerView) findViewById(R.id.drawingView);
-        layerView.setLayer(repository.getSelectedLayer());
-        layerView.setPackageSelectionChangedEventListener(this);
+        layerView.setLayer(null);
+        layerView.setPackageSelectListener(new TwoDimensionalLayerView.OnPackageSelectListener() {
+            @Override
+            public void onPackageSelect(Package thePackage) {
+
+            }
+        });
 
         this.layerSelector = (LayerSelectorView)findViewById(R.id.layer_selector);
 
@@ -95,10 +100,5 @@ public class MainActivity extends AppCompatActivity implements PackageSelectionC
         } catch (InvalidCommandException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onPackageSelectionChanged() {
-        Log.d("MainActivity", "Package selection changed.");
     }
 }

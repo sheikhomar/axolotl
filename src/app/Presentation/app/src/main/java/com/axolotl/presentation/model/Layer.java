@@ -39,7 +39,7 @@ public class Layer {
         return selectedIndex == index;
     }
 
-    public boolean select(int x, int y) {
+    public Package select(int x, int y) {
         for (int i = 0; i < packedPackages.size(); i++) {
             PackagedPackage packToCheck = packedPackages.get(i);
 
@@ -50,11 +50,11 @@ public class Layer {
 
                 this.selectedIndex = i;
 
-                return true;
+                return packToCheck.getPackage();
             }
         }
 
         this.selectedIndex = -1;
-        return false;
+        return null;
     }
 }
