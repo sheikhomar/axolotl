@@ -4,7 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,8 +21,10 @@ public class TwoDimensionalLayerView extends View {
     private final Paint strokePaint;
     private final Paint fillPaint;
     private final Paint boldPaint;
+    private final Drawable packageSelectedIcon;
     private Layer layer;
     private PackageSelectionChangedEventListener pscEventListener;
+
 
     public TwoDimensionalLayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -35,6 +41,8 @@ public class TwoDimensionalLayerView extends View {
         boldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boldPaint.setStyle(Paint.Style.STROKE);
         boldPaint.setColor(Color.GREEN);
+
+        this.packageSelectedIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_package_selected);
 
         setBackgroundColor(Color.WHITE);
     }
@@ -98,14 +106,25 @@ public class TwoDimensionalLayerView extends View {
         int right = left + pd.getLength() * scaleFactor;
         int bottom = top + pd.getWidth() * scaleFactor;
 
-        if (layer.isSelected(index)) {
-            fillPaint.setColor(Color.MAGENTA);
-        } else {
-            fillPaint.setColor(packagedPackage.getPackage().getColour().getPaintColour());
-        }
+        fillPaint.setColor(packagedPackage.getPackage().getColour().getPaintColour());
 
         canvas.drawRect(left, top, right, bottom, fillPaint);
         canvas.drawRect(left, top, right, bottom, strokePaint);
+
+        if (layer.isSelected(index)) {
+            drawIcon(canvas, this.packageSelectedIcon, left, top, right, bottom);
+        }
+    }
+
+    private void drawIcon(Canvas canvas, Drawable icon, int left, int top, int right, int bottom) {
+        int iconWidth = icon.getIntrinsicWidth();
+        int iconHeight = icon.getIntrinsicHeight();
+
+        int newLeft = ((right - left) / 2) + left - (iconWidth / 2);
+        int newTop = ((bottom - top) / 2) + top - (iconHeight / 2);
+
+        icon.setBounds(newLeft, newTop, newLeft+iconWidth, newTop+iconHeight);
+        icon.draw(canvas);
     }
 
     private void drawDots(Canvas canvas, int scaleFactor, int numberOfHorisontalDots, int numberOfVerticalDots) {
