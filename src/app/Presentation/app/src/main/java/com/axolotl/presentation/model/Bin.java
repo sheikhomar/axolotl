@@ -11,6 +11,7 @@ public class Bin {
     private final int numberOfLayers;
     private final String destination;
     private final ArrayList<Layer> layers;
+    private int selectedLayerIndex;
 
     public Bin(int id, int length, int width, int numberOfLayers, String destination) {
         this.id = id;
@@ -22,6 +23,8 @@ public class Bin {
         for (int i = 0; i < numberOfLayers; i++) {
             this.layers.add(new Layer(length, width));
         }
+
+        this.selectedLayerIndex = 0;
     }
 
     public void pack(@NonNull Package thePackage, int layerNo, int x, int y) {
@@ -59,5 +62,20 @@ public class Bin {
 
     public Layer getCurrentLayer() {
         return this.layers.get(0);
+    }
+
+    public Layer getLayerAt(int index) {
+        return this.layers.get(index);
+    }
+
+    public void selectLater(Layer layer) {
+        this.selectedLayerIndex = this.layers.indexOf(layer);
+    }
+
+    public Layer getSelectedLayer() {
+        if (this.selectedLayerIndex != -1)
+            return this.layers.get(this.selectedLayerIndex);
+
+        return null;
     }
 }

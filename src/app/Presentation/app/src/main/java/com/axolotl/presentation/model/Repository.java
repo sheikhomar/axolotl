@@ -22,15 +22,6 @@ public class Repository {
         return null;
     }
 
-    public Layer getCurrentLayer() {
-        if (bins.size() > 0) {
-            Bin currentBin = bins.get(selectedBinIndex);
-            return currentBin.getCurrentLayer();
-        }
-
-        return null;
-    }
-
     public ArrayList<Bin> getBins() {
         return bins;
     }
@@ -45,6 +36,22 @@ public class Repository {
     public Bin getSelectedBin() {
         if (bins.size() > 0) {
             return bins.get(selectedBinIndex);
+        }
+
+        return null;
+    }
+
+    public void selectLater(Layer layer) {
+        Bin bin = getSelectedBin();
+        if (bin != null) {
+            bin.selectLater(layer);
+        }
+    }
+
+    public Layer getSelectedLayer() {
+        Bin bin = getSelectedBin();
+        if (bin != null) {
+            return bin.getSelectedLayer();
         }
 
         return null;
