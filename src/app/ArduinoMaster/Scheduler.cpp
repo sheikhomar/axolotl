@@ -187,13 +187,13 @@ void receiveData(PackageCollection *packages) {
         serialDebug("] for PID: ");
         serialDebugLN(String(package->id));
 
-        if (package->colour == COLOUR_BLACK || package->colour == COLOUR_UNKNOWN) {
-            // If we get these colours then, we just remove the package
+        if (package->colour == COLOUR_UNKNOWN) {
+            // NXT was unable to find a colour, we'll request it again
 			debugLamp(1);
-            serialDebugLN("\n--->Bad colour");
+			serialDebugLN("\n--->Bad colour");
 
-            // Remove current package.
-            removePackage(packages, 0);
+			// Remove current package.
+			removePackage(packages, 0);
         }
     }
     else if (command == COMM_PI_ADVICEPACKAGE) {
