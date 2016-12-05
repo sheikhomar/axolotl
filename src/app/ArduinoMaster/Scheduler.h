@@ -12,7 +12,8 @@
 #include "Defines.h"
 
 //Defines
-#define FROM_ULT_TO_COLOUR_SENSOR_MS 450
+#define FROM_ULT_TO_COLOUR_SENSOR_MS 390
+#define FROM_ULT_TO_COLOUR_SENSOR_MS_DELAY 60
 #define FROM_ULT_TO_ARM1_MS 1092 
 #define FROM_ULT_TO_ARM2_MS 1508 
 
@@ -41,6 +42,8 @@ void handleSensorNoise(SensorReading *reading);
 void lampToggle(int *val);
 byte convertMeasuredValueToMillimetres(unsigned short number);
 void debugLamp(int command);
+short findNextColorRequested(PackageCollection *packages, short id);
+
 
 #endif
 

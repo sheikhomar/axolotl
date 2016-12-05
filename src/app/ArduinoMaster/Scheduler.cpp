@@ -82,7 +82,7 @@ void requestColourInformation(Package *package) {
         unsigned long currentTime = millis();
         unsigned long timeDiff = currentTime - package->middleTime;
 
-        if (timeDiff >= FROM_ULT_TO_COLOUR_SENSOR_MS) {
+        if (timeDiff >= (FROM_ULT_TO_COLOUR_SENSOR_MS + FROM_ULT_TO_COLOUR_SENSOR_MS_DELAY)) {
             serialDebug("Colour requested for PID: ");
             serialDebugLN(String(package->id));
 
@@ -151,6 +151,18 @@ Package *findNextPackageForPlacement(PackageCollection *packages) {
 //      Move the first package to push array
 //   End If
 // End If
+
+short findNextColorRequested(PackageCollection *packages, short id) {
+	short returnValue = 0;
+
+	for (short i = 0; i < packages->count; i++) {
+		if (packages->items[i].id == id) {
+			returnValue = i;
+		}
+	}
+	return returnValue;
+}
+
 void receiveData(PackageCollection *packages) {
     // Check if we have received data
     byte buf[] = { 0 };
@@ -183,8 +195,7 @@ void receiveData(PackageCollection *packages) {
 			debugLamp(1);
 			serialDebugLN("\n--->Bad colour");
 
-			// Remove current package.
-			removePackage(packages, 0);
+			removePackage(packages, findNextColorRequested(packages, package->id));
         }
     }
     else if (command == COMM_PI_ADVICEPACKAGE) {
@@ -201,8 +212,8 @@ void receiveData(PackageCollection *packages) {
         serialDebug("\n--->Wrong command: ");
         serialDebugLN(String(command));
         
-        // Wrong command. Remove package.
-        removePackage(packages, 0);
+        // Wrong command. Die
+		die("\nWrong command");
     }
 }
 
