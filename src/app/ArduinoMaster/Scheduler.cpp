@@ -251,19 +251,13 @@ void sendData(PackageCollection *packages) {
 
 			if (package->bin == BIN_NOT_REQUESTED) {
 				sendPackageInfoToRaspberryPi(package);
-				packages->packageTimeoutMS = millis() + PI_RESPONSE_TIMEOUT_MS;
+				packages->packageTimeoutMS = millis() + PI_REQUEST_TIMEOUT_MS;
 			}
 			else if (packages->packageTimeoutMS < millis()) {
-				if (package->bin == BIN_REQUESTED) {
-					resendPackageInfoToRaspberryPI(package);
-					packages->packageTimeoutMS = millis() + PI_RESPONSE_TIMEOUT_MS;
-				}
-				else {
-					debugLamp(1);
-					serialDebugLN("\n--->Timedout bin package");
-					removePackage(packages, i);
-					i--;
-				}
+				debugLamp(1);
+				serialDebugLN("\n--->Timedout bin package");
+				removePackage(packages, i);
+				i--;
 			}
         }
     }
