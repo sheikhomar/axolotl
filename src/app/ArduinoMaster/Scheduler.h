@@ -40,7 +40,7 @@ void runScheduler();
 void checkBufferCount(unsigned short buffer1, unsigned short buffer2, unsigned short buffer3);
 void handleSensorNoise(SensorReading *reading);
 void lampToggle(int *val);
-byte convertSensorDataToLegoSize(unsigned short number);
+byte convertMeasuredValueToMillimetres(unsigned short number);
 void debugLamp(int command);
 
 #endif
