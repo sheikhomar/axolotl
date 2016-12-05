@@ -217,14 +217,28 @@ void sendData(PackageCollection *packages) {
     //serialDebug("Number of packages: ");
     //serialDebugLN(String(packages->count));
 	bool hasRequestedPacking = false; //PI can only handle one request at a time.
+	bool hasRequestedColour = false; //NXT can only handle one request at a time.
+
 
     for (int i = 0; i < packages->count; i++) {
         Package *package = &(packages->items[i]);
 
 
         //Request Colour
-        if (package->colour == COLOUR_NOT_REQUESTED) {
-            requestColourInformation(package);
+        if (!hasRequestedColour &&
+			(package->colour == COLOUR_NOT_REQUESTED || package->colour == COLOUR_REQUESTED)) {
+			hasRequestedColour = true;
+
+			if (package->colour == COLOUR_NOT_REQUESTED) {
+				requestColourInformation(package);
+				packages->colourTimeoutMS = millis() + NXT_REQUEST_TIMEOUT_MS;
+			}
+			else if (packages->colourTimeoutMS < millis()) {
+				debugLamp(1);
+				serialDebugLN("\n--->Timedout colour request");
+				removePackage(packages, i);
+				i--;
+			}
         }
         
 		//Request Packing

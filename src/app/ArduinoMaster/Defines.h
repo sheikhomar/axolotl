@@ -54,7 +54,7 @@
 #define COLOUR_YELLOW 3
 #define COLOUR_WHITE 6
 #define COLOUR_BLACK 7
-#define COLOUR_UNKNOWN 128
+#define COLOUR_UNKNOWN 127
 #define COLOUR_NOT_REQUESTED 222
 #define COLOUR_REQUESTED 223
 
@@ -70,6 +70,8 @@
 #define RS485_SERIAL_PRINT_BINARY 0
 #define DEBUG 1
 #define SENSOR_RESULT_SIZE 5
+#define PI_REQUEST_TIMEOUT_MS 500
+#define NXT_REQUEST_TIMEOUT_MS 500
 
 #define ULT_TOP_SENSOR 1
 #define ULT_RIGHT_SENSOR 2
@@ -97,7 +99,8 @@ typedef struct {
 
 typedef struct {
     int count = 0;
-	unsigned long packageTimeoutMS = 0; //the time in ms when the current package should timeout
+	unsigned long packageTimeoutMS = PI_REQUEST_TIMEOUT_MS; //the time in ms when the current package should timeout
+	unsigned long colourTimeoutMS = NXT_REQUEST_TIMEOUT_MS; //the time in ms when the current colour request should timeout
     Package items[PACKAGE_BUFFER_SIZE];
 } PackageCollection;
 
