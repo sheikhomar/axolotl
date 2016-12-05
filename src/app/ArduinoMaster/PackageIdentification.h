@@ -1,7 +1,7 @@
-// ObjectIdentification.h
+// PackageIdentification.h
 
-#ifndef _OBJECTIDENTIFICATION_h
-#define _OBJECTIDENTIFICATION_h
+#ifndef _PACKAGEIDENTIFICATION_h
+#define _PACKAGEIDENTIFICATION_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -42,16 +42,16 @@ unsigned long normalizeSensorData(SensorReading *sensor);
 unsigned long findMiddleTime(SensorReading *sensor);
 void printPackageSize(Package *package);
 
-void initObjectIdentification(ObjectIdentificationState *state);
+void initPackageIdentification(PackageIdentificationState *state);
 void initSensorBuffer(SensorBuffer *buffer);
-void runIdentification(ObjectIdentificationState *state, PackageCollection *packages);
+void runIdentification(PackageIdentificationState *state, PackageCollection *packages);
 void createSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String s);
 unsigned short calculateSensorResult(ReadingCollection *collection, long checkDistance);
 bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor);
 void addItemToCollection(ReadingCollection *collection, double estimate);
 void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue);
 void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *topResult, SensorResult *rightResult);
-void checkForFailedSensor(unsigned long endtime, ObjectIdentificationState *state);
+void checkForFailedSensor(unsigned long endtime, PackageIdentificationState *state);
 SensorResult dequeue(SensorResultQueue *queue);
 unsigned long calcLength(SensorResult *result);
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right);

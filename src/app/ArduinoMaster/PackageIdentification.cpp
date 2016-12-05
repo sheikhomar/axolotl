@@ -7,7 +7,7 @@
 #include "SerialController.h"
 #include "UltrasoundSensor.h"
 
-#include "ObjectIdentification.h"
+#include "PackageIdentification.h"
 #include "KalmanFilter.h"
 
 // Global variables
@@ -171,7 +171,7 @@ unsigned long findLength(SensorReading *sensor) {
 	return result;
 }
 
-void initObjectIdentification(ObjectIdentificationState *state) {
+void initPackageIdentification(PackageIdentificationState *state) {
     initKalmanFilter(&state->topSensor, 5000, 150, 4000, 30);
     initKalmanFilter(&state->rightSensor, 5000, 150, 4000, 30);
     initKalmanFilter(&state->leftSensor, 5000, 125, 4000, 10);
@@ -201,7 +201,7 @@ void resetPackage2(Package *package) {
     package->middleTime = 0;
 }
 
-void runIdentification(ObjectIdentificationState *state, PackageCollection *packages) {
+void runIdentification(PackageIdentificationState *state, PackageCollection *packages) {
 	bool leftSensorTag = performReading(&state->leftSensor, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
 	bool topSensorTag = performReading(&state->topSensor, &state->topSensorBuffer, ULT_TOP_SENSOR);
 	bool rightSensorTag = performReading(&state->rightSensor, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
@@ -243,7 +243,7 @@ void runIdentification(ObjectIdentificationState *state, PackageCollection *pack
     }
 }
 
-void checkForFailedSensor(unsigned long endtime, ObjectIdentificationState *state) {
+void checkForFailedSensor(unsigned long endtime, PackageIdentificationState *state) {
 	if (millis() >= (endtime + TRANSPORT_TIME)) {
 		if (state->leftSensorResultQueue.count > 0) {
 			dequeue(&state->leftSensorResultQueue);

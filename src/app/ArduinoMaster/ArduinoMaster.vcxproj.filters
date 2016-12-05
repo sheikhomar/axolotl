@@ -24,9 +24,6 @@
     <ClCompile Include="LEDController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectIdentification.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,12 +51,12 @@
     <ClCompile Include="LEDControllerTest.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="PackageIdentification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LEDController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectIdentification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="__vm\.ArduinoMaster.vsarduino.h">
@@ -93,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KalmanFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PackageIdentification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

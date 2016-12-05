@@ -148,7 +148,7 @@ typedef struct {
     SensorResultQueue topSensorResultQueue;
     SensorResultQueue rightSensorResultQueue;
     SensorResultQueue leftSensorResultQueue;
-} ObjectIdentificationState;
+} PackageIdentificationState;
 
 
 typedef struct {

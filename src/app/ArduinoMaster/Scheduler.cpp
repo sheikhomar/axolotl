@@ -6,7 +6,7 @@
 #include "Utilities.h"
 #include "SerialController.h"
 #include "UltrasoundSensor.h"
-#include "ObjectIdentification.h"
+#include "PackageIdentification.h"
 #include "LEDController.h"
 
 #include "Scheduler.h"
@@ -478,11 +478,11 @@ void runScheduler() {
     // Setup
     serialDebug("Scheduler v2 started.\n");
     PackageCollection packages;
-    ObjectIdentificationState state;
+    PackageIdentificationState state;
     int lampCounter = 0;
     
     // Initialisation
-    initObjectIdentification(&state);
+    initPackageIdentification(&state);
 
     while (true) {
         runIdentification(&state, &packages);
