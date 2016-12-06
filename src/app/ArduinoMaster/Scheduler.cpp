@@ -183,7 +183,12 @@ void receiveData(PackageCollection *packages) {
         serialDebug("] for PID: ");
         serialDebugLN(String(package->id));
 
-        if (package->colour == COLOUR_UNKNOWN) {
+		//Check the colour
+		byte colour = byte(package->colour);
+		bool correctColour = (colour == COLOUR_BLUE || colour == COLOUR_GREEN ||
+			colour == COLOUR_RED || colour == COLOUR_YELLOW);
+
+        if (package->colour == COLOUR_UNKNOWN || !correctColour) {
             // NXT was unable to find a colour, we'll request it again
 			errorLamp(&ledState);
 			if (COLOUR_UNKNOWN) {
