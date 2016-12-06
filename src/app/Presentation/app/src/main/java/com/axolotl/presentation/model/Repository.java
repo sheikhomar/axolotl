@@ -56,4 +56,13 @@ public class Repository {
 
         return null;
     }
+
+    public Package getSelectedPackage() {
+        Bin bin = getSelectedBin();
+        if (bin != null) {
+            return bin.getLatestPackage();
+        }
+
+        return null;
+    }
 }
