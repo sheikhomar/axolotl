@@ -8,9 +8,11 @@
 #else
 	#include "WProgram.h"
 #endif
+
 //Functions
 void ledBlinkTest();
 void ledBlinkTestHelperFunction(long ledPin, long time, String message);
+void ledCycleTest();
 
 #endif
 
