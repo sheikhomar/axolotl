@@ -39,9 +39,7 @@ void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading
 void runScheduler();
 void checkBufferCount(unsigned short buffer1, unsigned short buffer2, unsigned short buffer3);
 void handleSensorNoise(SensorReading *reading);
-void lampToggle(int *val);
 byte convertMeasuredValueToMillimetres(unsigned short number);
-void debugLamp(int command);
 short findNextColorRequested(PackageCollection *packages, short id);
 
 

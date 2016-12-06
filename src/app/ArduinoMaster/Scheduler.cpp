@@ -14,6 +14,7 @@
 // Global variables
 unsigned int __nextPackageId = 1;
 int debugLEDCounter = 0;
+LedState ledState;
 
 void sendPackageInfoToRaspberryPi(Package *package) {
     byte buf[] = { 0, 0, 0, 0 };
@@ -192,8 +193,13 @@ void receiveData(PackageCollection *packages) {
 
         if (package->colour == COLOUR_UNKNOWN) {
             // NXT was unable to find a colour, we'll request it again
-			debugLamp(1);
-			serialDebugLN("\n--->Bad colour");
+			errorLamp(&ledState);
+			if (COLOUR_UNKNOWN) {
+				serialDebugLN("\n--->No colour");
+			}
+			else {
+				serialDebugLN("\n--->Incorrect colour");
+			}
 
 			removePackage(packages, findNextColorRequested(packages, package->id));
         }
@@ -208,7 +214,7 @@ void receiveData(PackageCollection *packages) {
         serialDebugLN(String(package->id));
     }
     else {
-		debugLamp(1);
+		errorLamp(&ledState);
         serialDebug("\n--->Wrong command: ");
         serialDebugLN(String(command));
         
@@ -245,7 +251,7 @@ void sendData(PackageCollection *packages) {
 				packages->colourTimeoutMS = millis() + NXT_REQUEST_TIMEOUT_MS;
 			}
 			else if (packages->colourTimeoutMS < millis()) {
-				debugLamp(1);
+				errorLamp(&ledState);
 				serialDebugLN("\n--->Timedout colour request");
 				removePackage(packages, i);
 				i--;
@@ -265,7 +271,7 @@ void sendData(PackageCollection *packages) {
 				packages->packageTimeoutMS = millis() + PI_REQUEST_TIMEOUT_MS;
 			}
 			else if (packages->packageTimeoutMS < millis()) {
-				debugLamp(1);
+				errorLamp(&ledState);
 				serialDebugLN("\n--->Timedout bin package");
 				removePackage(packages, i);
 				i--;
@@ -446,54 +452,15 @@ void printPackages(PackageCollection *packages) {
     }
 }
 
-void lampToggle(int *val) {
-	if (*val == BLINKINTERVAL/2) {
-		led(LEDTOGGLE_LED, true);
-	}
-	else if (*val >= BLINKINTERVAL){
-		led(LEDTOGGLE_LED, false);
-		*val = 0;
-	}
-
-	*val += 1;
-}
-
-//Commands:1 blinke once, 255 update times
-void debugLamp(int command) {
-	const int blinkLength = 100;
-
-	switch (command)
-	{
-		case 1: debugLEDCounter = blinkLength; Serial.println(debugLEDCounter); break;
-		default: break;
-	}
-
-	if (debugLEDCounter == 0) {
-		return;
-	}
-
-	//Single blink
-	if (debugLEDCounter > 0) {
-		if (debugLEDCounter == blinkLength) {
-			led(LED_RED, true);
-		}
-		else if (debugLEDCounter == blinkLength/2) {
-			led(LED_RED, false);
-		}
-		debugLEDCounter--;
-	}
-}
-
-
 void runScheduler() {
     // Setup
     serialDebug("Scheduler v2 started.\n");
     PackageCollection packages;
     PackageIdentificationState state;
-    int lampCounter = 0;
-    
+
     // Initialisation
-    initPackageIdentification(&state);
+	initLEDController(&ledState, LED_GREEN,LED_YELLOW,LED_RED);
+	initPackageIdentification(&state);
 
     while (true) {
         runIdentification(&state, &packages);
@@ -503,9 +470,6 @@ void runScheduler() {
         sendData(&packages);
 
         pushArm(&packages);
-
-		lampToggle(&lampCounter);
-		
-		debugLamp(255);
+		updateLED(&ledState);
     }
 }
