@@ -461,11 +461,8 @@ void runScheduler() {
 
     while (true) {
         runIdentification(&state, &packages);
-        
         receiveData(&packages);
-
         sendData(&packages);
-
         pushArm(&packages);
 		updateLED(&ledState);
     }

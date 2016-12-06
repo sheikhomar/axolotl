@@ -43,14 +43,9 @@ void updateLED(LedState *state) {
 	//Update cycle timer
 	if (state->cycleCount == halfCycle) {
 		led(state->cycleLED, true);
-		Serial.print("#");
 	}
 	else if (state->cycleCount == fullCycle) {
 		led(state->cycleLED, false);
-		Serial.print("-");
-	}
-	else {
-		Serial.print(".");
 	}
 
 	//Count status lamp
