@@ -16,7 +16,7 @@ class BlueLib:
 		if package.is_fragile:
 			fragile = 1
 		if package.position is not None:
-			return 'P: {x} {y} {length} {width} {height} {colour} {fragile} {layer} {bin_id}\n'.format(x=package.position.x, y=package.position.y, length=package.length, width=package.width, height=package.height, colour=package.colour, fragile=fragile, layer=package.position.layer.find_layer_number(), bin_id=p_advisor.find_bin_containing_package(package).bin_id)
+			return 'P: {x} {y} {length} {width} {original_length} {original_width} {original_height} {colour} {fragile} {layer} {bin_id}\n'.format(x=package.position.x, y=package.position.y, length=package.length, width=package.width, original_length=package.original_length, original_width=package.original_width, original_height=package.original_height, colour=package.colour, fragile=fragile, layer=package.position.layer.find_layer_number(), bin_id=p_advisor.find_bin_containing_package(package).bin_id)
 		else:
 			return 'P: error - position not set'
 	

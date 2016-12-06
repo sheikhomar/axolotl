@@ -7,6 +7,9 @@ class Package:
         self.position = None
         self.colour = colour
         self.is_fragile = (self.colour == 3 or self.colour == 1)
+        self.original_width = 0
+        self.original_length = 0
+        self.original_height = 0
 
     def position_is_taken(self, x, y):
         #Assumes position is initialized and test proposed position of new package

@@ -6,10 +6,28 @@ class SerLib:
 	def __init__(self, baudrate=57600):
 		self.baudrate = baudrate
 		self.last_bin_id = None
+		
+	def convert_byte_to_package(self, byte):
+		number = int.from_bytes(byte, byteorder='little')
+		
+		if number < 52:
+			return 2
+		elif number < 98:
+			return 4
+		else:
+			return 8
 
 	def format_serial_package(self, input_array):
 		if len(input_array) == 7:
-			return Package(width=int.from_bytes(input_array[4], byteorder='little'), length=int.from_bytes(input_array[3], byteorder='little'), colour=int.from_bytes(input_array[6], byteorder='little'))
+			p = Package(width=self.convert_byte_to_package(input_array[4]), length=self.convert_byte_to_package(input_array[3]), height=self.convert_byte_to_package(input_array[5]), colour=int.from_bytes(input_array[6], byteorder='little'))
+			p.original_width = int.from_bytes(input_array[4], byteorder='little')
+			p.original_length = int.from_bytes(input_array[3], byteorder='little')
+			p.original_height = int.from_bytes(input_array[5], byteorder='little')
+			print(int.from_bytes(input_array[4], byteorder='little'))
+			print(int.from_bytes(input_array[3], byteorder='little'))
+			print(int.from_bytes(input_array[5], byteorder='little'))
+			print(int.from_bytes(input_array[6], byteorder='little'))
+			return p
 		else:
 			raise InvalidArgError('Input to format_serial_package was not array of length 7')
 	

@@ -1,7 +1,7 @@
 from lib import *
 
 
-bin1 = Bin(width=5, length=10, max_layers=3)
+bin1 = Bin(width=8, length=8, max_layers=2)
 
 bluetooth_scale = 1
 
@@ -24,12 +24,27 @@ def format_serial_package(input_array):
     else:
         raise InvalidArgError('Input to format_serial_package was not array of length 7')
 
-p1 = Package(width=3, length=2)
+p1 = Package(width=4, length=2)
+p2 = Package(width=2, length=2)
+p3 = Package(width=2, length=2, colour = 3)
+p4 = Package(width=8, length=2)
+p5 = Package(width=8, length=2, colour = 3)
+p6 = Package(width=4, length=2)
+p7 = Package(width=4, length=2, colour = 3)
+p8 = Package(width=8, length=2)
+p9 = Package(width=8, length=2)
+p10 = Package(width=8, length=2)
 #input = ['r', 4, 'p', 2, 2, 3, 2] for serial input debugging
 
 
 pa = PackingAdvisor(bin1)
-
-print((12).to_bytes(length=1, byteorder='little'))
-print(int.from_bytes(b'\x01', byteorder = 'little')) 
-print(b'\xf0'.hex())
+pa.handle(p1)
+pa.handle(p2)
+pa.handle(p3)
+pa.handle(p4)
+pa.handle(p5)
+pa.handle(p6)
+pa.handle(p7)
+pa.handle(p8)
+pa.handle(p9)
+pa.handle(p10)
