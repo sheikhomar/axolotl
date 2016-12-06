@@ -12,6 +12,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 
 import com.axolotl.presentation.communication.BluetoothService;
 import com.axolotl.presentation.model.Bin;
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+
         repository = ((App)getApplication()).getRepository();
 
         startService(new Intent(this, BluetoothService.class));
@@ -111,7 +115,14 @@ public class MainActivity extends AppCompatActivity {
         updateUI();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void updateUI() {
+
         this.binSelector.setBins(repository.getBins());
         this.layerSelector.setBin(repository.getSelectedBin());
         this.layerView.setLayer(repository.getSelectedLayer());
