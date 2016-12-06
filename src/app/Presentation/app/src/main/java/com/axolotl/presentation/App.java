@@ -10,7 +10,7 @@ public class App extends Application {
 
     public App() {
         repository = new Repository();
-        populateRepostioryWithTestData();
+        //populateRepostioryWithTestData();
     }
 
     public Repository getRepository() {
