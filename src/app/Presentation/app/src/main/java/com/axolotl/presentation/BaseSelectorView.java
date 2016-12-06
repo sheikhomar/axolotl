@@ -65,6 +65,9 @@ public abstract class BaseSelectorView extends RelativeLayout {
     }
 
     protected void highlightIcon(int index) {
+        if (this.container.getChildCount() == 0)
+            return;
+
         ImageView icon = (ImageView)this.container.getChildAt(index);
         icon.setImageDrawable(this.selectedIcon);
     }
