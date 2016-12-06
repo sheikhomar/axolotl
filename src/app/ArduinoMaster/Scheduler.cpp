@@ -34,14 +34,6 @@ byte convertMeasuredValueToMillimetres(unsigned short number) {
     return number / 100;
 }
 
-void resendPackageInfoToRaspberryPI(Package *package) {
-	serialDebugLN("--->Resending package to PI");
-	serialSendData(RaspberryPi,'R');
-	package->bin = BIN_REQUESTED_AGAIN;
-}
-
-
-
 // Loop through all packages
 //   If package can be pushed
 //      If time to push

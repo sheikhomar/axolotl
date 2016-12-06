@@ -24,7 +24,6 @@
 //Functions
 void printPackages(PackageCollection *packages);
 void sendPackageInfoToRaspberryPi(Package *package);
-void resendPackageInfoToRaspberryPI(Package *package);
 void pushArm(PackageCollection *packages);
 void requestColourInformation(Package *package);
 void resetPackage(Package *package);
