@@ -1,4 +1,4 @@
-package com.axolotl.presentation;
+package com.axolotl.presentation.communication;
 
 public class InvalidCommandException extends Exception {
     public InvalidCommandException(String message) {

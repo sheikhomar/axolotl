@@ -1,10 +1,11 @@
-package com.axolotl.presentation;
+package com.axolotl.presentation.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.axolotl.presentation.R;
 import com.axolotl.presentation.model.Package;
 
 public class PackageDetailsView extends RelativeLayout {

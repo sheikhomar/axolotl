@@ -1,6 +1,5 @@
-package com.axolotl.presentation;
+package com.axolotl.presentation.communication;
 
-import com.axolotl.presentation.model.Bin;
 import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.PackageColour;
 import com.axolotl.presentation.model.PackageDimension;
@@ -47,16 +46,15 @@ public class CommandTranslator {
             int layer = Integer.parseInt(parts[10]);
             int binId = Integer.parseInt(parts[11]);
 
-            Bin bin = repository.getBinById(binId);
-            if (bin == null) {
+            if (!repository.binExists(binId)) {
                 throw new InvalidCommandException("Unknown bin id: " + binId);
             }
 
             PackageDimension translated = new PackageDimension(length, width, height);
             PackageDimension real = new PackageDimension(originalLength, originalWidth, originalHeight);
-            Package p = new Package(translated, real, PackageColour.parse(colourCode), isFragile);
 
-            bin.pack(p, layer, x, y);
+            Package p = repository.createPackage(translated, real, colourCode, isFragile);
+            repository.newPackage(binId, p, layer, x, y);
         } else {
             throw new InvalidCommandException("Unknown command: " + commandType);
         }

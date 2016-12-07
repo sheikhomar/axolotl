@@ -17,6 +17,7 @@ public class Layer {
 
     public void pack(Package thePackage, int x, int y) {
         packedPackages.add(new PackagedPackage(thePackage, x, y));
+        selectedIndex = packedPackages.size() - 1;
     }
 
     public int getNumberOfPackages() {
@@ -35,7 +36,7 @@ public class Layer {
         return width;
     }
 
-    public boolean isSelected(int index) {
+    public boolean isPackageSelected(int index) {
         return selectedIndex == index;
     }
 

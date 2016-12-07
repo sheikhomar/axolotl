@@ -1,4 +1,4 @@
-package com.axolotl.presentation;
+package com.axolotl.presentation.views;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,34 +14,42 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 
+import com.axolotl.presentation.App;
+import com.axolotl.presentation.R;
 import com.axolotl.presentation.communication.BluetoothService;
+import com.axolotl.presentation.communication.CommandTranslator;
+import com.axolotl.presentation.communication.InvalidCommandException;
+import com.axolotl.presentation.communication.Messages;
 import com.axolotl.presentation.model.Bin;
 import com.axolotl.presentation.model.Layer;
 import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.Repository;
+import com.axolotl.presentation.views.BinSelectorView;
+import com.axolotl.presentation.views.LayerSelectorView;
+import com.axolotl.presentation.views.PackageDetailsView;
+import com.axolotl.presentation.views.LayerView;
 
 public class MainActivity extends AppCompatActivity {
 
     private Repository repository;
     private CommandTranslator commandTranslator = new CommandTranslator();
-    private TwoDimensionalLayerView layerView;
+    private LayerView layerView;
     private BinSelectorView binSelector;
     private LayerSelectorView layerSelector;
     private PackageDetailsView packageDetailsView;
-    Messenger mService = null;
+    private Messenger mService = null;
     private boolean mIsBound;
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.d("MainActivity", "Service connected.");
             mService = new Messenger(service);
             try {
-                Message msg = Message.obtain(null, BluetoothService.MSG_REGISTER_CLIENT);
+                Message msg = Message.obtain(null, Messages.REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             }
             catch (RemoteException e) {
                 // In this case the service has crashed before we could even do anything with it
-
             }
         }
 
@@ -57,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case BluetoothService.MSG_DATA_RECEIVED:
+                case Messages.DATA_RECEIVED:
                     Log.d("MainActivity", "Data received.");
                     String cmd = (String)msg.obj;
                     try {
@@ -78,15 +86,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         repository = ((App)getApplication()).getRepository();
 
         startService(new Intent(this, BluetoothService.class));
         doBindService();
 
-        this.layerView = (TwoDimensionalLayerView) findViewById(R.id.layer_view);
+        this.layerView = (LayerView) findViewById(R.id.layer_view);
         this.layerSelector = (LayerSelectorView)findViewById(R.id.layer_selector);
         this.binSelector = (BinSelectorView)findViewById(R.id.bin_selector);
         this.packageDetailsView = (PackageDetailsView)findViewById(R.id.package_details);
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 layerView.setLayer(repository.getSelectedLayer());
             }
         });
-        this.layerView.setPackageSelectListener(new TwoDimensionalLayerView.OnPackageSelectListener() {
+        this.layerView.setPackageSelectListener(new LayerView.OnPackageSelectListener() {
             @Override
             public void onPackageSelect(Package aPackage) {
                 packageDetailsView.setPackage(aPackage);
@@ -119,14 +124,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private void updateUI() {
-
-        this.binSelector.setBins(repository.getBins());
-        this.layerSelector.setBin(repository.getSelectedBin());
-        this.layerView.setLayer(repository.getSelectedLayer());
-        this.packageDetailsView.setPackage(repository.getSelectedPackage());
     }
 
     @Override
@@ -146,12 +143,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "Service is bound.");
     }
 
-    void doUnbindService() {
+    private void doUnbindService() {
         if (mIsBound) {
             // If we have received the service, and hence registered with it, then now is the time to unregister.
             if (mService != null) {
                 try {
-                    Message msg = Message.obtain(null, BluetoothService.MSG_UNREGISTER_CLIENT);
+                    Message msg = Message.obtain(null, Messages.UNREGISTER_CLIENT);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                 }
@@ -163,5 +160,12 @@ public class MainActivity extends AppCompatActivity {
             unbindService(mConnection);
             mIsBound = false;
         }
+    }
+
+    private void updateUI() {
+        this.binSelector.setBins(repository.getBins(), repository.getSelectedBinIndex());
+        this.layerSelector.setBin(repository.getSelectedBin());
+        this.layerView.setLayer(repository.getSelectedLayer());
+        this.packageDetailsView.setPackage(repository.getSelectedPackage());
     }
 }

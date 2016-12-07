@@ -4,22 +4,22 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.axolotl.presentation.MainActivity">
+    tools:context="com.axolotl.presentation.views.MainActivity">
 
-    <com.axolotl.presentation.BinSelectorView
+    <com.axolotl.presentation.views.BinSelectorView
         android:id="@+id/bin_selector"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         />
 
-    <com.axolotl.presentation.LayerSelectorView
+    <com.axolotl.presentation.views.LayerSelectorView
         android:id="@+id/layer_selector"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_toRightOf="@id/bin_selector"
         />
 
-    <com.axolotl.presentation.PackageDetailsView
+    <com.axolotl.presentation.views.PackageDetailsView
         android:id="@+id/package_details"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -27,7 +27,7 @@
         android:layout_alignParentBottom="true"
         />
 
-    <com.axolotl.presentation.TwoDimensionalLayerView
+    <com.axolotl.presentation.views.LayerView
         android:id="@+id/layer_view"
         android:background="#333333"
         android:layout_width="wrap_content"

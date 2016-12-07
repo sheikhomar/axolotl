@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Repository {
     private final ArrayList<Bin> bins;
     private int selectedBinIndex = 0;
+    private int currentPackageNumber = 0;
 
     public Repository() {
         bins = new ArrayList<>();
@@ -14,12 +15,28 @@ public class Repository {
         bins.add(new Bin(id, length, width, numberOfLayers, destination));
     }
 
+    public Package createPackage(PackageDimension translated, PackageDimension real, int colourCode, boolean isFragile) {
+        this.currentPackageNumber++;
+        return new Package(currentPackageNumber, translated, real, PackageColour.parse(colourCode), isFragile);
+    }
+
+    public void newPackage(int binId, Package p, int layer, int x, int y) {
+        Bin bin = getBinById(binId);
+        if (bin != null) {
+            bin.pack(p, layer, x, y);
+        }
+    }
+
     public Bin getBinById(int binId) {
         for (int i = 0; i < bins.size(); i++)
             if (bins.get(i).getId() == binId)
                 return bins.get(i);
 
         return null;
+    }
+
+    public boolean binExists(int binId) {
+        return getBinById(binId) != null;
     }
 
     public ArrayList<Bin> getBins() {
@@ -33,6 +50,13 @@ public class Repository {
         }
     }
 
+    public void selectLater(Layer layer) {
+        Bin bin = getSelectedBin();
+        if (bin != null) {
+            bin.selectLater(layer);
+        }
+    }
+
     public Bin getSelectedBin() {
         if (bins.size() > 0) {
             return bins.get(selectedBinIndex);
@@ -41,11 +65,8 @@ public class Repository {
         return null;
     }
 
-    public void selectLater(Layer layer) {
-        Bin bin = getSelectedBin();
-        if (bin != null) {
-            bin.selectLater(layer);
-        }
+    public int getSelectedBinIndex() {
+        return selectedBinIndex;
     }
 
     public Layer getSelectedLayer() {

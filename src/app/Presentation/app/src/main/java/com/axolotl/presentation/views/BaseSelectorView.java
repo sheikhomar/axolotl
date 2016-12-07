@@ -1,4 +1,4 @@
-package com.axolotl.presentation;
+package com.axolotl.presentation.views;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.axolotl.presentation.R;
 import com.axolotl.presentation.model.Bin;
 
 public abstract class BaseSelectorView extends RelativeLayout {
@@ -65,8 +66,9 @@ public abstract class BaseSelectorView extends RelativeLayout {
     }
 
     protected void highlightIcon(int index) {
-        if (this.container.getChildCount() == 0)
+        if (index < 0 || index >= this.container.getChildCount()) {
             return;
+        }
 
         ImageView icon = (ImageView)this.container.getChildAt(index);
         icon.setImageDrawable(this.selectedIcon);

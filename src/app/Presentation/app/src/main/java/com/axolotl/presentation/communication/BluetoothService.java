@@ -1,37 +1,33 @@
 package com.axolotl.presentation.communication;
 
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.support.annotation.Nullable;
+import android.os.RemoteException;
 import android.util.Log;
 
-import java.io.IOException;
+import com.axolotl.presentation.App;
+import com.axolotl.presentation.model.Repository;
+
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class BluetoothService extends Service {
-    public static final int MSG_REGISTER_CLIENT = 1;
-    public static final int MSG_UNREGISTER_CLIENT = 2;
-    public static final int MSG_DATA_RECEIVED = 3;
-    public static final int MSG_CONNECT = 4;
-
-    private static boolean isRunning = false;
-
-
     // Keeps track of all current registered clients.
-    private ArrayList<Messenger> mClients = new ArrayList<>();
-    final Messenger mMessenger = new Messenger(new IncomingHandler()); // Target we publish for clients to send messages to IncomingHandler.
+    private ArrayList<Messenger> clients = new ArrayList<>();
+    // Target we publish for clients to send messages to IncomingHandler.
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Messenger threadMessenger = new Messenger(new ThreadMessageHandler());
+    private Repository repository;
+    private BluetoothThread thread;
 
-    public static boolean isRunning() {
-        return isRunning;
+    private class ThreadMessageHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            sendMessageToClients(msg);
+        }
     }
 
     // Handler of incoming messages from clients.
@@ -39,20 +35,14 @@ public class BluetoothService extends Service {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_REGISTER_CLIENT:
-                    mClients.add(msg.replyTo);
-                    try {
-                        mSocket = mDevice.createRfcommSocketToServiceRecord(myUUID);
-                        mSocket.connect();
-                        mBlueThread = new BluetoothThread(mSocket, mClients);
-                        mBlueThread.start();
+                case Messages.REGISTER_CLIENT:
+                    clients.add(msg.replyTo);
 
-                    } catch (IOException e) {
-                        Log.d(BluetoothService.class.getName(), "Could not connect to Bluetooth", e);
-                    }
+                    thread = new BluetoothThread(threadMessenger);
+                    thread.start();
                     break;
-                case MSG_UNREGISTER_CLIENT:
-                    mClients.remove(msg.replyTo);
+                case Messages.UNREGISTER_CLIENT:
+                    clients.remove(msg.replyTo);
                     break;
                 default:
                     super.handleMessage(msg);
@@ -60,23 +50,12 @@ public class BluetoothService extends Service {
         }
     }
 
-    private final IBinder mBinder;
-    private final UUID myUUID = UUID.fromString("c3ffbcc2-ab89-4e56-94ed-2a8df65e45bd");
-    private final String bluetoothMacAdress = "00:0C:78:33:A5:63";
-    private BluetoothAdapter mAdapter = null;
-    private BluetoothDevice mDevice = null;
-    private BluetoothSocket mSocket = null;
-    private BluetoothThread mBlueThread = null;
-
-    public BluetoothService(){
-        mBinder = new LocalBinder();
-        initializeAdapter();
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(BluetoothService.class.getName(), "Created BluetoothService");
+
+        repository = ((App)getApplication()).getRepository();
     }
 
     @Override
@@ -94,22 +73,18 @@ public class BluetoothService extends Service {
         return mMessenger.getBinder();
     }
 
-    private void initializeAdapter() {
-        mAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mAdapter == null){
-            Log.d(BluetoothService.class.getName(), "Could not get default Bluetooth adapter");
-        }
-        else if (!mAdapter.isEnabled()){
-            Log.d(BluetoothService.class.getName(), "Bluetooth is not enabled.");
-        } else {
-            mDevice = mAdapter.getRemoteDevice(bluetoothMacAdress);
-        }
-    }
-
-    // Internal classes:
-    private class LocalBinder extends Binder {
-        public BluetoothService getServiceInstance(){
-            return BluetoothService.this;
+    private void sendMessageToClients(Message msg) {
+        for (int i = clients.size() - 1; i >= 0; i--) {
+            try {
+                Message msg2 = Message.obtain(null, msg.what);
+                msg2.copyFrom(msg);
+                clients.get(i).send(msg2);
+            }
+            catch (RemoteException e) {
+                // The client is dead.
+                Log.d("BluetoothThread", "Sending message failed for client " + i, e);
+                clients.remove(i);
+            }
         }
     }
 }

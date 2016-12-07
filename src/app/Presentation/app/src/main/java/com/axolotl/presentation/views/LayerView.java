@@ -1,4 +1,4 @@
-package com.axolotl.presentation;
+package com.axolotl.presentation.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,12 +11,13 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.axolotl.presentation.R;
 import com.axolotl.presentation.model.Layer;
 import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.PackageDimension;
 import com.axolotl.presentation.model.PackagedPackage;
 
-public class TwoDimensionalLayerView extends View {
+public class LayerView extends View {
     public interface OnPackageSelectListener {
         void onPackageSelect(Package thePackage);
     }
@@ -28,7 +29,7 @@ public class TwoDimensionalLayerView extends View {
     private Layer layer;
     private OnPackageSelectListener packageSelectListener;
 
-    public TwoDimensionalLayerView(Context context, AttributeSet attrs) {
+    public LayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         // Initialisation
@@ -112,8 +113,13 @@ public class TwoDimensionalLayerView extends View {
 
         canvas.drawRect(left, top, right, bottom, fillPaint);
         canvas.drawRect(left, top, right, bottom, strokePaint);
+        String number = Integer.toString(packagedPackage.getPackage().getNumber());
 
-        if (layer.isSelected(index)) {
+        fillPaint.setColor(Color.BLACK);
+        fillPaint.setTextSize(20);
+        canvas.drawText(number, left + 10, top + 30, fillPaint);
+
+        if (layer.isPackageSelected(index)) {
             drawIcon(canvas, this.packageSelectedIcon, left, top, right, bottom);
         }
     }
