@@ -174,9 +174,9 @@ unsigned long findLength(SensorReading *sensor) {
 
 void initPackageIdentification(PackageIdentificationState *state) {
 	#if KALMAN_OR_SLIDING
-		initKalmanFilter(&state->kalmanTopSensor, 5000, 150, 4000, 30);
-		initKalmanFilter(&state->kalmanRightSensor, 5000, 150, 4000, 30);
-		initKalmanFilter(&state->kalmanLeftSensor, 5000, 125, 4000, 10);
+		initKalmanFilter(&state->kalmanTopSensor, 5000, 400, 4000, 40);
+		initKalmanFilter(&state->kalmanRightSensor, 5000, 400, 4000, 40);
+		initKalmanFilter(&state->kalmanLeftSensor, 5000, 400, 4000, 40);
 	#else
 		initSlidingWindowInformation(&state->slidingTopSensor);
 		initSlidingWindowInformation(&state->slidingRightSensor);
