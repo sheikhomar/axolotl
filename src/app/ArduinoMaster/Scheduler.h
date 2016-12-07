@@ -32,12 +32,9 @@ void receiveData(PackageCollection *packages);
 void sendData(PackageCollection *packages);
 void resetSensorReading(SensorReading *reading);
 void resetSensorData(SensorReading *r1, SensorReading *r2, SensorReading *r3);
-bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3);
 void cleanBuffer(SensorReading *reading, short sensor);
 void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3);
 void runScheduler();
-void checkBufferCount(unsigned short buffer1, unsigned short buffer2, unsigned short buffer3);
-void handleSensorNoise(SensorReading *reading);
 byte convertMeasuredValueToMillimetres(unsigned short number);
 short findNextColorRequested(PackageCollection *packages, short id);
 

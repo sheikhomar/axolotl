@@ -294,51 +294,6 @@ void resetSensorData(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
     resetSensorReading(r3);
 }
 
-bool readSensorsEx(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
-
-    // checking buffer bound
-    checkBufferCount(r1->bufferCount, r2->bufferCount, r3->bufferCount);
-	
-	//Reading sensors
-    delay(5);
-    bool readyForHandling2 = readSensor(r2, ULT_RIGHT_SENSOR);
-    delay(5);
-    bool readyForHandling1 = readSensor(r1, ULT_TOP_SENSOR);
-    delay(5);
-    bool readyForHandling3 = readSensor(r3, ULT_LEFT_SENSOR);
-
-	//Handle sensor noise
-	handleSensorNoise(r1);
-	handleSensorNoise(r2);
-	handleSensorNoise(r3);
-
-	return readyForHandling1 && readyForHandling2 && readyForHandling3;
-}
-
-void handleSensorNoise(SensorReading *reading) {
-	if (reading->falseCount >= NOT_DETECTED_THRESHOLD && 
-		reading->bufferCount <= (NOT_DETECTED_THRESHOLD + SENSOR_ALLOWED_FALSE_POSITIVES)) {
-		resetSensorReading(reading);
-	}
-}
-
-
-void checkBufferCount(unsigned short buffer1,unsigned short buffer2, unsigned short buffer3) {
-    if (buffer1 >= SENSOR_BUFFER_SIZE ||
-		buffer2 >= SENSOR_BUFFER_SIZE ||
-		buffer3 >= SENSOR_BUFFER_SIZE) {
-		serialDebugLN("");
-		serialDebug("Bufff 1 ");
-		serialDebugLN(String(buffer1));
-		serialDebug("Buff 2 ");
-		serialDebugLN(String(buffer2));
-		serialDebug("Buff 3 ");
-		serialDebugLN(String(buffer3));
-
-        die("Panic! Buffer for sensor data is full.");
-    }
-}
-
 void cleanBuffer(SensorReading *reading, short sensor) {
     unsigned short tagDist;
     if (sensor == ULT_TOP_SENSOR)
