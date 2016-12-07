@@ -25,7 +25,7 @@ def try_bluetooth_send(client_list, message):
 	#print('Number of clients: {clientnumber}'.format(clientnumber=len(client_list)))
 	for x in range(len(client_list)-1, -1, -1):
 		try:
-			print('And he tries. Oh my god does he try')
+			#print('And he tries')
 			client_list[x].send(message)
 		except bluetooth.BluetoothError:
 			print('BluetoothError excepted and client removed')
