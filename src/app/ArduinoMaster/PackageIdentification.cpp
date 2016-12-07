@@ -14,39 +14,6 @@
 // Global variables
 unsigned int ___nextPackageId = 1;
 
-bool readSensor(SensorReading *reading, int whichSensor) {
-	bool sensorTag = false;
-	unsigned short dist;
-
-	dist = makeReading(whichSensor);
-	sensorTag = checkReading(whichSensor, dist);
-
-	if (reading->bufferCount == 0 && sensorTag) {
-		addReading(reading, dist);
-		reading->startTime = millis();
-		reading->endTime = millis();
-		return false;
-	} 
-	else if (reading->bufferCount == 0){
-		return false;
-	} 
-	else {		
-		if (reading->falseCount < NOT_DETECTED_THRESHOLD) {
-			addReading(reading, dist);
-			checkAndIncrement(reading, sensorTag);
-		}
-
-		if (reading->falseCount == 0) {
-			reading->endTime = millis();
-		}
-
-		if (reading->falseCount >= NOT_DETECTED_THRESHOLD) {
-			return true;
-		}
-		return false;
-	}
-}
-
 short makeReading(int whichSensor) {
 	short dist;
 

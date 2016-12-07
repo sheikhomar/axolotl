@@ -30,7 +30,6 @@
 #define CORRECT_AMOUNT_THRESHOLD 3
 
 //Functions
-bool readSensor(SensorReading *reading, int sensor);
 short makeReading(int whichSensor);
 bool checkReading(int whichSensor, int dist);
 void addReading(SensorReading *reading, unsigned short dist);
