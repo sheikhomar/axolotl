@@ -9,8 +9,8 @@ public class PackageColour {
     private final String name;
     private static PackageColour[] Colours = {
             new PackageColour(0, Color.argb(255, 214, 24, 0), "Red"),
-            new PackageColour(1, Color.argb(255, 0, 72, 181), "Blue"),
-            new PackageColour(2, Color.argb(255, 0, 160, 18), "Green"),
+            new PackageColour(2, Color.argb(255, 0, 72, 181), "Blue"),
+            new PackageColour(1, Color.argb(255, 0, 160, 18), "Green"),
             new PackageColour(3, Color.argb(255, 237, 197, 0), "Yellow"),
             new PackageColour(6, Color.argb(255, 244, 244, 244), "White"),
             new PackageColour(7, Color.argb(255, 35, 16, 0), "Black"),
