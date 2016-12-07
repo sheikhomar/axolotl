@@ -8,7 +8,10 @@
 #else
 	#include "WProgram.h"
 #endif
-
-
 #endif
+#include "Defines.h"
+
+void initSlidingWindowInformation(SlidingWindowInformation *swi);
+void updateSlidingWindowFilter(SlidingWindowInformation *swi, double measurement);
+
 
