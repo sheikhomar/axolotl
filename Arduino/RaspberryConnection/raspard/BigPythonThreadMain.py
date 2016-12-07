@@ -22,15 +22,12 @@ s = BLib.setup_server()
 clients = [] #Client is initially set to empty and is later appended in thread
 
 def try_bluetooth_send(client_list, message):
-	#print('Number of clients: {clientnumber}'.format(clientnumber=len(client_list)))
 	for x in range(len(client_list)-1, -1, -1):
 		try:
-			#print('And he tries')
 			client_list[x].send(message)
 		except bluetooth.BluetoothError:
 			print('BluetoothError excepted and client removed')
 			client_list.pop(x)
-	#print('Number of clients after: {clientnumber}'.format(clientnumber=len(client_list)))
 		
 
 ###### Threading stuff #######
@@ -94,4 +91,3 @@ while True: #THE REAL DEAL
 				pack_buf.append(p1)
 			bluetooth_lock.release()
 	data.clear()
-	#time.sleep(1)
