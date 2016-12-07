@@ -97,8 +97,8 @@ class SerLib:
 		serial_instance = serial.Serial('/dev/ttyUSB0', self.baudrate)
 		return serial_instance
 		
-	def serial_write_last_push(self, ser):
-		if self.last_bin_id is not None:
-			self.serial_write_push(ser, self.last_bin_id)
-		else:
-			raise ArithmeticError('No last push to resend')
+	#def serial_write_last_push(self, ser): Commented out - currently obsolete
+	#	if self.last_bin_id is not None:
+	#		self.serial_write_push(ser, self.last_bin_id)
+	#	else:
+	#		raise ArithmeticError('No last push to resend')
