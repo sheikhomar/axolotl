@@ -63,7 +63,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Users\marcb\Documents\GitHub\axolotl\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Users\marcb\Documents\GitHub\axolotl\src\app\ArduinoMaster;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\txl0cfih.4jo\Micro Platforms\default\debuggers;C:\Users\marcb\Documents\GitHub\axolotl\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Users\Mathi\Documents\GitHub\axolotl\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Users\Mathi\Documents\GitHub\axolotl\src\app\ArduinoMaster;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Users\marcb\Documents\GitHub\axolotl\src\app\ArduinoMaster\__vm\.ArduinoMaster.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>__AVR_ATmega328p__;__AVR_ATmega328P__;F_CPU=16000000L;ARDUINO=106012;ARDUINO_AVR_UNO;ARDUINO_ARCH_AVR;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -94,6 +94,7 @@
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="SerialController.cpp" />
     <ClCompile Include="SerialControllerTest.cpp" />
+    <ClCompile Include="SlidingWindowFilter.cpp" />
     <ClCompile Include="UltrasoundSensor.cpp" />
     <ClCompile Include="UltrasoundSensorTest.cpp" />
     <ClCompile Include="Utilities.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="Scheduler.h" />
     <ClInclude Include="SerialController.h" />
     <ClInclude Include="SerialControllerTest.h" />
+    <ClInclude Include="SlidingWindowFilter.h" />
     <ClInclude Include="UltrasoundSensor.h" />
     <ClInclude Include="UltrasoundSensorTest.h" />
     <ClInclude Include="Utilities.h" />
@@ -118,7 +120,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties arduino.upload.port="COM4" />
+      <UserProperties arduino.upload.port="COM3" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
