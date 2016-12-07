@@ -47,7 +47,7 @@ void initSensorBuffer(SensorBuffer *buffer);
 void runIdentification(PackageIdentificationState *state, PackageCollection *packages);
 void createSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String s);
 unsigned short calculateSensorResult(ReadingCollection *collection, long checkDistance);
-bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor);
+bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int whichSensor);
 void addItemToCollection(ReadingCollection *collection, double estimate);
 void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue);
 void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *topResult, SensorResult *rightResult);

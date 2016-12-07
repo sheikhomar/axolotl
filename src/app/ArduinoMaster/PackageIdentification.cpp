@@ -9,6 +9,7 @@
 
 #include "PackageIdentification.h"
 #include "KalmanFilter.h"
+#include "SlidingWindowFilter.h"
 
 // Global variables
 unsigned int ___nextPackageId = 1;
@@ -172,9 +173,15 @@ unsigned long findLength(SensorReading *sensor) {
 }
 
 void initPackageIdentification(PackageIdentificationState *state) {
-    initKalmanFilter(&state->topSensor, 5000, 150, 4000, 30);
-    initKalmanFilter(&state->rightSensor, 5000, 150, 4000, 30);
-    initKalmanFilter(&state->leftSensor, 5000, 125, 4000, 10);
+	#if KALMAN_OR_SLIDING
+		initKalmanFilter(&state->kalmanTopSensor, 5000, 150, 4000, 30);
+		initKalmanFilter(&state->kalmanRightSensor, 5000, 150, 4000, 30);
+		initKalmanFilter(&state->kalmanLeftSensor, 5000, 125, 4000, 10);
+	#else
+		initSlidingWindowInformation(&state->slidingTopSensor);
+		initSlidingWindowInformation(&state->slidingRightSensor);
+		initSlidingWindowInformation(&state->slidingLeftSensor);
+	#endif
 
     initSensorBuffer(&state->topSensorBuffer);
     initSensorBuffer(&state->rightSensorBuffer);
@@ -202,9 +209,9 @@ void resetPackage2(Package *package) {
 }
 
 void runIdentification(PackageIdentificationState *state, PackageCollection *packages) {
-	bool leftSensorTag = performReading(&state->leftSensor, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
-	bool topSensorTag = performReading(&state->topSensor, &state->topSensorBuffer, ULT_TOP_SENSOR);
-	bool rightSensorTag = performReading(&state->rightSensor, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
+	bool leftSensorTag = performReading(state, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
+	bool topSensorTag = performReading(state, &state->topSensorBuffer, ULT_TOP_SENSOR);
+	bool rightSensorTag = performReading(state, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
 
 	createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE, "Left ");
 	createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE, "Top ");
@@ -419,28 +426,55 @@ unsigned short calculateSensorResult(ReadingCollection *collection, long checkDi
     return bestValue;
 }
 
-bool performReading(KalmanFilterInformation *kfi, SensorBuffer *buffer, int whichSensor) {
+bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int whichSensor) {
 	delay(1);
     double measurement = (double)makeReading(whichSensor);
+	bool tag;
+	double estimate; 
 
-    updateKalmanFilter(kfi, measurement);
+	#if KALMAN_OR_SLIDING
+		if (whichSensor == ULT_TOP_SENSOR) {
+			updateKalmanFilter(&state->kalmanTopSensor, measurement);
+			tag = checkReading(whichSensor, state->kalmanTopSensor.currentEstimate);
+			estimate = state->kalmanTopSensor.currentEstimate;
+		}
+		else if (whichSensor == ULT_RIGHT_SENSOR) {
+			updateKalmanFilter(&state->kalmanRightSensor, measurement);
+			tag = checkReading(whichSensor, state->kalmanRightSensor.currentEstimate);
+			estimate = state->kalmanRightSensor.currentEstimate;
+		}
+		else if (whichSensor == ULT_LEFT_SENSOR) {
+			updateKalmanFilter(&state->kalmanLeftSensor, measurement);
+			tag = checkReading(whichSensor, state->kalmanLeftSensor.currentEstimate);
+			estimate = state->kalmanLeftSensor.currentEstimate;
+		}
+	}
+	#else
+		if (whichSensor == ULT_TOP_SENSOR) {
+			updateSlidingWindowFilter(&state->slidingTopSensor, measurement);
+			tag = checkReading(whichSensor, state->slidingTopSensor.currentValue);
+			estimate = state->slidingTopSensor.currentValue;
+		}
+		else if (whichSensor == ULT_RIGHT_SENSOR) {
+			updateSlidingWindowFilter(&state->slidingRightSensor, measurement);
+			tag = checkReading(whichSensor, state->slidingRightSensor.currentValue);
+			estimate = state->slidingRightSensor.currentValue;
+		}
+		else if (whichSensor == ULT_LEFT_SENSOR) {
+			updateSlidingWindowFilter(&state->slidingLeftSensor, measurement);			
+			tag = checkReading(whichSensor, state->slidingLeftSensor.currentValue);
+			estimate = state->slidingLeftSensor.currentValue;
+		}
+	#endif
 
-    bool tag = checkReading(whichSensor, kfi->currentEstimate);
     if (tag) {
         if (buffer->data.count == 0) {
             buffer->startTime = millis();
         }
 
         buffer->endTime = millis();
-        double estimate = kfi->currentEstimate;
         addItemToCollection(&buffer->data, estimate);
     }
-
-	//if (whichSensor == ULT_RIGHT_SENSOR) {
-	//	serialDebug(String(measurement));
-	//	serialDebug("\t");
-	//	serialDebugLN(String(kfi->currentEstimate));
-	//}
 
     return tag;
 }

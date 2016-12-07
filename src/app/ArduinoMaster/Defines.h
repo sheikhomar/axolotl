@@ -66,6 +66,7 @@
 #define SENSOR_BUFFER_SIZE 100
 #define PACKAGE_BUFFER_SIZE 10
 #define SENSOR_READINGS_SIZE 25 // OLD: 20
+#define SLIDING_WINDOW_K 10
 #define RS485_DATA_LENGTH_MAX 11
 #define RS485_SERIAL_PRINT_BINARY 0
 #define DEBUG 1
@@ -76,6 +77,9 @@
 #define ULT_TOP_SENSOR 1
 #define ULT_RIGHT_SENSOR 2
 #define ULT_LEFT_SENSOR 3
+
+#define KALMAN_OR_SLIDING 0
+
 
 //Enums
 typedef enum client {
@@ -113,6 +117,13 @@ typedef struct {
 } KalmanFilterInformation;
 
 typedef struct {
+	double measurements[SLIDING_WINDOW_K];
+	short count;
+	double sumOfMeasurements;
+	double currentValue;
+} SlidingWindowInformation;
+
+typedef struct {
     unsigned short readings[SENSOR_READINGS_SIZE];
     int count = 0;
 } ReadingCollection;
@@ -137,11 +148,17 @@ typedef struct {
 } SensorResultQueue;
 
 typedef struct {
-    KalmanFilterInformation topSensor;
-    KalmanFilterInformation rightSensor;
-    KalmanFilterInformation leftSensor;
-
-    SensorBuffer topSensorBuffer;
+	#if KALMAN_OR_SLIDING
+		KalmanFilterInformation kalmanTopSensor;
+		KalmanFilterInformation kalmanRightSensor;
+		KalmanFilterInformation kalmanLeftSensor;
+	#else
+		SlidingWindowInformation slidingTopSensor;
+		SlidingWindowInformation slidingRightSensor;
+		SlidingWindowInformation slidingLeftSensor;
+	#endif
+    
+	SensorBuffer topSensorBuffer;
     SensorBuffer rightSensorBuffer;
     SensorBuffer leftSensorBuffer;
 
