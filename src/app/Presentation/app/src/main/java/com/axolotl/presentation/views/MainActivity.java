@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         this.layerView.setPackageSelectListener(new LayerView.OnPackageSelectListener() {
             @Override
             public void onPackageSelect(Package aPackage) {
-                repository.selectPackage(aPackage);
+                repository.togglePackageSelection(aPackage);
                 updateUI();
             }
         });

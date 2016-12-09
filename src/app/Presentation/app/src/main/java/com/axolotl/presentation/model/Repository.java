@@ -68,7 +68,7 @@ public class Repository {
         this.selectedPackage = null;
     }
 
-    public void selectPackage(Package aPackage) {
+    public void togglePackageSelection(Package aPackage) {
         if (this.selectedPackage == aPackage) {
             this.selectedPackage = null;
             this.autoSelectNewPackage = true;
