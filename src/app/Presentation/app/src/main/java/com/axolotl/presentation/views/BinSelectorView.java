@@ -31,7 +31,7 @@ public class BinSelectorView extends BaseSelectorView {
         super(context, attrs, defStyle);
     }
 
-    public void setBins(ArrayList<Bin> bins, Bin selectedBin) {
+    public void setData(ArrayList<Bin> bins, Bin selectedBin) {
         this.bins = bins;
 
         if (this.bins == null)

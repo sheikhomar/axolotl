@@ -28,7 +28,7 @@ public class PackageDetailsView extends RelativeLayout {
         init(attrs, defStyle);
     }
 
-    public void setPackage(Package aPackage) {
+    public void setData(Package aPackage) {
         if (aPackage != null) {
             dimensionView.setText(aPackage.getRealDimension().toString() + " mm");
             if (aPackage.isFragile()) {

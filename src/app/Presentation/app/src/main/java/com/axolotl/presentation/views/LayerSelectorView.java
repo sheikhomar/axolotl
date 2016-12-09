@@ -32,7 +32,7 @@ public class LayerSelectorView extends BaseSelectorView {
         this.layerSelectListener = layerSelectListener;
     }
 
-    public void setBin(Bin bin, Layer selectedLayer) {
+    public void setData(Bin bin, Layer selectedLayer) {
         this.bin = bin;
         clearSelection();
 

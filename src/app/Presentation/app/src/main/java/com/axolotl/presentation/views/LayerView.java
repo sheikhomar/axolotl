@@ -52,7 +52,7 @@ public class LayerView extends View {
         setBackgroundColor(Color.WHITE);
     }
 
-    public void setLayer(Layer layer, Package selectedPackage){
+    public void setData(Layer layer, Package selectedPackage){
         this.layer = layer;
         this.selectedPackage = selectedPackage;
         invalidate();
