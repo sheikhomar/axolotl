@@ -11,7 +11,6 @@ public class Bin {
     private final int numberOfLayers;
     private final String destination;
     private final ArrayList<Layer> layers;
-    private int selectedLayerIndex;
 
     public Bin(int id, int length, int width, int numberOfLayers, String destination) {
         this.id = id;
@@ -23,11 +22,9 @@ public class Bin {
         for (int i = 0; i < numberOfLayers; i++) {
             this.layers.add(new Layer(length, width));
         }
-
-        this.selectedLayerIndex = 0;
     }
 
-    public void pack(@NonNull Package thePackage, int layerNo, int x, int y) {
+    public Layer pack(@NonNull Package thePackage, int layerNo, int x, int y) {
         if (thePackage == null) {
             throw new IllegalArgumentException("Package cannot be null.");
         }
@@ -38,7 +35,7 @@ public class Bin {
 
         Layer layer = this.layers.get(layerNo - 1);
         layer.pack(thePackage, x, y);
-        selectedLayerIndex =  layerNo - 1;
+        return layer;
     }
 
     public int getId() {
@@ -61,26 +58,7 @@ public class Bin {
         return destination;
     }
 
-    public Layer getCurrentLayer() {
-        return this.layers.get(0);
-    }
-
     public Layer getLayerAt(int index) {
         return this.layers.get(index);
-    }
-
-    public void selectLater(Layer layer) {
-        this.selectedLayerIndex = this.layers.indexOf(layer);
-    }
-
-    public Layer getSelectedLayer() {
-        if (this.selectedLayerIndex != -1)
-            return this.layers.get(this.selectedLayerIndex);
-
-        return null;
-    }
-
-    public boolean isLayerSelected(int index) {
-        return this.selectedLayerIndex != -1 && this.selectedLayerIndex == index;
     }
 }

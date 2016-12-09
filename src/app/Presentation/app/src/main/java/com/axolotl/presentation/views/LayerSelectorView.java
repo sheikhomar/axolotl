@@ -32,7 +32,7 @@ public class LayerSelectorView extends BaseSelectorView {
         this.layerSelectListener = layerSelectListener;
     }
 
-    public void setBin(Bin bin) {
+    public void setBin(Bin bin, Layer selectedLayer) {
         this.bin = bin;
         clearSelection();
 
@@ -42,7 +42,7 @@ public class LayerSelectorView extends BaseSelectorView {
                 Layer layer = bin.getLayerAt(i);
                 this.container.getChildAt(i).setTag(layer);
 
-                if (bin.isLayerSelected(i)) {
+                if (layer == selectedLayer) {
                     this.highlightIcon(i);
                 }
             }

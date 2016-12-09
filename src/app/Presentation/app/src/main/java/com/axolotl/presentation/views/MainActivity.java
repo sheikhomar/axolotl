@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBinSelect(Bin bin) {
                 repository.selectBin(bin);
-                layerSelector.setBin(bin);
+                layerSelector.setBin(repository.getSelectedBin(), repository.getSelectedLayer());
                 layerView.setLayer(repository.getSelectedLayer(), repository.getSelectedPackage());
             }
         });
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI() {
         this.binSelector.setBins(repository.getBins(), repository.getSelectedBinIndex());
-        this.layerSelector.setBin(repository.getSelectedBin());
+        this.layerSelector.setBin(repository.getSelectedBin(), repository.getSelectedLayer());
         this.layerView.setLayer(repository.getSelectedLayer(), repository.getSelectedPackage());
         this.packageDetailsView.setPackage(repository.getSelectedPackage());
     }

@@ -8,6 +8,7 @@ public class Repository {
     private int currentPackageNumber = 0;
     private Package selectedPackage;
     private boolean autoSelectNewPackage;
+    private Layer selectedLayer;
 
     public Repository() {
         this.bins = new ArrayList<>();
@@ -18,7 +19,7 @@ public class Repository {
         bins.add(new Bin(id, length, width, numberOfLayers, destination));
     }
 
-    public void packPackage(int x, int y, int translatedLength, int translatedWidth, int translatedHeight, int measuredLength, int measuredWidth, int measuredHeight, int colourCode, boolean isFragile, int layer, int binId) {
+    public void packPackage(int x, int y, int translatedLength, int translatedWidth, int translatedHeight, int measuredLength, int measuredWidth, int measuredHeight, int colourCode, boolean isFragile, int layerNo, int binId) {
         PackageDimension translated = new PackageDimension(translatedLength, translatedWidth, translatedHeight);
         PackageDimension measured = new PackageDimension(measuredLength, measuredWidth, measuredHeight);
 
@@ -32,10 +33,11 @@ public class Repository {
                     isFragile,
                     bin.getDestination());
 
-            bin.pack(p, layer, x, y);
+            Layer layer = bin.pack(p, layerNo, x, y);
             if (autoSelectNewPackage) {
                 this.selectedBinIndex = bins.indexOf(bin);
-                selectedPackage = p;
+                this.selectedPackage = p;
+                this.selectedLayer = layer;
             }
         }
     }
@@ -67,12 +69,9 @@ public class Repository {
     }
 
     public void selectLater(Layer layer) {
-        Bin bin = getSelectedBin();
-        if (bin != null) {
-            bin.selectLater(layer);
-            // Clear selected package, when a layer is selected.
-            selectedPackage = null;
-        }
+        this.selectedLayer = layer;
+        // Clear selected package, when a layer is selected by the user.
+        selectedPackage = null;
     }
 
     public void selectPackage(Package aPackage) {
@@ -94,7 +93,7 @@ public class Repository {
     }
 
     public int getSelectedBinIndex() {
-        return selectedBinIndex;
+        return this.selectedBinIndex;
     }
 
     public Package getSelectedPackage() {
@@ -102,11 +101,6 @@ public class Repository {
     }
 
     public Layer getSelectedLayer() {
-        Bin bin = getSelectedBin();
-        if (bin != null) {
-            return bin.getSelectedLayer();
-        }
-
-        return null;
+        return this.selectedLayer;
     }
 }
