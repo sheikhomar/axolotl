@@ -41,6 +41,9 @@ while True:
 	
 	try:
 		for p in pack_list:
+			p.original_length = 32
+			p.original_width = 62
+			p.original_height = 18
 			if pa.handle(p):
 				client.send(BLib.bluetooth_format_bin(pa.find_bin_containing_package(p)))
 			client.send(BLib.bluetooth_format_package(p, pa))
