@@ -12,37 +12,57 @@ import android.util.Log;
 import com.axolotl.presentation.App;
 import com.axolotl.presentation.model.Repository;
 
-import java.util.ArrayList;
-
 public class BluetoothService extends Service {
-    // Keeps track of all current registered clients.
-    private ArrayList<Messenger> clients = new ArrayList<>();
-    // Target we publish for clients to send messages to IncomingHandler.
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private Messenger clientMessenger;
+    // Target we publish for clients to send messages to ServiceMessageHandler.
+    final Messenger serviceMessenger = new Messenger(new ServiceMessageHandler());
     private final Messenger threadMessenger = new Messenger(new ThreadMessageHandler());
     private Repository repository;
     private BluetoothThread thread;
+    private CommandTranslator commandTranslator;
 
     private class ThreadMessageHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            sendMessageToClients(msg);
+            switch (msg.what) {
+                case Messages.DATA_RECEIVED:
+                    String cmd = (String)msg.obj;
+                    try {
+                        commandTranslator.translate(cmd, repository);
+                    } catch (InvalidCommandException e) {
+                        Log.d("BluetoothService", "Invalid command: " + e.getMessage(), e);
+                    }
+
+                    Message newMsg = Message.obtain(null, Messages.DATA_RECEIVED);
+                    sendMessageToClient(newMsg);
+                    break;
+
+                case Messages.EVENT_BLUETOOTH_DISABLED:
+                    Message newMsg2 = Message.obtain(null, Messages.EVENT_BLUETOOTH_DISABLED);
+                    sendMessageToClient(newMsg2);
+                    break;
+
+                default:
+                    super.handleMessage(msg);
+            }
         }
     }
 
     // Handler of incoming messages from clients.
-    private class IncomingHandler extends Handler {
+    private class ServiceMessageHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case Messages.REGISTER_CLIENT:
-                    clients.add(msg.replyTo);
-
-                    thread = new BluetoothThread(threadMessenger);
-                    thread.start();
+                case Messages.ESTABLISH_CONNECTION:
+                    clientMessenger = msg.replyTo;
+                    if (thread == null)
+                        thread = new BluetoothThread(threadMessenger);
+                    if (thread.getState() == Thread.State.NEW)
+                        thread.start();
                     break;
-                case Messages.UNREGISTER_CLIENT:
-                    clients.remove(msg.replyTo);
+                case Messages.CLOSE_CONNECTION:
+                    Log.d("BluetoothService", "Close connection event.");
+                    clientMessenger = null;
                     break;
                 default:
                     super.handleMessage(msg);
@@ -56,6 +76,7 @@ public class BluetoothService extends Service {
         Log.d(BluetoothService.class.getName(), "Created BluetoothService");
 
         repository = ((App)getApplication()).getRepository();
+        commandTranslator = new CommandTranslator();
     }
 
     @Override
@@ -70,21 +91,22 @@ public class BluetoothService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mMessenger.getBinder();
+        return serviceMessenger.getBinder();
     }
 
-    private void sendMessageToClients(Message msg) {
-        for (int i = clients.size() - 1; i >= 0; i--) {
-            try {
-                Message msg2 = Message.obtain(null, msg.what);
-                msg2.copyFrom(msg);
-                clients.get(i).send(msg2);
-            }
-            catch (RemoteException e) {
-                // The client is dead.
-                Log.d("BluetoothThread", "Sending message failed for client " + i, e);
-                clients.remove(i);
-            }
+    private void sendMessageToClient(Message msg) {
+        if (clientMessenger == null) {
+            Log.d("BluetoothService", "No client to send message to.");
+            return;
+        }
+
+        try {
+            clientMessenger.send(msg);
+        }
+        catch (RemoteException e) {
+            // The client is dead.
+            Log.d("BluetoothThread", "Sending message failed for client.", e);
+            clientMessenger = null;
         }
     }
 }

@@ -1,8 +1,12 @@
 package com.axolotl.presentation.communication;
 
 public class Messages {
-    public static final int CONNECTION_ERROR = 1;
-    public static final int DATA_RECEIVED = 2;
-    public static final int REGISTER_CLIENT = 3;
-    public static final int UNREGISTER_CLIENT = 4;
+    // Actions
+    public static final int ESTABLISH_CONNECTION = 1;
+    public static final int CLOSE_CONNECTION = 2;
+
+    // Events
+    public static final int DATA_RECEIVED = 10;
+    public static final int CONNECTION_ERROR = 11;
+    public static final int EVENT_BLUETOOTH_DISABLED = 12;
 }

@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -16,10 +17,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class BluetoothThread extends Thread {
-
     private final String REMOTE_SERVER_MAC_ADDRESS = "00:0C:78:33:A5:63";
     private final UUID REMOTE_SERVICE_ID = UUID.fromString("c3ffbcc2-ab89-4e56-94ed-2a8df65e45bd");
-
     private final Messenger messenger;
 
     public BluetoothThread(Messenger messenger) {
@@ -27,10 +26,12 @@ public class BluetoothThread extends Thread {
     }
 
     public void run() {
+        Log.d("BluetoothThread", "Running ...");
         BluetoothSocket socket = establishConnection();
         if (socket != null) {
             receiveData(socket);
         }
+        Log.d("BluetoothThread", "Stopped.");
     }
 
     private void receiveData(BluetoothSocket socket) {
@@ -66,16 +67,19 @@ public class BluetoothThread extends Thread {
         }
     }
 
+    @Nullable
     private BluetoothSocket establishConnection() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
             Message msg = Message.obtain(null, Messages.CONNECTION_ERROR);
             msg.obj = "Device does not support Bluetooth.";
             sendMessageToUI(msg);
+            Log.d("BluetoothThread", "Device does not support Bluetooth.");
         } else if (!adapter.isEnabled()) {
-            Message msg = Message.obtain(null, Messages.CONNECTION_ERROR);
+            Message msg = Message.obtain(null, Messages.EVENT_BLUETOOTH_DISABLED);
             msg.obj = "Bluetooth is disabled.";
             sendMessageToUI(msg);
+            Log.d("BluetoothThread", "Bluetooth is disabled.");
         } else {
             BluetoothDevice device = adapter.getRemoteDevice(REMOTE_SERVER_MAC_ADDRESS);
             BluetoothSocket socket = null;
@@ -87,6 +91,7 @@ public class BluetoothThread extends Thread {
                 Message msg = Message.obtain(null, Messages.CONNECTION_ERROR);
                 msg.obj = "Remote server is down.";
                 sendMessageToUI(msg);
+                Log.d("BluetoothThread", "Remote host is down.");
             }
 
             return socket;
