@@ -27,7 +27,11 @@ public class LayerView extends View {
     private final Rect rect;
     private final Drawable packageSelectedIcon;
     private Layer layer;
+    private Package selectedPackage;
     private OnPackageSelectListener packageSelectListener;
+    private final int PADDING_TOP = 10;
+    private final int PADDING_LEFT = 10;
+    private final int PADDING_RIGHT = 10;
 
     public LayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -48,8 +52,9 @@ public class LayerView extends View {
         setBackgroundColor(Color.WHITE);
     }
 
-    public void setLayer(Layer layer){
+    public void setLayer(Layer layer, Package selectedPackage){
         this.layer = layer;
+        this.selectedPackage = selectedPackage;
         invalidate();
         requestLayout();
     }
@@ -117,19 +122,21 @@ public class LayerView extends View {
 
         fillPaint.setColor(Color.BLACK);
         fillPaint.setTextSize(20);
-        canvas.drawText(number, left + 10, top + 30, fillPaint);
+        canvas.drawText(number, left + PADDING_LEFT, top + 25, fillPaint);
 
-        if (layer.isPackageSelected(index)) {
-            drawIcon(canvas, this.packageSelectedIcon, left, top, right, bottom);
+        if (selectedPackage != null && selectedPackage == packagedPackage.getPackage()) {
+            drawSelectedIcon(canvas, this.packageSelectedIcon, left, top, right, bottom);
         }
     }
 
-    private void drawIcon(Canvas canvas, Drawable icon, int left, int top, int right, int bottom) {
+    private void drawSelectedIcon(Canvas canvas, Drawable icon, int left, int top, int right, int bottom) {
         int iconWidth = icon.getIntrinsicWidth();
         int iconHeight = icon.getIntrinsicHeight();
 
-        int newLeft = ((right - left) / 2) + left - (iconWidth / 2);
-        int newTop = ((bottom - top) / 2) + top - (iconHeight / 2);
+        //int newLeft = ((right - left) / 2) + left - (iconWidth / 2);
+        //int newTop = ((bottom - top) / 2) + top - (iconHeight / 2);
+        int newLeft = right - iconWidth - PADDING_RIGHT;
+        int newTop = top + PADDING_TOP;
 
         icon.setBounds(newLeft, newTop, newLeft+iconWidth, newTop+iconHeight);
         icon.draw(canvas);
@@ -151,7 +158,7 @@ public class LayerView extends View {
 
     private void drawEmpty(Canvas canvas) {
         fillPaint.setColor(Color.BLACK);
-        fillPaint.setTextSize(100);
+        fillPaint.setTextSize(50);
 
         String text = "No layer selected.";
 

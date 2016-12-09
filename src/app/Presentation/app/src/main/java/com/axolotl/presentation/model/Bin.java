@@ -12,7 +12,6 @@ public class Bin {
     private final String destination;
     private final ArrayList<Layer> layers;
     private int selectedLayerIndex;
-    private Package latestPackage;
 
     public Bin(int id, int length, int width, int numberOfLayers, String destination) {
         this.id = id;
@@ -40,8 +39,6 @@ public class Bin {
         Layer layer = this.layers.get(layerNo - 1);
         layer.pack(thePackage, x, y);
         selectedLayerIndex =  layerNo - 1;
-
-        latestPackage = thePackage;
     }
 
     public int getId() {
@@ -85,9 +82,5 @@ public class Bin {
 
     public boolean isLayerSelected(int index) {
         return this.selectedLayerIndex != -1 && this.selectedLayerIndex == index;
-    }
-
-    public Package getLatestPackage() {
-        return latestPackage;
     }
 }

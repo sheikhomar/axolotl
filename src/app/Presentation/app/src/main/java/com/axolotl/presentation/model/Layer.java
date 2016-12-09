@@ -6,18 +6,18 @@ public class Layer {
     private final ArrayList<PackagedPackage> packedPackages;
     private final int length;
     private final int width;
-    private int selectedIndex;
+    private int selectedPackageIndex;
 
     public Layer(int length, int width) {
         this.length = length;
         this.width = width;
         this.packedPackages = new ArrayList<>();
-        this.selectedIndex = -1;
+        this.selectedPackageIndex = -1;
     }
 
     public void pack(Package thePackage, int x, int y) {
         packedPackages.add(new PackagedPackage(thePackage, x, y));
-        selectedIndex = packedPackages.size() - 1;
+        selectedPackageIndex = packedPackages.size() - 1;
     }
 
     public int getNumberOfPackages() {
@@ -37,7 +37,7 @@ public class Layer {
     }
 
     public boolean isPackageSelected(int index) {
-        return selectedIndex == index;
+        return selectedPackageIndex == index;
     }
 
     public Package select(int x, int y) {
@@ -49,13 +49,13 @@ public class Layer {
                     packToCheck.getY() <= y &&
                     y < packToCheck.getY() + packToCheck.getPackage().getDimension().getWidth()) {
 
-                this.selectedIndex = i;
+                this.selectedPackageIndex = i;
 
                 return packToCheck.getPackage();
             }
         }
 
-        this.selectedIndex = -1;
+        this.selectedPackageIndex = -1;
         return null;
     }
 }

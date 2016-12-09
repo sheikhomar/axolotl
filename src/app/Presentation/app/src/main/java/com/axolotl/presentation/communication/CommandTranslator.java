@@ -1,8 +1,6 @@
 package com.axolotl.presentation.communication;
 
-import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.PackageColour;
-import com.axolotl.presentation.model.PackageDimension;
 import com.axolotl.presentation.model.Repository;
 
 public class CommandTranslator {
@@ -26,23 +24,28 @@ public class CommandTranslator {
             int numberOfLayers = Integer.parseInt(parts[3]);
             int id = Integer.parseInt(parts[4]);
             String destination = parts[5];
+            if (destination != null && destination.length() > 0) {
+                destination = destination.replace(',', ' ');
+            }
 
             repository.createBin(id, length, width, numberOfLayers, destination);
 
         } else if (commandType.equals("P:")) {
+
             int x = Integer.parseInt(parts[1]);
             int y = Integer.parseInt(parts[2]);
 
-            int length = Integer.parseInt(parts[3]);
-            int width = Integer.parseInt(parts[4]);
-            int height = 1;
+            int translatedLength = Integer.parseInt(parts[3]);
+            int translatedWidth = Integer.parseInt(parts[4]);
+            int translatedHeight = 1;
 
-            int originalLength = Integer.parseInt(parts[5]);
-            int originalWidth = Integer.parseInt(parts[6]);
-            int originalHeight = Integer.parseInt(parts[7]);
+            int measuredLength = Integer.parseInt(parts[5]);
+            int measuredWidth = Integer.parseInt(parts[6]);
+            int measuredHeight = Integer.parseInt(parts[7]);
 
             int colourCode = Integer.parseInt(parts[8]);
-            boolean isFragile = parts[9] == "1";
+            boolean isFragile = "1".equals(parts[9]);
+
             int layer = Integer.parseInt(parts[10]);
             int binId = Integer.parseInt(parts[11]);
 
@@ -50,14 +53,15 @@ public class CommandTranslator {
                 throw new InvalidCommandException("Unknown bin id: " + binId);
             }
 
-            PackageDimension translated = new PackageDimension(length, width, height);
-            PackageDimension real = new PackageDimension(originalLength, originalWidth, originalHeight);
             if (!PackageColour.exists(colourCode)) {
                 throw new InvalidCommandException("Unknown colour code: " + colourCode);
             }
 
-            Package p = repository.createPackage(translated, real, colourCode, isFragile);
-            repository.newPackage(binId, p, layer, x, y);
+            repository.packPackage(x, y,
+                    translatedLength, translatedWidth, translatedHeight,
+                    measuredLength, measuredWidth, measuredHeight,
+                    colourCode, isFragile, layer, binId);
+
         } else {
             throw new InvalidCommandException("Unknown command: " + commandType);
         }
