@@ -38,10 +38,12 @@ while True:
 	client = BLib.make_client(s)
 	client.send(BLib.bluetooth_format_bin(bin1))
 	client.send(BLib.bluetooth_format_bin(pa.bins_foreign[0]))
-
-	for p in pack_list:
-		if pa.handle(p):
-			client.send(BLib.bluetooth_format_bin(pa.find_bin_containing_package(p)))
-		client.send(BLib.bluetooth_format_package(p, pa))
-		time.sleep(1)
-
+	
+	try:
+		for p in pack_list:
+			if pa.handle(p):
+				client.send(BLib.bluetooth_format_bin(pa.find_bin_containing_package(p)))
+			client.send(BLib.bluetooth_format_package(p, pa))
+			time.sleep(1)
+	except bluetooth.BluetoothError:
+		print('BluetoothError excepted! Restarting demo')
