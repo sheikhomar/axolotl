@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class Repository {
     private final ArrayList<Bin> bins;
-    private int selectedBinIndex = 0;
     private int currentPackageNumber = 0;
     private Package selectedPackage;
     private boolean autoSelectNewPackage;
     private Layer selectedLayer;
+    private Bin selectedBin;
 
     public Repository() {
         this.bins = new ArrayList<>();
@@ -35,7 +35,7 @@ public class Repository {
 
             Layer layer = bin.pack(p, layerNo, x, y);
             if (autoSelectNewPackage) {
-                this.selectedBinIndex = bins.indexOf(bin);
+                this.selectedBin = bin;
                 this.selectedPackage = p;
                 this.selectedLayer = layer;
             }
@@ -55,23 +55,18 @@ public class Repository {
     }
 
     public ArrayList<Bin> getBins() {
-        return bins;
+        return this.bins;
     }
 
     public void selectBin(Bin bin) {
-        int binIndex = bins.indexOf(bin);
-        if (binIndex != -1) {
-            selectedBinIndex = binIndex;
-
-            // Clear selected package, when a bin is selected.
-            selectedPackage = null;
-        }
+        this.selectedBin = bin;
+        this.selectedLayer = bin.getLayerAt(0);
+        this.selectedPackage = null;
     }
 
     public void selectLater(Layer layer) {
         this.selectedLayer = layer;
-        // Clear selected package, when a layer is selected by the user.
-        selectedPackage = null;
+        this.selectedPackage = null;
     }
 
     public void selectPackage(Package aPackage) {
@@ -85,15 +80,7 @@ public class Repository {
     }
 
     public Bin getSelectedBin() {
-        if (bins.size() > 0) {
-            return bins.get(selectedBinIndex);
-        }
-
-        return null;
-    }
-
-    public int getSelectedBinIndex() {
-        return this.selectedBinIndex;
+        return this.selectedBin;
     }
 
     public Package getSelectedPackage() {

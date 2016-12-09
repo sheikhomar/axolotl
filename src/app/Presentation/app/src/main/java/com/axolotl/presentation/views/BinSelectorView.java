@@ -31,7 +31,7 @@ public class BinSelectorView extends BaseSelectorView {
         super(context, attrs, defStyle);
     }
 
-    public void setBins(ArrayList<Bin> bins, int selectedIndex) {
+    public void setBins(ArrayList<Bin> bins, Bin selectedBin) {
         this.bins = bins;
 
         if (this.bins == null)
@@ -39,10 +39,15 @@ public class BinSelectorView extends BaseSelectorView {
 
         showIcons(this.bins.size());
 
+        int selectedIndex = 0;
         for (int i = 0; i < this.bins.size(); i++) {
             Bin bin = bins.get(i);
             this.container.getChildAt(i).setTag(bin);
+            if (bin == selectedBin) {
+                selectedIndex = i;
+            }
         }
+
         this.clearSelection();
         this.highlightIcon(selectedIndex);
     }

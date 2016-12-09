@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        this.binSelector.setBins(repository.getBins(), repository.getSelectedBinIndex());
+        this.binSelector.setBins(repository.getBins(), repository.getSelectedBin());
         this.layerSelector.setBin(repository.getSelectedBin(), repository.getSelectedLayer());
         this.layerView.setLayer(repository.getSelectedLayer(), repository.getSelectedPackage());
         this.packageDetailsView.setPackage(repository.getSelectedPackage());
