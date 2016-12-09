@@ -2,6 +2,7 @@ package com.axolotl.presentation.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -11,7 +12,7 @@ import com.axolotl.presentation.model.Package;
 public class PackageDetailsView extends RelativeLayout {
     private TextView destinationView;
     private TextView dimensionView;
-    private TextView colourView;
+    private ImageView fragileSymbol;
 
     public PackageDetailsView(Context context) {
         super(context);
@@ -30,13 +31,17 @@ public class PackageDetailsView extends RelativeLayout {
 
     public void setPackage(Package aPackage) {
         if (aPackage != null) {
+            destinationView.setText("To " + aPackage.getDestination());
             dimensionView.setText(aPackage.getRealDimension().toString() + " mm");
-            colourView.setText(aPackage.getColour().getName());
-            destinationView.setText("");
+            if (aPackage.isFragile()) {
+                fragileSymbol.setVisibility(VISIBLE);
+            } else {
+                fragileSymbol.setVisibility(GONE);
+            }
         } else {
+            destinationView.setText("No package selected.");
             dimensionView.setText("");
-            colourView.setText("");
-            destinationView.setText("");
+            fragileSymbol.setVisibility(GONE);
         }
     }
 
@@ -45,6 +50,6 @@ public class PackageDetailsView extends RelativeLayout {
 
         this.destinationView = (TextView)findViewById(R.id.package_details_destination);
         this.dimensionView = (TextView)findViewById(R.id.package_details_dimension);
-        this.colourView = (TextView)findViewById(R.id.package_details_colour);
+        this.fragileSymbol = (ImageView)findViewById(R.id.package_details_fragile_symbol);
     }
 }

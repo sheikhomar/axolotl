@@ -22,7 +22,7 @@
     <com.axolotl.presentation.views.PackageDetailsView
         android:id="@+id/package_details"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="85dp"
         android:layout_toRightOf="@id/bin_selector"
         android:layout_alignParentBottom="true"
         />
