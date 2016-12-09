@@ -52,6 +52,9 @@ public class CommandTranslator {
 
             PackageDimension translated = new PackageDimension(length, width, height);
             PackageDimension real = new PackageDimension(originalLength, originalWidth, originalHeight);
+            if (!PackageColour.exists(colourCode)) {
+                throw new InvalidCommandException("Unknown colour code: " + colourCode);
+            }
 
             Package p = repository.createPackage(translated, real, colourCode, isFragile);
             repository.newPackage(binId, p, layer, x, y);

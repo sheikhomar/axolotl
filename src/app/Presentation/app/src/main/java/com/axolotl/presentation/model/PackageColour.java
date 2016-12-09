@@ -42,4 +42,8 @@ public class PackageColour {
     public String getName() {
         return name;
     }
+
+    public static boolean exists(int colourCode) {
+        return parse(colourCode) != null;
+    }
 }
