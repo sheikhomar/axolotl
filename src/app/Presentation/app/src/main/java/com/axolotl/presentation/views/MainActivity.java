@@ -13,6 +13,7 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.axolotl.presentation.App;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private final Messenger mMessenger = new Messenger(new ServiceMessageHandler());
+    private TextView binDestinationView;
 
     private class ServiceMessageHandler extends Handler {
         @Override
@@ -87,28 +89,27 @@ public class MainActivity extends AppCompatActivity {
         this.layerSelector = (LayerSelectorView)findViewById(R.id.layer_selector);
         this.binSelector = (BinSelectorView)findViewById(R.id.bin_selector);
         this.packageDetailsView = (PackageDetailsView)findViewById(R.id.package_details);
+        this.binDestinationView = (TextView)findViewById(R.id.bin_destination);
 
         this.binSelector.setBinSelectListener(new BinSelectorView.OnBinSelectListener() {
             @Override
             public void onBinSelect(Bin bin) {
                 repository.selectBin(bin);
-                layerSelector.setBin(repository.getSelectedBin(), repository.getSelectedLayer());
-                layerView.setLayer(repository.getSelectedLayer(), repository.getSelectedPackage());
+                updateUI();
             }
         });
         this.layerSelector.setLayerSelectListener(new LayerSelectorView.OnLayerSelectListener() {
             @Override
             public void onLayerSelect(Layer layer) {
                 repository.selectLater(layer);
-                layerView.setLayer(repository.getSelectedLayer(), repository.getSelectedPackage());
+                updateUI();
             }
         });
         this.layerView.setPackageSelectListener(new LayerView.OnPackageSelectListener() {
             @Override
             public void onPackageSelect(Package aPackage) {
                 repository.selectPackage(aPackage);
-                packageDetailsView.setPackage(repository.getSelectedPackage());
-                layerView.setLayer(repository.getSelectedLayer(), repository.getSelectedPackage());
+                updateUI();
             }
         });
         updateUI();
@@ -136,6 +137,16 @@ public class MainActivity extends AppCompatActivity {
         this.layerSelector.setBin(repository.getSelectedBin(), repository.getSelectedLayer());
         this.layerView.setLayer(repository.getSelectedLayer(), repository.getSelectedPackage());
         this.packageDetailsView.setPackage(repository.getSelectedPackage());
+        updateDestination();
+    }
+
+    private void updateDestination() {
+        Bin selectedBin = repository.getSelectedBin();
+        if (selectedBin != null) {
+            this.binDestinationView.setText("To " + selectedBin.getDestination());
+        } else {
+            this.binDestinationView.setText("No bin selected.");
+        }
     }
 
     private void doBindService() {

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Repository {
     private final ArrayList<Bin> bins;
+    private boolean autoSelectNewPackage;
     private int currentPackageNumber = 0;
     private Package selectedPackage;
-    private boolean autoSelectNewPackage;
     private Layer selectedLayer;
     private Bin selectedBin;
 
@@ -30,8 +30,7 @@ public class Repository {
                     translated,
                     measured,
                     PackageColour.parse(colourCode),
-                    isFragile,
-                    bin.getDestination());
+                    isFragile);
 
             Layer layer = bin.pack(p, layerNo, x, y);
             if (autoSelectNewPackage) {
