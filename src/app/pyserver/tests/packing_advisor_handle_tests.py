@@ -136,3 +136,42 @@ class PackingAdvisorHandleTests(unittest.TestCase):
             pa.handle(p1)
         with self.assertRaises(InvalidArgError):
             pa.handle(p2)
+
+    def test_handle_find_bin_for_new_bins(self):
+        bin1 = Bin(width=4, length=4, max_layers=1)
+
+        p1 = Package(width = 4, length = 4, height = 1, colour = 2)
+        p2 = Package(width = 4, length = 4, height = 1, colour = 1)
+        p3 = Package(width = 4, length = 4, height = 1, colour = 0)
+        p4 = Package(width = 4, length = 4, height = 1, colour = 3)
+        
+        pa = PackingAdvisor(bin1)
+
+        self.assertEqual(len(pa.bins), 1)
+        self.assertEqual(len(pa.bins_foreign), 1)
+        pa.handle(p1)
+        self.assertEqual(len(pa.bins), 1)
+        self.assertEqual(len(pa.bins_foreign), 1)
+        self.assertEqual(pa.find_bin_containing_package(p1), pa.bins_foreign[0])
+        pa.handle(p2)
+        self.assertEqual(len(pa.bins), 1)
+        self.assertEqual(len(pa.bins_foreign), 2)
+        self.assertEqual(pa.find_bin_containing_package(p2), pa.bins_foreign[1])
+        pa.handle(p3) 
+        self.assertEqual(len(pa.bins), 1)
+        self.assertEqual(len(pa.bins_foreign), 2)
+        self.assertEqual(pa.find_bin_containing_package(p3), pa.bins[0])
+        pa.handle(p4)
+        self.assertEqual(len(pa.bins), 2)
+        self.assertEqual(len(pa.bins_foreign), 2)
+        self.assertEqual(pa.find_bin_containing_package(p4), pa.bins[1])
+
+
+    def test_handle_throws_exception_invalid_colour(self):
+        bin1 = Bin(5,5,1)
+        pa = PackingAdvisor(bin1)
+        p1 = Package(width=2, length=2, colour = 7)
+
+        with self.assertRaises(InvalidArgError):
+            pa.handle(p1)
+
