@@ -5,16 +5,19 @@ import com.axolotl.presentation.model.Repository;
 
 public class CommandTranslator {
 
+    public static final String ERR_COMMAND_UNKNOWN = "Command is unknown";
+    public static final String ERR_REPOSITORY_IS_NULL = "Repository cannot be null";
+    public static final String ERR_COMMAND_NULL_OR_EMPTY = "Command cannot be null or empty.";
+
     public void translate(String command, Repository repository) throws InvalidCommandException {
+        if (repository == null) {
+            throw new IllegalArgumentException(ERR_REPOSITORY_IS_NULL);
+        }
         if (command == null || command.isEmpty()) {
-            throw new IllegalArgumentException("Command cannot be null or empty.");
+            throw new IllegalArgumentException(ERR_COMMAND_NULL_OR_EMPTY);
         }
 
         String[] parts = command.split(" ");
-
-        if (parts.length < 2) {
-            throw new InvalidCommandException("Command has the wrong format.");
-        }
 
         String commandType = parts[0];
 
@@ -63,7 +66,7 @@ public class CommandTranslator {
                     colourCode, isFragile, layer, binId);
 
         } else {
-            throw new InvalidCommandException("Unknown command: " + commandType);
+            throw new InvalidCommandException(ERR_COMMAND_UNKNOWN);
         }
     }
 }
