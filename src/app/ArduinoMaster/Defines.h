@@ -63,9 +63,8 @@
 #define BAUD_DEBUG 9600
 #define RS485_TIMEOUT_US 100
 #define SERIAL_MAX_DATA_SIZE 12
-#define SENSOR_BUFFER_SIZE 100
 #define PACKAGE_BUFFER_SIZE 10
-#define SENSOR_READINGS_SIZE 25 // OLD: 20
+#define SENSOR_READINGS_SIZE 30 // OLD: 20
 #define SLIDING_WINDOW_K 10
 #define RS485_DATA_LENGTH_MAX 11
 #define RS485_SERIAL_PRINT_BINARY 0
@@ -166,15 +165,6 @@ typedef struct {
     SensorResultQueue rightSensorResultQueue;
     SensorResultQueue leftSensorResultQueue;
 } PackageIdentificationState;
-
-
-typedef struct {
-	unsigned short sensorReadingBuffer[SENSOR_BUFFER_SIZE];
-	unsigned short bufferCount = 0;
-	unsigned long startTime = 0;
-	unsigned long endTime = 0;
-	byte falseCount = 0;
-} SensorReading;
 
 #endif
 
