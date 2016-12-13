@@ -1,12 +1,12 @@
 package com.axolotl.presentation.model;
 
-public class PackagedPackage {
+public class PackedPackage {
 
     private final Package thePackage;
     private final int x;
     private final int y;
 
-    public PackagedPackage(Package thePackage, int x, int y) {
+    public PackedPackage(Package thePackage, int x, int y) {
         this.thePackage = thePackage;
         this.x = x;
         this.y = y;

@@ -15,7 +15,7 @@ import com.axolotl.presentation.R;
 import com.axolotl.presentation.model.Layer;
 import com.axolotl.presentation.model.Package;
 import com.axolotl.presentation.model.PackageDimension;
-import com.axolotl.presentation.model.PackagedPackage;
+import com.axolotl.presentation.model.PackedPackage;
 
 public class LayerView extends View {
     public interface OnPackageSelectListener {
@@ -99,14 +99,14 @@ public class LayerView extends View {
         //canvas.drawRect(0, 0, width-1, height-1, strokePaint);
 
         for (int i = 0; i < layer.getNumberOfPackages(); i++) {
-            PackagedPackage p = layer.get(i);
+            PackedPackage p = layer.get(i);
             drawPackage(canvas, p, i, scaleFactor);
         }
 
         //drawDots(canvas, scaleFactor, layer.getLength(), layer.getWidth());
     }
 
-    private void drawPackage(Canvas canvas, PackagedPackage packagedPackage, int index, int scaleFactor) {
+    private void drawPackage(Canvas canvas, PackedPackage packagedPackage, int index, int scaleFactor) {
         PackageDimension pd = packagedPackage.getPackage().getDimension();
 
         int left = packagedPackage.getX() * scaleFactor;
@@ -118,6 +118,9 @@ public class LayerView extends View {
 
         canvas.drawRect(left, top, right, bottom, fillPaint);
         canvas.drawRect(left, top, right, bottom, strokePaint);
+
+        //drawLegoDots(canvas, packagedPackage, scaleFactor);
+
         String number = Integer.toString(packagedPackage.getPackage().getNumber());
 
         fillPaint.setColor(Color.BLACK);
@@ -127,6 +130,21 @@ public class LayerView extends View {
         if (selectedPackage != null && selectedPackage == packagedPackage.getPackage()) {
             drawSelectedIcon(canvas, this.packageSelectedIcon, left, top, right, bottom);
         }
+    }
+
+    private void drawLegoDots(Canvas canvas, PackedPackage packagedPackage, int scaleFactor) {
+        float x = packagedPackage.getX() * scaleFactor;
+        float y = packagedPackage.getY() * scaleFactor;
+        PackageDimension pd = packagedPackage.getPackage().getDimension();
+
+        float radius = scaleFactor / 3;
+        x = x + radius + (radius/2);
+        y = y+radius + (radius/2);
+        canvas.drawCircle(x, y, radius, strokePaint);
+
+        x = x + (radius/2) + radius;
+        y = y;
+        canvas.drawCircle(x, y, radius, strokePaint);
     }
 
     private void drawSelectedIcon(Canvas canvas, Drawable icon, int left, int top, int right, int bottom) {
