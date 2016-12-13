@@ -22,7 +22,6 @@
 #define LEDTOGGLE_LED LED_YELLOW
 
 //Functions
-void printPackages(PackageCollection *packages);
 void sendPackageInfoToRaspberryPi(Package *package);
 void pushArm(PackageCollection *packages);
 void requestColourInformation(Package *package);
@@ -30,10 +29,6 @@ void resetPackage(Package *package);
 void removePackage(PackageCollection *packages, int index);
 void receiveData(PackageCollection *packages);
 void sendData(PackageCollection *packages);
-void resetSensorReading(SensorReading *reading);
-void resetSensorData(SensorReading *r1, SensorReading *r2, SensorReading *r3);
-void cleanBuffer(SensorReading *reading, short sensor);
-void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3);
 void runScheduler();
 byte convertMeasuredValueToMillimetres(unsigned short number);
 short findNextColorRequested(PackageCollection *packages, short id);

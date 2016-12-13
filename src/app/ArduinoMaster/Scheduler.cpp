@@ -34,14 +34,6 @@ byte convertMeasuredValueToMillimetres(unsigned short number) {
     return number / 100;
 }
 
-// Loop through all packages
-//   If package can be pushed
-//      If time to push
-//          Push
-//          Remove package
-//      If Bin is Wrong Then delete
-//          Remove package
-// End Loop
 void pushArm(PackageCollection *packages) {
     for (int i = 0; i < packages->count; i++) {
         
@@ -134,16 +126,6 @@ Package *findNextPackageForPlacement(PackageCollection *packages) {
     }
 }
 
-// Read serial
-// If Not For Us then 
-//   Return
-// Else
-//   If Command = Colour
-//      Set colour on the first package
-//   Else Command = BinPacking
-//      Move the first package to push array
-//   End If
-// End If
 
 short findNextColorRequested(PackageCollection *packages, short id) {
 	short returnValue = 0;
@@ -274,133 +256,6 @@ void sendData(PackageCollection *packages) {
 				i--;
 			}
         }
-    }
-}
-
-
-void resetSensorReading(SensorReading *reading) {
-    reading->startTime = 0;
-    reading->endTime = 0;
-    reading->falseCount = 0;
-    reading->bufferCount = 0;
-    for (int i = 0; i < SENSOR_BUFFER_SIZE; i++) {
-        reading->sensorReadingBuffer[i] = 0;
-    }
-}
-
-void resetSensorData(SensorReading *r1, SensorReading *r2, SensorReading *r3) {
-    resetSensorReading(r1);
-    resetSensorReading(r2);
-    resetSensorReading(r3);
-}
-
-void cleanBuffer(SensorReading *reading, short sensor) {
-    unsigned short tagDist;
-    if (sensor == ULT_TOP_SENSOR)
-        tagDist = ULT_TOP_TAG_DIST;
-    else if (sensor == ULT_RIGHT_SENSOR)
-        tagDist = ULT_RIGHT_TAG_DIST;
-    else if (sensor == ULT_LEFT_SENSOR)
-        tagDist = ULT_LEFT_TAG_DIST;
-
-    for (int i = 0; i < reading->bufferCount; i++) {
-        if (reading->sensorReadingBuffer[i] > tagDist) {
-            reading->bufferCount = reading->bufferCount - 1;
-            for (int j = i; j < reading->bufferCount; j++) {
-                reading->sensorReadingBuffer[j] = reading->sensorReadingBuffer[j + 1];
-            }
-            i--;
-        }
-    }
-}
-
-void handlePackage(PackageCollection *packages, SensorReading *r1, SensorReading *r2, SensorReading *r3) {
-    //Cleaning buffer from obvious mistakes
-    cleanBuffer(r1, ULT_TOP_SENSOR);
-    cleanBuffer(r2, ULT_RIGHT_SENSOR);
-    cleanBuffer(r3, ULT_LEFT_SENSOR);
-
-	//Check bound for packages
-	if (packages->count >= PACKAGE_BUFFER_SIZE) {
-		serialDebug("Reached max packages _ ");
-		serialDebugLN(String(packages->count));
-		die("");
-	}
-
-
-    // Create new package
-    Package *package = &(packages->items[packages->count]);
-    packages->count = packages->count + 1;
-    resetPackage(package);
-    (*package).id = __nextPackageId;
-    __nextPackageId = __nextPackageId + 1;
-
-    
-
-	serialDebug("\nNew package with ID: #");
-    serialDebugLN(String(package->id));
-
-    //Fill Package object using collected sensor data
-    handleSensorReadings(package, r1, r2, r3);
-
-    //resetting sensorReadings
-    resetSensorReading(r1);
-    resetSensorReading(r2);
-    resetSensorReading(r3);
-}
-
-void packageEmulator(PackageCollection *packages, int *count) {
-    *count += 1;
-    if (*count == 400) {
-        *count = 0;
-        serialDebugLN("Creating new package.");
-
-
-		if (packages->count >= PACKAGE_BUFFER_SIZE) {
-			String masterString = "Reached max packages _ ";
-			masterString.concat(packages->count);
-			die(masterString);
-		}
-
-
-        Package *package = &(packages->items[packages->count]);
-        packages->count += 1;
-        resetPackage(package);
-
-        package->id = __nextPackageId;
-        __nextPackageId += 1;
-        
-        package->height = 2000;
-        package->width = 3200;
-        package->length = 1600;
-        package->middleTime = 400;
-
-        printPackages(packages);
-    }
-    delay(10);
-}
-
-void printPackages(PackageCollection *packages) {
-	serialDebugLN("");
-	serialDebug("Count ");
-	serialDebug(String(packages->count));
-	serialDebug(" Timeout ");
-	serialDebug(String(packages->packageTimeoutMS));
-	serialDebugLN("");
-
-    for (int i = 0; i < PACKAGE_BUFFER_SIZE; i++) {
-        Package *package = &(packages->items[i]);
-		serialDebug("");
-		serialDebug("[");
-		serialDebug(String(i));
-		serialDebug("] ");
-		serialDebug(String(package->id));
-		serialDebug(" ");
-		serialDebug(String(package->length));
-		serialDebug(" ");
-		serialDebug(String(package->colour));
-		serialDebug(" ");
-		serialDebugLN(String(package->bin));
     }
 }
 
