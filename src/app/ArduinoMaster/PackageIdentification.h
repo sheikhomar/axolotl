@@ -32,13 +32,6 @@
 //Functions
 short makeReading(int whichSensor);
 bool checkReading(int whichSensor, int dist);
-void addReading(SensorReading *reading, unsigned short dist);
-void checkAndIncrement(SensorReading *reading, bool bVal);
-
-void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReading *sensor2, SensorReading *sensor3);
-unsigned long findLength(SensorReading *sensor);
-unsigned long normalizeSensorData(SensorReading *sensor);
-unsigned long findMiddleTime(SensorReading *sensor);
 void printPackageSize(Package *package);
 
 void initPackageIdentification(PackageIdentificationState *state);

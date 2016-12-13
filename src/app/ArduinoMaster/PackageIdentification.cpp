@@ -52,48 +52,6 @@ bool checkReading(int whichSensor, int dist) {
 	return bVal;
 }
 
-void addReading(SensorReading *reading, unsigned short dist) {
-	reading->sensorReadingBuffer[reading->bufferCount] = dist;
-	reading->bufferCount = (reading->bufferCount) + 1;
-}
-
-void checkAndIncrement(SensorReading *reading, bool sensorTag) {
-	
-	if (sensorTag) {
-		reading->falseCount = 0;
-	}
-	else if (reading->falseCount == NOT_DETECTED_THRESHOLD)
-	{
-		reading->falseCount = NOT_DETECTED_THRESHOLD;
-	}
-	else {
-		reading->falseCount = reading->falseCount + 1;
-	}
-}
-
-void handleSensorReadings(Package *package, SensorReading *sensor1, SensorReading *sensor2, SensorReading *sensor3){
-	//Finding package length
-	unsigned long lengthBasedOnSensor1 = findLength(sensor1);
-	unsigned long lengthBasedOnSensor2 = findLength(sensor2);
-	unsigned long lengthBasedOnSensor3 = findLength(sensor3);
-	package->length = (lengthBasedOnSensor1 + lengthBasedOnSensor2 + lengthBasedOnSensor3 ) / 3;
-
-	//Normalizing sensor data
-	unsigned long sensor1Length = normalizeSensorData(sensor1);
-	unsigned long sensor2Length = normalizeSensorData(sensor2);
-	unsigned long sensor3Length = normalizeSensorData(sensor3);
-
-	//Finding width and height
-	package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - sensor1Length;
-	package->width = LENGTH_BETWEEN_SENSORS - sensor2Length - sensor3Length;
-
-	//Finding middle time
-	unsigned long sensor1MiddleTime = findMiddleTime(sensor1);
-	unsigned long sensor2MiddleTime = findMiddleTime(sensor2);
-	unsigned long sensor3MiddleTime = findMiddleTime(sensor3);
-	package->middleTime = (sensor1MiddleTime); //todo, we're assuming only one middletime atm
-}
-
 void printPackageSize(Package *package) {
 	serialDebug("Length: ");
 	//serialDebug("(" + String(lengthBasedOnSensor1));
@@ -113,37 +71,11 @@ void printPackageSize(Package *package) {
 	serialDebug(String(package->height) + "\n");
 }
 
-unsigned long normalizeSensorData(SensorReading *sensor) {
-	unsigned long total; 
-
-	for (int i = 0; i < sensor->bufferCount; i++) {
-		total += sensor->sensorReadingBuffer[i];
-	}
-	unsigned long result = total / sensor->bufferCount;
-
-	return result;
-}
-
-unsigned long findMiddleTime(SensorReading *sensor) {
-	unsigned long result = sensor->startTime + ((sensor->endTime - sensor->startTime) / 2);
-
-	return result;
-}
-
-unsigned long findLength(SensorReading *sensor) {
-	unsigned long packageTime = sensor->endTime - sensor->startTime;
-	unsigned long result = packageTime / 10 * SPEED_CONVEYOR;
-
-	//serialDebug("packageTime = endTime - startTime = " + String(sensor->endTime) + " - " + String(sensor->startTime) + " = " + String(packageTime) + "\n");
-	//serialDebug("result = packageTime / 10 * SPEED_CONVEYOR = " + String(packageTime) + " / 10 * 140 = " + String(result) + "\n");
-	return result;
-}
-
 void initPackageIdentification(PackageIdentificationState *state) {
 	#if KALMAN_OR_SLIDING
-		initKalmanFilter(&state->kalmanTopSensor, 5000, 400, 4000, 40);
-		initKalmanFilter(&state->kalmanRightSensor, 5000, 400, 4000, 40);
-		initKalmanFilter(&state->kalmanLeftSensor, 5000, 400, 4000, 40);
+		initKalmanFilter(&state->kalmanTopSensor, 2000, 400, 10000, 40);
+		initKalmanFilter(&state->kalmanRightSensor, 2000, 400, 10000, 40);
+		initKalmanFilter(&state->kalmanLeftSensor, 2000, 400, 10000, 40);
 	#else
 		initSlidingWindowInformation(&state->slidingTopSensor);
 		initSlidingWindowInformation(&state->slidingRightSensor);
@@ -395,7 +327,7 @@ unsigned short calculateSensorResult(ReadingCollection *collection, long checkDi
 
 bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int whichSensor) {
 	delay(1);
-    double measurement = (double)makeReading(whichSensor);
+    double measurement = (double) makeReading(whichSensor);
 	bool tag;
 	double estimate; 
 
@@ -415,22 +347,27 @@ bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int
 			tag = checkReading(whichSensor, state->kalmanLeftSensor.currentEstimate);
 			estimate = state->kalmanLeftSensor.currentEstimate;
 		}
-	}
 	#else
 		if (whichSensor == ULT_TOP_SENSOR) {
 			updateSlidingWindowFilter(&state->slidingTopSensor, measurement);
-			tag = checkReading(whichSensor, state->slidingTopSensor.currentValue);
-			estimate = state->slidingTopSensor.currentValue;
+			if (state->slidingTopSensor.count >= SLIDING_WINDOW_K) {
+				tag = checkReading(whichSensor, state->slidingTopSensor.currentValue);
+				estimate = state->slidingTopSensor.currentValue;
+			}
 		}
 		else if (whichSensor == ULT_RIGHT_SENSOR) {
 			updateSlidingWindowFilter(&state->slidingRightSensor, measurement);
-			tag = checkReading(whichSensor, state->slidingRightSensor.currentValue);
-			estimate = state->slidingRightSensor.currentValue;
+			if (state->slidingTopSensor.count >= SLIDING_WINDOW_K) {
+				tag = checkReading(whichSensor, state->slidingRightSensor.currentValue);
+				estimate = state->slidingRightSensor.currentValue;
+			}
 		}
 		else if (whichSensor == ULT_LEFT_SENSOR) {
 			updateSlidingWindowFilter(&state->slidingLeftSensor, measurement);			
-			tag = checkReading(whichSensor, state->slidingLeftSensor.currentValue);
-			estimate = state->slidingLeftSensor.currentValue;
+			if (state->slidingTopSensor.count >= SLIDING_WINDOW_K) {
+				tag = checkReading(whichSensor, state->slidingLeftSensor.currentValue);
+				estimate = state->slidingLeftSensor.currentValue;
+			}
 		}
 	#endif
 
@@ -448,6 +385,6 @@ bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int
 
 void addItemToCollection(ReadingCollection *collection, double estimate) {
     // TODO: Potential type cast problem
-    collection->readings[collection->count % SENSOR_READINGS_SIZE] = (unsigned short)estimate;
+    collection->readings[collection->count % SENSOR_READINGS_SIZE] = (unsigned short) estimate;
     collection->count += 1;
 }
