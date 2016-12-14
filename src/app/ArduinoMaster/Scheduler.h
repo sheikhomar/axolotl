@@ -26,6 +26,8 @@ void sendPackageInfoToRaspberryPi(Package *package);
 void pushArm(PackageCollection *packages);
 void requestColourInformation(Package *package);
 void resetPackage(Package *package);
+Package *findNextPackageForColour(PackageCollection *packages);
+Package *findNextPackageForPlacement(PackageCollection *packages);
 void removePackage(PackageCollection *packages, int index);
 void receiveData(PackageCollection *packages);
 void sendData(PackageCollection *packages);
