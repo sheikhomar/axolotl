@@ -15,11 +15,11 @@ import com.axolotl.presentation.model.Repository;
 public class BluetoothService extends Service {
     private Messenger clientMessenger;
     // Target we publish for clients to send messages to ServiceMessageHandler.
-    final Messenger serviceMessenger = new Messenger(new ServiceMessageHandler());
+    private final Messenger serviceMessenger = new Messenger(new ServiceMessageHandler());
     private final Messenger threadMessenger = new Messenger(new ThreadMessageHandler());
     private Repository repository;
     private BluetoothThread thread;
-    private CommandTranslator commandTranslator;
+    private CommandParser commandTranslator;
 
     private class ThreadMessageHandler extends Handler {
         @Override
@@ -28,7 +28,7 @@ public class BluetoothService extends Service {
                 case Messages.DATA_RECEIVED:
                     String cmd = (String)msg.obj;
                     try {
-                        commandTranslator.translate(cmd, repository);
+                        commandTranslator.parse(cmd, repository);
                     } catch (InvalidCommandException e) {
                         Log.d("BluetoothService", "Invalid command: " + e.getMessage(), e);
                     }
@@ -76,7 +76,7 @@ public class BluetoothService extends Service {
         Log.d(BluetoothService.class.getName(), "Created BluetoothService");
 
         repository = ((App)getApplication()).getRepository();
-        commandTranslator = new CommandTranslator();
+        commandTranslator = new CommandParser();
     }
 
     @Override

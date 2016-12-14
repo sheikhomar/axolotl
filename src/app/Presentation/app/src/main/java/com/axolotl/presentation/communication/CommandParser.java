@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.axolotl.presentation.model.Repository;
 
-public class CommandTranslator {
+public class CommandParser {
     public static final String ERR_CMD_UNKNOWN = "Command is unknown";
     public static final String ERR_REPOSITORY_IS_NULL = "Repository cannot be null";
     public static final String ERR_CMD_NULL_OR_EMPTY = "Command cannot be null or empty";
@@ -15,7 +15,7 @@ public class CommandTranslator {
     public static final String ERR_UNKNOWN_BIN = "Unknown bin id: ";
     public static final String ERR_UNKNOWN_COLOUR = "Unknown colour code: ";
 
-    public void translate(@NonNull String command, @NonNull Repository repository) throws InvalidCommandException {
+    public void parse(@NonNull String command, @NonNull Repository repository) throws InvalidCommandException {
         if (repository == null) {
             throw new IllegalArgumentException(ERR_REPOSITORY_IS_NULL);
         }
