@@ -35,7 +35,7 @@ public class CommandParserTests {
 
 
     @Test
-    public void translate_shouldNotAcceptNullRepository() throws Exception {
+    public void parse_shouldNotAcceptNullRepository() throws Exception {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(CommandParser.ERR_REPOSITORY_IS_NULL);
 
@@ -44,7 +44,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptNullCommand() throws Exception {
+    public void parse_shouldNotAcceptNullCommand() throws Exception {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(CommandParser.ERR_CMD_NULL_OR_EMPTY);
 
@@ -53,7 +53,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptEmptyCommand() throws Exception {
+    public void parse_shouldNotAcceptEmptyCommand() throws Exception {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(CommandParser.ERR_CMD_NULL_OR_EMPTY);
 
@@ -62,7 +62,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptUnknownCommands() throws Exception {
+    public void parse_shouldNotAcceptUnknownCommands() throws Exception {
         final String invalidCommands[] = {
                 "B",
                 "P",
@@ -85,7 +85,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptInvalidBinCommands() throws Exception {
+    public void parse_shouldNotAcceptInvalidBinCommands() throws Exception {
         final String invalidCommands[] = {
                 "B: ",
                 "B: 1 ",
@@ -109,7 +109,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptBinCommandAlphaNumeric() throws Exception {
+    public void parse_shouldNotAcceptBinCommandAlphaNumeric() throws Exception {
         thrown.expect(InvalidCommandException.class);
         thrown.expectMessage(CommandParser.ERR_BIN_CMD_WRONG_FORMAT);
 
@@ -119,7 +119,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldParseBinCommandCorrectly() throws Exception {
+    public void parse_shouldParseBinCommandCorrectly() throws Exception {
         ct.parse("B: 10 20 3 1 Isle,of,Mors", repository);
 
         verify(repository, times(1)).createBin(
@@ -131,7 +131,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptPackageCommandWithWrongNumberOfParts() throws Exception {
+    public void parse_shouldNotAcceptPackageCommandWithWrongNumberOfParts() throws Exception {
         final String invalidCommands[] = {
                 "P: ",
                 "P: 1 ",
@@ -161,7 +161,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptPackageCommandAlphaNumeric() throws Exception {
+    public void parse_shouldNotAcceptPackageCommandAlphaNumeric() throws Exception {
         thrown.expect(InvalidCommandException.class);
         thrown.expectMessage(CommandParser.ERR_PACKAGE_CMD_WRONG_FORMAT);
 
@@ -171,7 +171,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptPackageCommandWithNonExistentBinId() throws Exception {
+    public void parse_shouldNotAcceptPackageCommandWithNonExistentBinId() throws Exception {
         thrown.expect(InvalidCommandException.class);
         thrown.expectMessage(CommandParser.ERR_UNKNOWN_BIN);
 
@@ -182,7 +182,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldNotAcceptPackageCommandWithNonExistentColourCode() throws Exception {
+    public void parse_shouldNotAcceptPackageCommandWithNonExistentColourCode() throws Exception {
         thrown.expect(InvalidCommandException.class);
         thrown.expectMessage(CommandParser.ERR_UNKNOWN_COLOUR);
 
@@ -194,7 +194,7 @@ public class CommandParserTests {
     }
 
     @Test
-    public void translate_shouldParsePackageCommandCorrectly() throws Exception {
+    public void parse_shouldParsePackageCommandCorrectly() throws Exception {
         when(repository.colourExists(0)).thenReturn(true);
         when(repository.binExists(21)).thenReturn(true);
 
