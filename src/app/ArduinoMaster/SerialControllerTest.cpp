@@ -79,39 +79,23 @@ Combines the sending and receiving of data together with the PI.
 Sends five packages to the PI and blinks the builtin LED in acc with which motor to push.
 ***************************/
 void serialArduinoPICommTest() {
-	byte packages[5][4] = {
-		{ 1,1,1,COLOUR_RED },
-		{ 2,2,2,COLOUR_BLUE },
-		{ 4,4,4,COLOUR_YELLOW },
-		{ 8,8,8,COLOUR_YELLOW },
-		{ 1,2,3,COLOUR_GREEN }
-	};
-	byte i;
-
-	for (i = 0; i < 5; i++)
-	{
-		serialArduinoPICommTestHelperFunction(packages[i]);
-	}
-}
-
-void serialArduinoPICommTestHelperFunction(byte data[]) {
+	byte data[] = { 'a' };
 	client sender = unknown;
-	byte received[] = { 0 };
 
-	serialSendData(RaspberryPi, data, 4, COMM_PI_ADVICEPACKAGE);
+	while (data[0] <= 'y')
+	{
+		serialSendData(RaspberryPi, data, 1, 't');
 
-	do {
-		sender = serialReadData(received, 1);
-	} while (sender != RaspberryPi);
+		do {
+			sender = serialReadData(data, 1);
+		} while (sender != Arduino);
+		String masterString = "|Data=";
+		masterString.concat(data[0]);
+		masterString.concat("|");
 
-
-	while (received[0] > 0) {
-		led(LED_YELLOW, true);
-		delay(500);
-		received[0] -= 1;
+		data[0] += 1;
 	}
 }
-
 
 /***************************
 serialSendAllCharsTest
