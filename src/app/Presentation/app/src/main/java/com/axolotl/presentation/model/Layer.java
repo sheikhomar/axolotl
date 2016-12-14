@@ -8,6 +8,9 @@ public class Layer {
     private final int width;
 
     public Layer(int length, int width) {
+        if (length < 1 || width < 1) {
+            throw new IllegalArgumentException("Length/width cannot be zero or negative.");
+        }
         this.length = length;
         this.width = width;
         this.packedPackages = new ArrayList<>();
