@@ -4,6 +4,7 @@
 */
 
 //External libs
+#include "KalmanFilterTest.h"
 #include "SchedulerTest.h"
 #include "FilterTest.h"
 #include "SlidingWindowFilter.h"

@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClCompile Include="FilterTest.cpp" />
     <ClCompile Include="KalmanFilter.cpp" />
+    <ClCompile Include="KalmanFilterTest.cpp" />
     <ClCompile Include="LEDController.cpp" />
     <ClCompile Include="LEDControllerTest.cpp" />
     <ClCompile Include="PackageIdentification.cpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="Defines.h" />
     <ClInclude Include="FilterTest.h" />
     <ClInclude Include="KalmanFilter.h" />
+    <ClInclude Include="KalmanFilterTest.h" />
     <ClInclude Include="LEDController.h" />
     <ClInclude Include="LEDControllerTest.h" />
     <ClInclude Include="PackageIdentification.h" />
