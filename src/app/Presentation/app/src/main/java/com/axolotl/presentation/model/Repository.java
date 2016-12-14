@@ -64,9 +64,11 @@ public class Repository {
     }
 
     public void selectBin(Bin bin) {
-        this.selectedBin = bin;
-        this.selectedLayer = bin.getLayerAt(0);
-        this.selectedPackage = null;
+        if (this.selectedBin != bin) {
+            this.selectedBin = bin;
+            this.selectedLayer = bin.getLayerAt(0);
+            this.selectedPackage = null;
+        }
     }
 
     public void selectLater(Layer layer) {
