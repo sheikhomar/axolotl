@@ -114,7 +114,8 @@ public class LayerView extends View {
         int right = left + pd.getLength() * scaleFactor;
         int bottom = top + pd.getWidth() * scaleFactor;
 
-        fillPaint.setColor(packagedPackage.getPackage().getColour().getPaintColour());
+        int argbColour = ColourMapping.getPaintColour(packagedPackage.getPackage().getColour());
+        fillPaint.setColor(argbColour);
 
         canvas.drawRect(left, top, right, bottom, fillPaint);
         canvas.drawRect(left, top, right, bottom, strokePaint);

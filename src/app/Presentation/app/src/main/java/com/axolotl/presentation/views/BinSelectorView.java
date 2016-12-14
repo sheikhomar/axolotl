@@ -1,11 +1,13 @@
 package com.axolotl.presentation.views;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import com.axolotl.presentation.R;
 import com.axolotl.presentation.model.Bin;
+import com.axolotl.presentation.model.PackageColour;
 
 import java.util.ArrayList;
 

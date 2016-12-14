@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.axolotl.presentation.communication.CommandParser;
 import com.axolotl.presentation.communication.InvalidCommandException;
+import com.axolotl.presentation.model.ColourCodeParser;
 import com.axolotl.presentation.model.Repository;
 
 public class App extends Application {
@@ -11,7 +12,7 @@ public class App extends Application {
     private Repository repository;
 
     public App() {
-        repository = new Repository();
+        repository = new Repository(new ColourCodeParser());
         //populateRepostioryWithTestData();
     }
 

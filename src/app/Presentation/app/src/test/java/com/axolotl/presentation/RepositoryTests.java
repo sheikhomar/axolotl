@@ -3,6 +3,7 @@ package com.axolotl.presentation;
 import com.axolotl.presentation.communication.CommandParser;
 import com.axolotl.presentation.communication.InvalidCommandException;
 import com.axolotl.presentation.model.Bin;
+import com.axolotl.presentation.model.ColourCodeParser;
 import com.axolotl.presentation.model.Repository;
 
 import org.junit.Assert;
@@ -21,13 +22,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class RepositoryTests {
-    private static String VALID_COMMAND = "B: 10 10 10 1 Local";
-    private CommandParser ct = new CommandParser();
 
     // Mockito tutorial: http://www.vogella.com/tutorials/Mockito/article.html
 
     // Tells Mockito to mock this instance
-    //@Mock private Repository repository;
+    @Mock private ColourCodeParser colourCodeParser;
 
     // Tells Mockito to create the mocks based on the @Mock annotation
     @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -37,7 +36,7 @@ public class RepositoryTests {
 
     @Test
     public void createBin_shouldCreateCorrectBinObject() throws Exception {
-        Repository repository = new Repository();
+        Repository repository = new Repository(colourCodeParser);
 
         Assert.assertNotNull(repository.getBins().size());
         Assert.assertEquals(0, repository.getBins().size());
@@ -56,7 +55,7 @@ public class RepositoryTests {
 
     @Test
     public void getBinById_shouldReturnCorrectBin() throws Exception {
-        Repository repository = new Repository();
+        Repository repository = new Repository(colourCodeParser);
         repository.createBin(1, 2, 3, 4, "France");
         repository.createBin(10, 11, 12, 13, "Denmark");
 
@@ -81,7 +80,7 @@ public class RepositoryTests {
 
     @Test
     public void getBinById_shouldReturnNullIfBinIdIsNotFound() throws Exception {
-        Repository repository = new Repository();
+        Repository repository = new Repository(colourCodeParser);
         repository.createBin(1, 2, 3, 4, "Local");
         repository.createBin(10, 11, 12, 13, "Local");
 
@@ -94,7 +93,20 @@ public class RepositoryTests {
 
     @Test
     public void binExists_shouldReturnCorrectValue() throws Exception {
-        Repository repository = new Repository();
+        Repository repository = new Repository(colourCodeParser);
+        repository.createBin(1000, 2, 3, 4, "France");
+        repository.createBin(2000, 5, 12, 13, "Denmark");
+
+        Assert.assertTrue(repository.binExists(1000));
+        Assert.assertTrue(repository.binExists(2000));
+        Assert.assertFalse(repository.binExists(1));
+        Assert.assertFalse(repository.binExists(2));
+        Assert.assertFalse(repository.binExists(10));
+    }
+
+    @Test
+    public void getSelectedPackage_shouldReturnCorrectValue() throws Exception {
+        Repository repository = new Repository(colourCodeParser);
         repository.createBin(1000, 2, 3, 4, "France");
         repository.createBin(2000, 5, 12, 13, "Denmark");
 

@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 public class Repository {
     private final ArrayList<Bin> bins;
+    private final ColourCodeParser colourParser;
     private boolean autoSelectNewPackage;
     private int currentPackageNumber = 0;
     private Package selectedPackage;
     private Layer selectedLayer;
     private Bin selectedBin;
 
-    public Repository() {
+    public Repository(ColourCodeParser colourParser) {
+        this.colourParser = colourParser;
         this.bins = new ArrayList<>();
         this.autoSelectNewPackage = true;
     }
@@ -29,7 +31,7 @@ public class Repository {
             Package p = new Package(currentPackageNumber,
                     translated,
                     measured,
-                    PackageColour.parse(colourCode),
+                    colourParser.parse(colourCode),
                     isFragile);
 
             Layer layer = bin.pack(p, layerNo, x, y);
@@ -54,7 +56,7 @@ public class Repository {
     }
 
     public boolean colourExists(int colourCode) {
-        return PackageColour.exists(colourCode);
+        return colourParser.exists(colourCode);
     }
 
     public ArrayList<Bin> getBins() {
