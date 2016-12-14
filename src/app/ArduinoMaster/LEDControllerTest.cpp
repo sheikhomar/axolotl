@@ -30,7 +30,7 @@ void ledCycleTest() {
 	
 	while (true)
 	{
-		++count % 1000000;
+		++count %= 900000;
 
 		if ((count % 300) == 0) {
 			statusLamp(&ledState);
