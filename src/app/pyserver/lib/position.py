@@ -6,7 +6,3 @@ class PackedPosition(Position):
         self.x = x
         self.y = y
         self.layer = layer
-
-class ConveyorPosition(Position):
-    def __init(self, time):
-        self.time = time
