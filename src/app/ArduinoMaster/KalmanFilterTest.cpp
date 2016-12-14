@@ -9,7 +9,7 @@
 
 void KalmanFilterTestRun() {
 	//initKalmanFilter
-	initkalmanFilterTest();
+	initKalmanFilterTest();
 
 	//KalmanGain
 
@@ -57,5 +57,3 @@ void initKalmanFilterTest() {
 			serialDebugLN("KalmanFilter was not correctly initialized.");
 	}
 }
-
-void 

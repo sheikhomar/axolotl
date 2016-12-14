@@ -8,7 +8,9 @@
 #else
 	#include "WProgram.h"
 #endif
-
+//Functions
+void KalmanFilterTestRun();
+void initKalmanFilterTest();
 
 #endif
 
