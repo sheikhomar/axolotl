@@ -76,7 +76,7 @@ void serialArduinoNXTLoopTest() {
 serialArduinoPICommTest
 
 Combines the sending and receiving of data together with the PI.
-Sends five packages to the PI and blinks the builtin LED in acc with which motor to push.
+A byte is incremented from 'a' to 'z', where both the Arduino and PI increments the value by one.
 ***************************/
 void serialArduinoPICommTest() {
 	byte data[] = { 'a' };
