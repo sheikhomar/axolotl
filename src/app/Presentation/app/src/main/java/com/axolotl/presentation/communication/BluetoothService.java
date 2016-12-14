@@ -41,7 +41,9 @@ public class BluetoothService extends Service {
                     Message newMsg2 = Message.obtain(null, Messages.EVENT_BLUETOOTH_DISABLED);
                     sendMessageToClient(newMsg2);
                     break;
-
+                case Messages.CONNECTION_ERROR:
+                    sendMessageToClient(Message.obtain(null, Messages.CONNECTION_ERROR));
+                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -53,16 +55,14 @@ public class BluetoothService extends Service {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case Messages.ESTABLISH_CONNECTION:
+                case Messages.REGISTER:
                     clientMessenger = msg.replyTo;
-                    if (thread == null)
-                        thread = new BluetoothThread(threadMessenger);
-                    if (thread.getState() == Thread.State.NEW)
-                        thread.start();
+                    startThread();
                     break;
-                case Messages.CLOSE_CONNECTION:
-                    Log.d("BluetoothService", "Close connection event.");
+                case Messages.UNREGISTER:
                     clientMessenger = null;
+                case Messages.ESTABLISH_CONNECTION:
+                    startThread();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -108,5 +108,25 @@ public class BluetoothService extends Service {
             Log.d("BluetoothThread", "Sending message failed for client.", e);
             clientMessenger = null;
         }
+    }
+
+    private void startThread() {
+        if (thread != null) {
+            Log.d("BluetoothService", "Closing thread....");
+            thread.close();
+            Log.d("BluetoothService", "Thread closed.");
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Log.d("BluetoothService", "Failed to join thread.");
+            }
+            thread = null;
+            //thread = new BluetoothThread(threadMessenger);
+        }
+
+        repository.clear();
+
+        thread = new BluetoothThread(threadMessenger);
+        thread.start();
     }
 }

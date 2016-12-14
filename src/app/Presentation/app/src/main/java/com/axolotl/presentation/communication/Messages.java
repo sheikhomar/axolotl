@@ -3,7 +3,9 @@ package com.axolotl.presentation.communication;
 public class Messages {
     // Actions
     public static final int ESTABLISH_CONNECTION = 1;
-    public static final int CLOSE_CONNECTION = 2;
+    public static final int REGISTER = 3;
+    public static final int UNREGISTER = 4;
+
 
     // Events
     public static final int DATA_RECEIVED = 10;

@@ -19,7 +19,8 @@ import java.util.UUID;
 public class BluetoothThread extends Thread {
     private final String REMOTE_SERVER_MAC_ADDRESS = "00:0C:78:33:A5:63";
     private final UUID REMOTE_SERVICE_ID = UUID.fromString("c3ffbcc2-ab89-4e56-94ed-2a8df65e45bd");
-    private final Messenger messenger;
+    private Messenger messenger;
+    private BluetoothSocket socket;
 
     public BluetoothThread(Messenger messenger) {
         this.messenger = messenger;
@@ -27,28 +28,41 @@ public class BluetoothThread extends Thread {
 
     public void run() {
         Log.d("BluetoothThread", "Running ...");
-        BluetoothSocket socket = establishConnection();
+        socket = establishConnection();
         if (socket != null) {
-            receiveData(socket);
+            receiveData(getReader(socket));
         }
         Log.d("BluetoothThread", "Stopped.");
     }
 
-    private void receiveData(BluetoothSocket socket) {
-        InputStream is = null;
+    public void close() {
+        if (socket != null && socket.isConnected()) {
+            messenger = null;
+            try {
+                socket.close();
+            } catch (IOException e) {
+                Log.d("BluetoothThread", "Exception while closing connection", e);
+            }
+        }
+    }
+
+    @Nullable
+    private BufferedReader getReader(BluetoothSocket socket) {
         try {
-            is = socket.getInputStream();
+            InputStream is = socket.getInputStream();
+            return new BufferedReader(new InputStreamReader(is));
         } catch (IOException e) {
             Log.d("BluetoothThread", "An error while getting input stream", e);
 
             Message msg = Message.obtain(null, Messages.CONNECTION_ERROR);
             msg.obj = "Error getting input stream.";
             sendMessageToUI(msg);
-            return;
         }
 
-        BufferedReader r = new BufferedReader(new InputStreamReader(is));
+        return null;
+    }
 
+    private void receiveData(BufferedReader r) {
         while (true) {
             try {
                 String receivedData = r.readLine();
@@ -91,7 +105,7 @@ public class BluetoothThread extends Thread {
                 Message msg = Message.obtain(null, Messages.CONNECTION_ERROR);
                 msg.obj = "Remote server is down.";
                 sendMessageToUI(msg);
-                Log.d("BluetoothThread", "Remote host is down.");
+                Log.d("BluetoothThread", "Remote host is down.", e);
             }
 
             return socket;
@@ -101,6 +115,9 @@ public class BluetoothThread extends Thread {
     }
 
     private void sendMessageToUI(Message message) {
+        if (messenger == null)
+            return;
+
         try {
             messenger.send(message);
         }

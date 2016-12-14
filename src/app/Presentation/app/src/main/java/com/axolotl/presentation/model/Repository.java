@@ -18,7 +18,13 @@ public class Repository {
     }
 
     public void createBin(int id, int length, int width, int numberOfLayers, String destination) {
-        bins.add(new Bin(id, length, width, numberOfLayers, destination));
+        Bin bin = new Bin(id, length, width, numberOfLayers, destination);
+        if (bins.size() == 0) {
+            this.selectedBin = bin;
+            this.selectedLayer = bin.getLayerAt(0);
+        }
+
+        bins.add(bin);
     }
 
     public void packPackage(int x, int y, int translatedLength, int translatedWidth, int translatedHeight, int measuredLength, int measuredWidth, int measuredHeight, int colourCode, boolean isFragile, int layerNo, int binId) {
@@ -96,5 +102,9 @@ public class Repository {
 
     public Layer getSelectedLayer() {
         return this.selectedLayer;
+    }
+
+    public void clear() {
+        bins.clear();
     }
 }

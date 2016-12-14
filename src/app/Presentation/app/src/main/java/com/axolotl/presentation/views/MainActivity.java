@@ -2,6 +2,7 @@ package com.axolotl.presentation.views;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -10,9 +11,11 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,14 +42,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.d("MainActivity", "Service connected.");
             mService = new Messenger(service);
-            try {
-                Message msg = Message.obtain(null, Messages.ESTABLISH_CONNECTION);
-                msg.replyTo = mMessenger;
-                mService.send(msg);
-            }
-            catch (RemoteException e) {
-                Log.d("MainActivity", "Service has crashed.");
-            }
+            sendMessageToService(Messages.REGISTER);
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -55,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
             mService = null;
         }
     };
+
     private final Messenger mMessenger = new Messenger(new ServiceMessageHandler());
     private TextView binDestinationView;
 
@@ -68,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 case Messages.EVENT_BLUETOOTH_DISABLED:
                     Log.d("MainActivity", "Event Bluetooth disabled.");
                     Toast.makeText(getApplicationContext(), "Bluetooth disabled", Toast.LENGTH_LONG).show();
+                    showAlert("Bluetooth", "Bluetooth is disabled.");
+                    break;
+                case Messages.CONNECTION_ERROR:
+                    Log.d("MainActivity", "Connection error.");
+                    showAlert("Bluetooth", "Connection error.");
                     break;
                 default:
                     super.handleMessage(msg);
@@ -122,6 +124,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_reconnect:
+                this.establishConnection();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         try {
@@ -158,18 +172,45 @@ public class MainActivity extends AppCompatActivity {
     private void doUnbindService() {
         if (mIsBound) {
             if (mService != null) {
-                try {
-                    Message msg = Message.obtain(null, Messages.CLOSE_CONNECTION);
-                    msg.replyTo = mMessenger;
-                    mService.send(msg);
-                }
-                catch (RemoteException e) {
-                    // There is nothing special we need to do if the service has crashed.
-                }
+                sendMessageToService(Messages.UNREGISTER);
             }
             // Detach our existing connection.
             unbindService(mConnection);
             mIsBound = false;
+        }
+    }
+
+    private void showAlert(String title, String msg){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage(msg);
+        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void establishConnection() {
+        sendMessageToService(Messages.ESTABLISH_CONNECTION);
+    }
+
+    private void sendMessageToService(int message) {
+        if (mService == null)
+            return;
+
+        try {
+            Message msg = Message.obtain(null, message);
+            msg.replyTo = mMessenger;
+            mService.send(msg);
+        }
+        catch (RemoteException e) {
+            Log.d("MainActivity", "Service has crashed.");
+            showAlert("BluetoothService crashed.", "Service has crashed. Please restart the app.");
         }
     }
 }
