@@ -53,6 +53,10 @@ public class Repository {
         return getBinById(binId) != null;
     }
 
+    public boolean colourExists(int colourCode) {
+        return PackageColour.exists(colourCode);
+    }
+
     public ArrayList<Bin> getBins() {
         return this.bins;
     }
