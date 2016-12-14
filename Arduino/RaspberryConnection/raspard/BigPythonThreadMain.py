@@ -44,11 +44,15 @@ def make_client_thread(server_input):
 	client_local = BLib.make_client(server_input)
 	bluetooth_lock.acquire()
 	clients.append(client_local)
-	for b in bin_buf:
-		client_local.send(BLib.bluetooth_format_bin(b))
-	for p in pack_buf:
-		client_local.send(BLib.bluetooth_format_package(p, pa))
-	BTReady = True
+	try:
+		for b in bin_buf:
+			client_local.send(BLib.bluetooth_format_bin(b))
+		for p in pack_buf:
+			client_local.send(BLib.bluetooth_format_package(p, pa))
+		BTReady = True
+	#Nothing needs to be done when excepting though - try_bluetooth_send handles removing the client anyway. Excepting guarantees lock release and new thread creation
+	except bluetooth.BluetoothError:
+		print('BluetoothError detected during client creation! Nothing should be wrong though') 
 	print('Thread {number} is done'.format(number=thread_number))
 	bluetooth_lock.release()
 	thread_number = thread_number + 1
