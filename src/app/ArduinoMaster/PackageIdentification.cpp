@@ -107,48 +107,6 @@ void resetPackage2(Package *package) {
     package->middleTime = 0;
 }
 
-void runIdentification(PackageIdentificationState *state, PackageCollection *packages) {
-	bool leftSensorTag = performReading(state, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
-	bool topSensorTag = performReading(state, &state->topSensorBuffer, ULT_TOP_SENSOR);
-	bool rightSensorTag = performReading(state, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
-
-	createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE, "Left ");
-	createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE, "Top ");
-	createSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE, "Right");
-
-	queueResult(&state->leftSensorBuffer, &state->leftSensorResultQueue);
-	queueResult(&state->topSensorBuffer, &state->topSensorResultQueue);
-	queueResult(&state->rightSensorBuffer, &state->rightSensorResultQueue);
-	
-	if(state->leftSensorResultQueue.count > 0)
-		checkForFailedSensor(state->leftSensorResultQueue.data[0].endTime, state);
-	if(state->topSensorResultQueue.count > 0)
-		checkForFailedSensor(state->topSensorResultQueue.data[0].endTime, state);
-	if(state->rightSensorResultQueue.count > 0)
-		checkForFailedSensor(state->rightSensorResultQueue.data[0].endTime, state);
-
-    if (state->leftSensorResultQueue.count > 0 && 
-        state->topSensorResultQueue.count > 0 &&
-        state->rightSensorResultQueue.count > 0) {
-
-        // Create new package
-        Package *package = &(packages->items[packages->count]);
-        packages->count = packages->count + 1;
-        resetPackage2(package);
-        package->id = ___nextPackageId;
-        ___nextPackageId += 1;
-
-        serialDebug("\n\n\nNew package with ID: #");
-        serialDebugLN(String(package->id));
-
-        setPackageInfo(package,
-            &dequeue(&state->leftSensorResultQueue),
-            &dequeue(&state->topSensorResultQueue),
-            &dequeue(&state->rightSensorResultQueue)
-        );
-    }
-}
-
 void checkForFailedSensor(unsigned long endtime, PackageIdentificationState *state) {
 	if (millis() >= (endtime + TRANSPORT_TIME)) {
 		if (state->leftSensorResultQueue.count > 0) {
@@ -184,17 +142,17 @@ SensorResult dequeue(SensorResultQueue *queue) {
 void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *topResult, SensorResult *rightResult) {
     package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - topResult->result;
     package->width = LENGTH_BETWEEN_SENSORS - rightResult->result - leftResult->result;
-    
-	//serialDebug("RightResult: ");
-	//serialDebug(String(rightResult->result));
-	//serialDebug(" LeftResult ");
-	//serialDebugLN(String(leftResult->result));
+
+	Serial.print("\t\tHeight: \t" + String(package->height));
+	Serial.print("\tWidth: \t" + String(package->width));
 
     unsigned long leftLength = calcLength(leftResult);
     unsigned long topLength = calcLength(topResult);
     unsigned long rightLength = calcLength(rightResult);
 
     package->length = findMedian(leftLength, topLength, rightLength);
+
+	Serial.println("\tLength: \t" + String(package->length));
 
     unsigned long leftMiddleTime = (leftResult->endTime - leftResult->startTime) / 2;
     unsigned long topMiddleTime = (topResult->endTime - topResult->startTime) / 2;
@@ -211,14 +169,14 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
 
     package->middleTime = largestStartTime + findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
 
-	serialDebug("h: ");
-	serialDebug(String(package->height));
-	serialDebug(" w: ");
-	serialDebug(String(package->width));
-	serialDebug(" l: ");
-	serialDebug(String(package->length));
-	serialDebug(" mt: ");
-	serialDebugLN(String(package->middleTime));
+	//serialDebug("h: ");
+	//serialDebug(String(package->height));
+	//serialDebug(" w: ");
+	//serialDebug(String(package->width));
+	//serialDebug(" l: ");
+	//serialDebug(String(package->length));
+	//serialDebug(" mt: ");
+	//serialDebugLN(String(package->middleTime));
 }
 
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right) {
@@ -268,30 +226,20 @@ void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue) {
 void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String sensor) {
     if (!packageDetected && sensorBuffer->data.count > 0) {
         if (sensorBuffer->data.count > CORRECT_AMOUNT_THRESHOLD) {
-            sensorBuffer->result = calculateSensorResult(&sensorBuffer->data, sensorCheckDistance);
+            sensorBuffer->result = calculateDensitySensorResult(&sensorBuffer->data, sensorCheckDistance);
             sensorBuffer->isReady = true;
         }
-		//serialDebug("sensorBufferCount: ");
-		//serialDebug(String(sensorBuffer->data.count));
-		//serialDebug("   sensorResult: ");
-		//serialDebug(String(sensorBuffer->result));
-		//serialDebug("     ");
-		//serialDebugLN(sensor);
-
-		//unsigned short val = SENSOR_READINGS_SIZE;
-		//if (sensorBuffer->data.count < SENSOR_READINGS_SIZE) {
-		//	val = sensorBuffer->data.count;
-		//}
-		//for (int i = 0; i < val; i++) {
-		//	serialDebug(String(i));
-		//	serialDebug("\t\t");
-		//	serialDebugLN(String(sensorBuffer->data.readings[i]));
-		//}
+		Serial.print("\t");
+		Serial.print(sensor);
+		Serial.print("\tdens:\t" + String(sensorBuffer->result));
+		Serial.print("\tmin:\t" + String(calculateMinimumSensorResult(&sensorBuffer->data)));
+		Serial.print("\tavg:\t" + String(calculateAverageSensorResult(&sensorBuffer->data)));
+		
         sensorBuffer->data.count = 0;
     }
 }
 
-unsigned short calculateSensorResult(ReadingCollection *collection, long checkDistance) {
+unsigned short calculateDensitySensorResult(ReadingCollection *collection, long checkDistance) {
     unsigned short bestValue = 0;
     unsigned short bestNumberOfNeighbours = 0;
 
@@ -324,6 +272,38 @@ unsigned short calculateSensorResult(ReadingCollection *collection, long checkDi
 	
     return bestValue;
 }
+
+unsigned short calculateAverageSensorResult(ReadingCollection *collection) {
+	long result = 0; 
+	int loopingBound = collection->count;
+
+	if (loopingBound > SENSOR_READINGS_SIZE) {
+		loopingBound = SENSOR_READINGS_SIZE;
+	}
+
+	for (int i = 0; i < loopingBound; i++) {
+		result += collection->readings[i];
+	}
+	return (unsigned short)(result / loopingBound);
+}
+
+unsigned short calculateMinimumSensorResult(ReadingCollection *collection) {
+	short result = collection->readings[0];
+	int loopingBound = collection->count;
+
+	if (loopingBound > SENSOR_READINGS_SIZE) {
+		loopingBound = SENSOR_READINGS_SIZE;
+	}
+
+	for (int i = 1; i < loopingBound; i++) {
+		if (result > collection->readings[i]) {
+			result = collection->readings[i];
+		}
+	}
+
+	return result;
+}
+
 
 bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int whichSensor) {
 	delay(1);
@@ -387,4 +367,46 @@ void addItemToCollection(ReadingCollection *collection, double estimate) {
     // TODO: Potential type cast problem
     collection->readings[collection->count % SENSOR_READINGS_SIZE] = (unsigned short) estimate;
     collection->count += 1;
+}
+
+void runIdentification(PackageIdentificationState *state, PackageCollection *packages) {
+	bool leftSensorTag = performReading(state, &state->leftSensorBuffer, ULT_LEFT_SENSOR);
+	bool topSensorTag = performReading(state, &state->topSensorBuffer, ULT_TOP_SENSOR);
+	bool rightSensorTag = performReading(state, &state->rightSensorBuffer, ULT_RIGHT_SENSOR);
+
+	createSensorResult(leftSensorTag, &state->leftSensorBuffer, LEFT_SENSOR_CHECK_DISTANCE, "Left ");
+	createSensorResult(topSensorTag, &state->topSensorBuffer, TOP_SENSOR_CHECK_DISTANCE, "Top ");
+	createSensorResult(rightSensorTag, &state->rightSensorBuffer, RIGHT_SENSOR_CHECK_DISTANCE, "Right");
+
+	queueResult(&state->leftSensorBuffer, &state->leftSensorResultQueue);
+	queueResult(&state->topSensorBuffer, &state->topSensorResultQueue);
+	queueResult(&state->rightSensorBuffer, &state->rightSensorResultQueue);
+
+	if (state->leftSensorResultQueue.count > 0)
+		checkForFailedSensor(state->leftSensorResultQueue.data[0].endTime, state);
+	if (state->topSensorResultQueue.count > 0)
+		checkForFailedSensor(state->topSensorResultQueue.data[0].endTime, state);
+	if (state->rightSensorResultQueue.count > 0)
+		checkForFailedSensor(state->rightSensorResultQueue.data[0].endTime, state);
+
+	if (state->leftSensorResultQueue.count > 0 &&
+		state->topSensorResultQueue.count > 0 &&
+		state->rightSensorResultQueue.count > 0) {
+
+		// Create new package
+		Package *package = &(packages->items[packages->count]);
+		packages->count = packages->count + 1;
+		resetPackage2(package);
+		package->id = ___nextPackageId;
+		___nextPackageId += 1;
+
+		serialDebug("\n\n\nNew package with ID: #");
+		serialDebugLN(String(package->id));
+
+		setPackageInfo(package,
+			&dequeue(&state->leftSensorResultQueue),
+			&dequeue(&state->topSensorResultQueue),
+			&dequeue(&state->rightSensorResultQueue)
+		);
+	}
 }

@@ -64,11 +64,11 @@
 #define RS485_TIMEOUT_US 100
 #define SERIAL_MAX_DATA_SIZE 12
 #define PACKAGE_BUFFER_SIZE 10
-#define SENSOR_READINGS_SIZE 30 // OLD: 20
+#define SENSOR_READINGS_SIZE 30 
 #define SLIDING_WINDOW_K 10
 #define RS485_DATA_LENGTH_MAX 11
 #define RS485_SERIAL_PRINT_BINARY 0
-#define DEBUG 1
+#define DEBUG 0
 #define SENSOR_RESULT_SIZE 5
 #define PI_REQUEST_TIMEOUT_MS 500
 #define NXT_REQUEST_TIMEOUT_MS 500
@@ -77,7 +77,7 @@
 #define ULT_RIGHT_SENSOR 2
 #define ULT_LEFT_SENSOR 3
 
-#define KALMAN_OR_SLIDING 0
+#define KALMAN_OR_SLIDING 0           // 1 - to use kalman    0 - to use sliding
 
 
 //Enums

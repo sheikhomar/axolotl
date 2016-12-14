@@ -38,7 +38,7 @@ void initPackageIdentification(PackageIdentificationState *state);
 void initSensorBuffer(SensorBuffer *buffer);
 void runIdentification(PackageIdentificationState *state, PackageCollection *packages);
 void createSensorResult(bool tag, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String s);
-unsigned short calculateSensorResult(ReadingCollection *collection, long checkDistance);
+unsigned short calculateDensitySensorResult(ReadingCollection *collection, long checkDistance);
 bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int whichSensor);
 void addItemToCollection(ReadingCollection *collection, double estimate);
 void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue);
@@ -48,6 +48,8 @@ SensorResult dequeue(SensorResultQueue *queue);
 unsigned long calcLength(SensorResult *result);
 unsigned long findMedian(unsigned long left, unsigned long top, unsigned long right);
 void sort(unsigned long buffer[], int size);
+unsigned short calculateAverageSensorResult(ReadingCollection *collection);
+unsigned short calculateMinimumSensorResult(ReadingCollection *collection);
 
 #endif
 
