@@ -145,6 +145,9 @@ public class ControlBrick {
 			}
 			badColourCount++;
 		}
+		else if(colour == RED || colour == GREEN || colour == BLUE || colour == YELLOW){
+			listResetCount = stopwatch.elapsed();
+		}
 	}
 	
 	private static void sendColour(){ //Sending colour to Ardu
@@ -269,7 +272,7 @@ public class ControlBrick {
 	}
 	
 	private static void checkToClearColourList(){ //Clear the colourList if more than 1 sec since last brick is read
-		final int MAX_READING_TIME = 1000;
+		final int MAX_READING_TIME = 150;
 		if(stopwatch.elapsed() - listResetCount > MAX_READING_TIME){
 			colourList.clear();
 			listResetCount = stopwatch.elapsed();
