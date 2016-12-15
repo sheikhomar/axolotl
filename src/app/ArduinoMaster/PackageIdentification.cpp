@@ -143,8 +143,8 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
     package->height = HEIGHT_BETWEEN_SENSOR_AND_BELT - topResult->result;
     package->width = LENGTH_BETWEEN_SENSORS - rightResult->result - leftResult->result;
 
-	Serial.print("\t\tHeight: \t" + String(package->height));
-	Serial.print("\tWidth: \t" + String(package->width));
+	//Serial.print("\t\tHeight: \t" + String(package->height));
+	//Serial.print("\tWidth: \t" + String(package->width));
 
     unsigned long leftLength = calcLength(leftResult);
     unsigned long topLength = calcLength(topResult);
@@ -152,7 +152,7 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
 
     package->length = findMedian(leftLength, topLength, rightLength);
 
-	Serial.println("\tLength: \t" + String(package->length));
+	//Serial.println("\tLength: \t" + String(package->length));
 
     unsigned long leftMiddleTime = (leftResult->endTime - leftResult->startTime) / 2;
     unsigned long topMiddleTime = (topResult->endTime - topResult->startTime) / 2;
@@ -169,12 +169,12 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
 
     package->middleTime = largestStartTime + findMedian(leftMiddleTime, topMiddleTime, rightMiddleTime);
 
-	//serialDebug("h: ");
-	//serialDebug(String(package->height));
-	//serialDebug(" w: ");
-	//serialDebug(String(package->width));
-	//serialDebug(" l: ");
-	//serialDebug(String(package->length));
+	serialDebug("h: ");
+	serialDebug(String(package->height));
+	serialDebug(" w: ");
+	serialDebug(String(package->width));
+	serialDebug(" l: ");
+	serialDebugLN(String(package->length));
 	//serialDebug(" mt: ");
 	//serialDebugLN(String(package->middleTime));
 }
@@ -229,11 +229,11 @@ void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsign
             sensorBuffer->result = calculateDensitySensorResult(&sensorBuffer->data, sensorCheckDistance);
             sensorBuffer->isReady = true;
         }
-		Serial.print("\t");
-		Serial.print(sensor);
-		Serial.print("\tdens:\t" + String(sensorBuffer->result));
-		Serial.print("\tmin:\t" + String(calculateMinimumSensorResult(&sensorBuffer->data)));
-		Serial.print("\tavg:\t" + String(calculateAverageSensorResult(&sensorBuffer->data)));
+		//Serial.print("\t");
+		//Serial.print(sensor);
+		//Serial.print("\tdens:\t" + String(sensorBuffer->result));
+		//Serial.print("\tmin:\t" + String(calculateMinimumSensorResult(&sensorBuffer->data)));
+		//Serial.print("\tavg:\t" + String(calculateAverageSensorResult(&sensorBuffer->data)));
 		
         sensorBuffer->data.count = 0;
     }

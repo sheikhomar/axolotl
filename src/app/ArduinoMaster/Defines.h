@@ -77,7 +77,7 @@
 #define ULT_RIGHT_SENSOR 2
 #define ULT_LEFT_SENSOR 3
 
-#define KALMAN_OR_SLIDING 0           // 1 - to use kalman    0 - to use sliding
+#define KALMAN_OR_SLIDING 1           // 1 - to use kalman    0 - to use sliding
 
 
 //Enums
