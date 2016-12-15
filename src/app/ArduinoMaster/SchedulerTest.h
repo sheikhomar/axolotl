@@ -9,8 +9,20 @@
 	#include "WProgram.h"
 #endif
 
-//Functions
+//Include
+#include "Defines.h"
 
+//Functions
+void runAllTests();
+void findNextPackageForColourTest();
+void findNextPackageForPlacementTest();
+void convertMeasuredValueToMillimetresTest();
+void findPackageByIdTest();
+void resetPackageTest();
+void removePackageTest();
+
+//Helper function
+void packageEmulator(PackageCollection *packages, int _nextPackageId, int height, int width, int length, int middletime, byte colour, byte bin);
 
 #endif
 
