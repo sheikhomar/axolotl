@@ -22,6 +22,7 @@
 #include "PositionTest.h"
 #include "SerialControllerTest.h"
 #include "UltrasoundSensorTest.h"
+#include "SchedulerTest.h"
 #include "Utilities.h"
 
 void setup() {

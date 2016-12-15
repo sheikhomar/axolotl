@@ -33,7 +33,7 @@ void receiveData(PackageCollection *packages);
 void sendData(PackageCollection *packages);
 void runScheduler();
 byte convertMeasuredValueToMillimetres(unsigned short number);
-short findNextColorRequested(PackageCollection *packages, short id);
+short findPackageById(PackageCollection *packages, short id);
 
 
 #endif

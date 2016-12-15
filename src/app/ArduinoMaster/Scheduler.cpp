@@ -90,22 +90,26 @@ void resetPackage(Package *package) {
 }
 
 void removePackage(PackageCollection *packages, int index) {
-    if (packages->count <= 0 || packages->count > PACKAGE_BUFFER_SIZE) {
+	if (index == NO_PACKAGE_FOUND || index < 0 || index >= packages->count) {
+		serialDebug("Index invalid: ");
+		die(String(index));
+	}
+	if (packages->count <= 0 || packages->count > PACKAGE_BUFFER_SIZE) {
 		String masterString = "Cannot remove package! - size ";
-		masterString.concat(packages->count);
+		serialDebug(masterString);
 
-        die(masterString);
-    }
+		die(String(packages->count));
+	}
 
-    serialDebug("Removing package: ");
-    serialDebugLN(String(packages->items[index].id));
+	serialDebug("Removing package: ");
+	serialDebugLN(String(packages->items[index].id));
 
-    // Remove package from the buffer
-    for (int i = index; i < packages->count; i++) {
-        packages->items[i] = packages->items[i + 1];
-    }
+	// Remove package from the buffer
+	for (int i = index; i < packages->count; i++) {
+		packages->items[i] = packages->items[i + 1];
+	}
 
-    packages->count = packages->count - 1;
+	packages->count = packages->count - 1;
 }
 
 
@@ -115,6 +119,7 @@ Package *findNextPackageForColour(PackageCollection *packages) {
             return &(packages->items[i]);
         }
     }
+	return NULL;
 }
 
 Package *findNextPackageForPlacement(PackageCollection *packages) {
@@ -124,11 +129,12 @@ Package *findNextPackageForPlacement(PackageCollection *packages) {
             return &(packages->items[i]);
         }
     }
+	return NULL;
 }
 
 
-short findNextColorRequested(PackageCollection *packages, short id) {
-	short returnValue = 0;
+short findPackageById(PackageCollection *packages, short id) {
+	short returnValue = NO_PACKAGE_FOUND;
 
 	for (short i = 0; i < packages->count; i++) {
 		if (packages->items[i].id == id) {
@@ -180,7 +186,7 @@ void receiveData(PackageCollection *packages) {
 				serialDebugLN("\n--->Incorrect colour");
 			}
 
-			removePackage(packages, findNextColorRequested(packages, package->id));
+			removePackage(packages, findPackageById(packages, package->id));
         }
     }
     else if (command == COMM_PI_ADVICEPACKAGE) {
