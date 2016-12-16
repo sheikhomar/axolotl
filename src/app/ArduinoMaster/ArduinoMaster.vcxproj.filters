@@ -60,8 +60,11 @@
     <ClCompile Include="FilterTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SchedulerTest.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
     <ClCompile Include="KalmanFilterTest.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KalmanFilterTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SchedulerTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
