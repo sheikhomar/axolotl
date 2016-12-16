@@ -13,7 +13,8 @@ void runPackageIdentificationTest() {
 	checkReadingTest();
 	checkForFailedSensorTest();
 	dequeueTest();
-	setPackageInfoEx();
+	setPackageInfoTest();
+	setPackageInfoTestEx();
 	findMedianTest();
 	calcLength();
 	calculateAverageSensorResultTest();
@@ -86,7 +87,7 @@ void dequeueTest() {
 	dequeue(&queue);
 }
 
-void setPackageInfo() {
+void setPackageInfoTest() {
 	//sets the correct information based on excel
 	SensorResult resL, resT, resR;
 	Package package;
@@ -144,7 +145,7 @@ void setPackageInfo() {
 	}
 }
 
-void setPackageInfoEx() {
+void setPackageInfoTestEx() {
 	//sets the correct information based on excel
 	SensorResult resL, resT, resR;
 	Package package;
@@ -239,7 +240,7 @@ void calcLength() {
 	}
 }
 
-unsigned short calculateAverageSensorResultTest() {
+void calculateAverageSensorResultTest() {
 	ReadingCollection dataCollection;
 	unsigned short res = 0;
 	int i;

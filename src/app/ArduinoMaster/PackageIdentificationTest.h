@@ -18,11 +18,12 @@ void runPackageIdentificationTest();
 void checkReadingTest();
 void checkForFailedSensorTest();
 void dequeueTest();
-void setPackageInfoEx();
+void setPackageInfoTest();
+void setPackageInfoTestEx();
 void findMedianTest();
 void findMedianTestHelper(unsigned long median, unsigned long valB, unsigned long valC);
 void calcLength();
-unsigned short calculateAverageSensorResultTest();
+void calculateAverageSensorResultTest();
 
 #endif
 
