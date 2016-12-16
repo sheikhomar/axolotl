@@ -36,6 +36,7 @@ void KalmanFilterTestRun() {
 }
 
 
+//Testing if the kalman filter is initialized correct
 void initKalmanFilterTest() {
 	KalmanFilterInformation kfi;
 	kfi.currentEstimate = 1;
