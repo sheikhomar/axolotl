@@ -66,6 +66,9 @@
     <ClCompile Include="KalmanFilterTest.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="PackageIdentificationTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LEDController.h">
@@ -117,6 +120,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SchedulerTest.h">
+    <ClInclude Include="PackageIdentificationTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

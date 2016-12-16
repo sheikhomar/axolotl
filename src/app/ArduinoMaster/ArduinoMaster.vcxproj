@@ -92,6 +92,7 @@
     <ClCompile Include="LEDController.cpp" />
     <ClCompile Include="LEDControllerTest.cpp" />
     <ClCompile Include="PackageIdentification.cpp" />
+    <ClCompile Include="PackageIdentificationTest.cpp" />
     <ClCompile Include="PositionTest.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="SchedulerTest.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="LEDController.h" />
     <ClInclude Include="LEDControllerTest.h" />
     <ClInclude Include="PackageIdentification.h" />
+    <ClInclude Include="PackageIdentificationTest.h" />
     <ClInclude Include="PositionTest.h" />
     <ClInclude Include="Scheduler.h" />
     <ClInclude Include="SchedulerTest.h" />
