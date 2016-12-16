@@ -150,7 +150,7 @@ void setPackageInfo(Package *package, SensorResult *leftResult, SensorResult *to
     unsigned long topLength = calcLength(topResult);
     unsigned long rightLength = calcLength(rightResult);
 
-    package->length = findMedian(leftLength, topLength, rightLength);
+    package->length = 0.95 * findMedian(leftLength, topLength, rightLength);
 
 	//Serial.println("\tLength: \t" + String(package->length));
 
@@ -226,15 +226,17 @@ void queueResult(SensorBuffer *sensorBuffer, SensorResultQueue *queue) {
 void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsigned short sensorCheckDistance, String sensor) {
     if (!packageDetected && sensorBuffer->data.count > 0) {
         if (sensorBuffer->data.count > CORRECT_AMOUNT_THRESHOLD) {
-            sensorBuffer->result = calculateDensitySensorResult(&sensorBuffer->data, sensorCheckDistance);
+            sensorBuffer->result = calculateAverageSensorResult(&sensorBuffer->data);
             sensorBuffer->isReady = true;
         }
-		//Serial.print("\t");
+		//Serial.print("\t");calculateDensitySensorResult
 		//Serial.print(sensor);
 		//Serial.print("\tdens:\t" + String(sensorBuffer->result));
 		//Serial.print("\tmin:\t" + String(calculateMinimumSensorResult(&sensorBuffer->data)));
-		//Serial.print("\tavg:\t" + String(calculateAverageSensorResult(&sensorBuffer->data)));
+		//Serial.print("\tavg:\t" + String(calculateDensitySensorResult(&sensorBuffer->data)));
 		
+		serialDebugLN(sensor + " buffercount = " + String(sensorBuffer->data.count));
+
         sensorBuffer->data.count = 0;
     }
 }

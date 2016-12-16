@@ -17,8 +17,8 @@
 #define NOT_DETECTED_THRESHOLD 4
 #define SPEED_CONVEYOR 180				// TODO: Calibrate this
 
-#define LENGTH_BETWEEN_SENSORS 11300			// TODO: Calibrate this  -- Old: 11950
-#define HEIGHT_BETWEEN_SENSOR_AND_BELT 4950 // TODO: Calibrate this
+#define LENGTH_BETWEEN_SENSORS 11849			// TODO: Calibrate this  -- Old: 11300
+#define HEIGHT_BETWEEN_SENSOR_AND_BELT 5001 // TODO: Calibrate this -- Old: 4950
 
 
 #define TOP_SENSOR_CHECK_DISTANCE 50 // TODO: Calibrate this
