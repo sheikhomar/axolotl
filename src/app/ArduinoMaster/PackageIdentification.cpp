@@ -264,7 +264,6 @@ unsigned short calculateDensitySensorResult(ReadingCollection *collection, long 
         }
 
         if (currentNumberOfNeighbours >= bestNumberOfNeighbours) {
-            // TODO: Consider using average to handle the case where best and current are equal
             bestValue = currentValue;
             bestNumberOfNeighbours = currentNumberOfNeighbours;
         }
@@ -364,7 +363,6 @@ bool performReading(PackageIdentificationState *state, SensorBuffer *buffer, int
 }
 
 void addItemToCollection(ReadingCollection *collection, double estimate) {
-    // TODO: Potential type cast problem
     collection->readings[collection->count % SENSOR_READINGS_SIZE] = (unsigned short) estimate;
     collection->count += 1;
 }

@@ -10,20 +10,20 @@
 #endif
 
 //Defines
-#define ULT_TOP_TAG_DIST 3800					// TODO: Calibrate this
-#define ULT_RIGHT_TAG_DIST 5500					// TODO: Calibrate this
-#define ULT_LEFT_TAG_DIST 4500 					// TODO: Calibrate this
+#define ULT_TOP_TAG_DIST 3800
+#define ULT_RIGHT_TAG_DIST 5500
+#define ULT_LEFT_TAG_DIST 4500
 
 #define NOT_DETECTED_THRESHOLD 4
-#define SPEED_CONVEYOR 180				// TODO: Calibrate this
+#define SPEED_CONVEYOR 180
 
-#define LENGTH_BETWEEN_SENSORS 11300			// TODO: Calibrate this  -- Old: 11950
-#define HEIGHT_BETWEEN_SENSOR_AND_BELT 4950 // TODO: Calibrate this
+#define LENGTH_BETWEEN_SENSORS 11300
+#define HEIGHT_BETWEEN_SENSOR_AND_BELT 4950
 
 
-#define TOP_SENSOR_CHECK_DISTANCE 50 // TODO: Calibrate this
-#define LEFT_SENSOR_CHECK_DISTANCE 50 // TODO: Calibrate this
-#define RIGHT_SENSOR_CHECK_DISTANCE 50 // TODO: Calibrate this
+#define TOP_SENSOR_CHECK_DISTANCE 50
+#define LEFT_SENSOR_CHECK_DISTANCE 50
+#define RIGHT_SENSOR_CHECK_DISTANCE 50
 
 #define TRANSPORT_TIME 500 // transport time through the sensors in millis
 
