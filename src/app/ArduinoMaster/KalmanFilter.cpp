@@ -9,20 +9,11 @@
 #include "KalmanFilter.h"
 
 void updateKalmanFilter(KalmanFilterInformation *kfi, double measurement){
-    updatePrediction(kfi);
-    calculateKalmanGain(kfi);
-    calculateKalmanEstimate(kfi, measurement);
-    calculateKalmanErrorInEstimate(kfi);
+    updatePrediction(kfi);						//Calculates P_predict
+    calculateKalmanGain(kfi);					//Calculates K
+    calculateKalmanEstimate(kfi, measurement);	//Calculates X_corr
+    calculateKalmanErrorInEstimate(kfi);		//Calculates P_coor
 }
-
-void resetKalmanFilter(KalmanFilterInformation *kfi) {
-	kfi->kalmanGain = 0;
-	kfi->errorInEstimate = 5000;
-	kfi->sensorNoise = 200;
-	kfi->currentEstimate = 4000;
-	kfi->processNoise = 10;
-}
-
 
 void initKalmanFilter(KalmanFilterInformation *kfi, double errorInEstimate, double sensorNoise, double currentEstimate, double processNoise) {
     kfi->kalmanGain = 0;
