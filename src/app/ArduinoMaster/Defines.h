@@ -110,11 +110,11 @@ typedef struct {
 } PackageCollection;
 
 typedef struct {
-    double kalmanGain;
-    double errorInEstimate;
-    double sensorNoise;
-    double currentEstimate;
-    double processNoise;
+    double kalmanGain;		//K
+    double errorInEstimate; //P_predict
+    double sensorNoise;		//R
+    double currentEstimate; //X_corr
+    double processNoise;	//Q
 } KalmanFilterInformation;
 
 typedef struct {
