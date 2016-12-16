@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>f6c99b2c-2674-428a-8120-0ac4cb1ab84d</ProjectGuid>
+    <ProjectGuid>{5db886b5-e0cc-45d2-9fde-c70d5841132b}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
     <StartupFile>main.py</StartupFile>
@@ -11,7 +11,7 @@
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>pyserver</Name>
+    <Name>pyserver_production</Name>
     <RootNamespace>PythonApplication1</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

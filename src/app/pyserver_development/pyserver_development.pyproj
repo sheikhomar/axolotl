@@ -11,7 +11,7 @@
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>pyserver</Name>
+    <Name>pyserver_development</Name>
     <RootNamespace>PythonApplication1</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

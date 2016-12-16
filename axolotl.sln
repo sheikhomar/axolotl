@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "pyserver", "src\app\pyserver\pyserver.pyproj", "{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoMaster", "src\app\ArduinoMaster\ArduinoMaster.vcxproj", "{733764F9-FE35-43E9-9FD9-186C8D2AF671}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "pyserver_development", "src\app\pyserver_development\pyserver_development.pyproj", "{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "pyserver_production", "src\app\pyserver_production\pyserver_production.pyproj", "{5DB886B5-E0CC-45D2-9FDE-C70D5841132B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,16 +17,20 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Release|x86.ActiveCfg = Release|Any CPU
 		{733764F9-FE35-43E9-9FD9-186C8D2AF671}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{733764F9-FE35-43E9-9FD9-186C8D2AF671}.Debug|x86.ActiveCfg = Debug|Win32
 		{733764F9-FE35-43E9-9FD9-186C8D2AF671}.Debug|x86.Build.0 = Debug|Win32
 		{733764F9-FE35-43E9-9FD9-186C8D2AF671}.Release|Any CPU.ActiveCfg = Release|Win32
 		{733764F9-FE35-43E9-9FD9-186C8D2AF671}.Release|x86.ActiveCfg = Release|Win32
 		{733764F9-FE35-43E9-9FD9-186C8D2AF671}.Release|x86.Build.0 = Release|Win32
+		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6C99B2C-2674-428A-8120-0AC4CB1AB84D}.Release|x86.ActiveCfg = Release|Any CPU
+		{5DB886B5-E0CC-45D2-9FDE-C70D5841132B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DB886B5-E0CC-45D2-9FDE-C70D5841132B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5DB886B5-E0CC-45D2-9FDE-C70D5841132B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DB886B5-E0CC-45D2-9FDE-C70D5841132B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
