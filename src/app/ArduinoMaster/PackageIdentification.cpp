@@ -235,7 +235,7 @@ void createSensorResult(bool packageDetected, SensorBuffer *sensorBuffer, unsign
 		//Serial.print("\tmin:\t" + String(calculateMinimumSensorResult(&sensorBuffer->data)));
 		//Serial.print("\tavg:\t" + String(calculateDensitySensorResult(&sensorBuffer->data)));
 		
-		serialDebugLN(sensor + " buffercount = " + String(sensorBuffer->data.count));
+		//serialDebugLN(sensor + " buffercount = " + String(sensorBuffer->data.count));
 
         sensorBuffer->data.count = 0;
     }
